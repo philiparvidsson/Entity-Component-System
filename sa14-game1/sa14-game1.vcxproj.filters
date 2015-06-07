@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Documentation Files">
+      <UniqueIdentifier>{1c5977cf-ebeb-4836-9c46-deae52c77333}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sa14-game1.c">
@@ -20,6 +23,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="doc\readme.txt" />
+    <Text Include="doc\readme.txt">
+      <Filter>Documentation Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
