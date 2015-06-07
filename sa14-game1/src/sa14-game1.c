@@ -23,6 +23,25 @@
  * FUNCTIONS
  *----------------------------------------------*/
 
+/*--------------------------------------
+ * Function: PrintIntroMessage()
+ * Parameters:
+ *
+ * Description:
+ *   Skriver ut introduktionsmeddelandet.
+ *------------------------------------*/
+void PrintIntroMessage() {
+    printf("sa14-game1 v%s by %s\n\n\n", ProgramVersion, ProgramAuthors);
+}
+
+/*--------------------------------------
+ * Function: main()
+ * Parameters:
+ *
+ * Description:
+ *   Programmets huvudfunktion.
+ *------------------------------------*/
 main() {
-    printf("Hello, world!\n");
+    PrintIntroMessage();
+    system("pause");
 }

@@ -17,7 +17,7 @@
 #define ProgramAuthors "Philip Arvidsson (philip@philiparvidsson.com)"
 #define ProgramVersion "0.01b"
 
-typedef enum { FALSE, TRUE } bool;
+typedef enum { False, True } bool;
 
 typedef struct {
     float x, y;
