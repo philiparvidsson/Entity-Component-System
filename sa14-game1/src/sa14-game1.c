@@ -14,6 +14,8 @@
  * INCLUDES
  *----------------------------------------------*/
 
+#include "core/common.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 
