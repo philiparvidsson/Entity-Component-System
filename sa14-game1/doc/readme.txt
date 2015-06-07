@@ -7,4 +7,18 @@ Riktlinjer för programkoden:
 		FunktionsNamn();
 		variabel_namn
 		typNamnT
-		KonstantNamn
+		KONSTANT_NAMN
+
+pseudokod:
+
+	while true
+		update user inputs
+			här läser vi in knapptryck osv
+		handle inputs
+			här hanterar vi knapptryck. tex esc för att avsluta spelet osv
+		update game objects
+			här uppdaterar vi alla spelobjekt.. flyttar rymdskeppet framåt
+			(beroende på user inputs) osv..flyttar raketer osv framåt
+		render everything
+			här ritar vi upp allting på skärmen
+	loop

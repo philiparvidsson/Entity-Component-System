@@ -10,15 +10,47 @@
  *
  *----------------------------------------------------------------------------*/
 
-
 #ifndef _common_h_
 #define _common_h_
 
-#define ProgramAuthors "Philip Arvidsson (philip@philiparvidsson.com)"
-#define ProgramVersion "0.01b"
+/*------------------------------------------------
+ * CONSTANTS
+ *----------------------------------------------*/
 
-typedef enum { False, True } bool;
+/*--------------------------------------
+ * Constant: PROGRAM_AUTHORS
+ *
+ * Description:
+ *   De programmerare som varit med och programmerat programmet.
+ *------------------------------------*/
+#define PROGRAM_AUTHORS "Philip Arvidsson (philip@philiparvidsson.com)"
 
+/*--------------------------------------
+ * Constant: PROGRAM_VERSION
+ *
+ * Description:
+ *   Programmets version.
+ *------------------------------------*/
+#define PROGRAM_VERSION "0.01b"
+
+/*------------------------------------------------
+ * TYPES
+ *----------------------------------------------*/
+
+/*--------------------------------------
+ * Type: bool
+ *
+ * Description:
+ *   Boolesk typ.
+ *------------------------------------*/
+typedef enum { FALSE, TRUE } bool;
+
+/*--------------------------------------
+ * Type: pointT
+ *
+ * Description:
+ *   Representerar en punkt i 2-dimensionell rymd.
+ *------------------------------------*/
 typedef struct {
     float x, y;
 } pointT;

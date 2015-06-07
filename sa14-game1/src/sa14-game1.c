@@ -31,7 +31,7 @@
  *   Skriver ut introduktionsmeddelandet.
  *------------------------------------*/
 void PrintIntroMessage() {
-    printf("sa14-game1 v%s by %s\n\n\n", ProgramVersion, ProgramAuthors);
+    printf("sa14-game1 v%s by %s\n\n\n", PROGRAM_VERSION, PROGRAM_AUTHORS);
 }
 
 /*--------------------------------------
