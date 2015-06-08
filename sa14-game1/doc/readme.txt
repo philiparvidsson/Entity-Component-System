@@ -6,7 +6,7 @@ Riktlinjer för programkoden:
 	Namngivning:
 		FunktionsNamn();
 		variabel_namn
-		typNamnT
+		typNamn
 		KONSTANT_NAMN
 
 pseudokod:

@@ -16,32 +16,41 @@
 
 #include "core/common.h"
 
-#include <stdlib.h>
+#include "ui/window.h"
+
 #include <stdio.h>
+#include <stdlib.h>
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Function: PrintIntroMessage()
- * Parameters:
+ * Function: printIntroMessage()
  *
  * Description:
  *   Skriver ut introduktionsmeddelandet.
  *------------------------------------*/
-void PrintIntroMessage() {
+static void printIntroMessage() {
     printf("sa14-game1 v%s by %s\n\n\n", PROGRAM_VERSION, PROGRAM_AUTHORS);
 }
 
 /*--------------------------------------
  * Function: main()
- * Parameters:
  *
  * Description:
  *   Programmets huvudfunktion.
  *------------------------------------*/
 main() {
-    PrintIntroMessage();
+    printIntroMessage();
+
+    windowADT window = createWindow("Main Window", 640, 480);
+
+    while (TRUE) {
+        updateWindow(window);
+    }
+
+    destroyWindow(window);
+
     system("pause");
 }

@@ -43,11 +43,13 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\win32\</OutDir>
     <IntDir>$(SolutionDir)\build\win32\</IntDir>
+    <IncludePath>$(ProjectDir)\src\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\win32\</OutDir>
     <IntDir>$(SolutionDir)\build\win32\</IntDir>
+    <IncludePath>$(ProjectDir)\src\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -80,6 +82,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\win32\window_win32.c" />
+    <ClCompile Include="src\core\debug.c" />
     <ClCompile Include="src\sa14-game1.c" />
   </ItemGroup>
   <ItemGroup>
@@ -87,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\common.h" />
+    <ClInclude Include="src\core\debug.h" />
+    <ClInclude Include="src\ui\window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

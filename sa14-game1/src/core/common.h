@@ -14,6 +14,10 @@
 #define _common_h_
 
 /*------------------------------------------------
+ * INCLUDES
+ *----------------------------------------------*/
+
+/*------------------------------------------------
  * CONSTANTS
  *----------------------------------------------*/
 
@@ -23,7 +27,7 @@
  * Description:
  *   De programmerare som varit med och programmerat programmet.
  *------------------------------------*/
-#define PROGRAM_AUTHORS "Philip Arvidsson (philip@philiparvidsson.com)"
+#define PROGRAM_AUTHORS ("Philip Arvidsson (philip@philiparvidsson.com)")
 
 /*--------------------------------------
  * Constant: PROGRAM_VERSION
@@ -31,7 +35,7 @@
  * Description:
  *   Programmets version.
  *------------------------------------*/
-#define PROGRAM_VERSION "0.01b"
+#define PROGRAM_VERSION ("0.01b")
 
 /*------------------------------------------------
  * TYPES
@@ -43,16 +47,14 @@
  * Description:
  *   Boolesk typ.
  *------------------------------------*/
-typedef enum { FALSE, TRUE } bool;
+typedef enum { FALSE, TRUE } boolT;
 
 /*--------------------------------------
- * Type: pointT
+ * Type: string
  *
  * Description:
- *   Representerar en punkt i 2-dimensionell rymd.
+ *   Strängtyp.
  *------------------------------------*/
-typedef struct {
-    float x, y;
-} pointT;
+typedef char *stringT;
 
 #endif // _common_h_
