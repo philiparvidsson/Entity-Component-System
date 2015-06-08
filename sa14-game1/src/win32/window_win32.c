@@ -37,6 +37,14 @@
  *------------------------------------*/
 #define CLASS_NAME (L"sa14-game1")
 
+/*--------------------------------------
+ * Constant: MAX_WINDOWS
+ *
+ * Description:
+ *  Maximalt antal fönster som får vara öppna vid ett och samma tillfälle.
+ *------------------------------------*/
+#define MAX_WINDOWS (10)
+
 /*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
@@ -49,6 +57,7 @@
  *------------------------------------*/
 struct windowCDT {
     HWND hwnd;
+    boolT is_open;
 };
 
 /*------------------------------------------------
@@ -62,6 +71,22 @@ struct windowCDT {
  *   Fönsterklassen.
  *------------------------------------*/
 boolT class_registered = FALSE;
+
+/*--------------------------------------
+ * Variable: num_windows
+ *
+ * Description:
+ *   Antal fönster som är öppna just nu.
+ *------------------------------------*/
+int num_windows = 0;
+
+/*--------------------------------------
+ * Variable: windows
+ *
+ * Description:
+ *   De fönster som är öppna just nu.
+ *------------------------------------*/
+windowADT windows[MAX_WINDOWS] = { 0 };
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -78,7 +103,42 @@ LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
                             _In_ WPARAM wParam,
                             _In_ LPARAM lParam)
 {
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    windowADT window = findWindow(hwnd);
+    
+    switch (uMsg) {
+
+    case WM_CLOSE: {
+        window->is_open = FALSE;
+        break;
+    }
+
+    };
+
+    return (DefWindowProc(hwnd, uMsg, wParam, lParam));
+}
+
+/*--------------------------------------
+ * Function: findWindow()
+ * Parameters:
+ *   hwnd  Handtag till fönstret.
+ *
+ * Returns:
+ *   En pekare till fönstret.
+ *
+ * Description:
+ *   Letar upp ett fönster utifrån ett specificerat hwnd-värde.
+ *------------------------------------*/
+static windowADT findWindow(HWND hwnd) {
+    /*
+     * En hash-tabell kanske hade varit snyggare, men jag räknar inte med att
+     * någon kommer öppna speciellt många fönster samtidigt så detta duger fint.
+     */
+    for (int i = 0; i < MAX_WINDOWS; i++) {
+        if (windows[i] && windows[i]->hwnd == hwnd)
+            return windows[i];
+    }
+
+    return NULL;
 }
 
 /*--------------------------------------
@@ -104,6 +164,8 @@ static void registerWindowClass() {
     wcx.hIconSm       = NULL;
 
     assert(RegisterClassExW(&wcx));
+
+    class_registered = TRUE;
 }
 
 /*--------------------------------------
@@ -114,6 +176,8 @@ static void registerWindowClass() {
  *------------------------------------*/
 static void unregisterWindowClass() {
     UnregisterClassW(CLASS_NAME, GetModuleHandleW(NULL));
+
+    class_registered = FALSE;
 }
 
 /*--------------------------------------
@@ -188,7 +252,21 @@ windowADT createWindow(stringT title, int width, int height) {
     /* Utan detta anrop syns inte fönstret. */
     ShowWindow(window->hwnd, SW_SHOW);
 
-    return window;
+    window->is_open = TRUE;
+    num_windows++;
+
+    /*
+     * Här sparar vi fönsterpekaren på första lediga plats i arrayen, så att vi
+     * kan leta upp fönstret utifrån hwnd i WindowProc()-funktionen.
+     */
+    for (int i = 0; i < MAX_WINDOWS; i++) {
+        if (!windows[i]) {
+            windows[i] = window;
+            break;
+        }
+    }
+
+    return (window);
 }
 
 /*--------------------------------------
@@ -200,9 +278,27 @@ windowADT createWindow(stringT title, int width, int height) {
  *   Stänger och förstör det specificerade fönstret.
  *------------------------------------*/
 void destroyWindow(windowADT window) {
-    DestroyWindow(window->hwnd);
+    if (!DestroyWindow(window->hwnd))
+        return; /* Om vi inte lyckas förstöra fönstret så avbryter vi här. */
+
+    /* @To-do: Är det en bra idé att anropa updateWindow() här? */
+    updateWindow(window);
+
+    /*
+     * Nu ska fönstret bort ur arrayen så vi letar upp det och nollar den
+     * platsen i arrayen.
+     */
+    for (int i = 0; i < MAX_WINDOWS; i++) {
+        if (windows[i] == window) {
+            windows[i] = NULL;
+            break;
+        }
+    }
 
     free(window);
+
+    if (--num_windows == 0)
+        unregisterWindowClass();
 }
 
 /*--------------------------------------
@@ -217,7 +313,7 @@ void destroyWindow(windowADT window) {
  *   Kontrollerar om det specificerade fönstret är öppet.
  *------------------------------------*/
 boolT isWindowOpen(windowADT window) {
-    return FALSE;
+    return (window->is_open);
 }
 
 /*--------------------------------------
