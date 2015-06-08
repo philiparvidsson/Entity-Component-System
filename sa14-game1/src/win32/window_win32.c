@@ -10,6 +10,8 @@
  *
  *----------------------------------------------------------------------------*/
 
+#ifdef _WIN32
+
 /*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
@@ -44,7 +46,7 @@
  *
  * Description:
  *   Typ som representerar ett fönster.
- *-------------------u-----------------*/
+ *------------------------------------*/
 struct windowCDT {
     HWND hwnd;
 };
@@ -54,11 +56,11 @@ struct windowCDT {
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Type: class_registered
+ * Variable: class_registered
  *
  * Description:
- *   Indikerar om fönsterklassen registrerats.
- *-------------------u-----------------*/
+ *   Fönsterklassen.
+ *------------------------------------*/
 boolT class_registered = FALSE;
 
 /*------------------------------------------------
@@ -93,15 +95,25 @@ static void registerWindowClass() {
     wcx.lpfnWndProc   = WindowProc;
     wcx.cbClsExtra    = 0;
     wcx.cbWndExtra    = 0;
-    wcx.hInstance     = GetModuleHandle(NULL);
-    wcx.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
-    wcx.hCursor       = LoadCursor(NULL, IDC_ARROW);
+    wcx.hInstance     = GetModuleHandleW(NULL);
+    wcx.hIcon         = LoadIconW(NULL, IDI_APPLICATION);
+    wcx.hCursor       = LoadCursorW(NULL, IDC_ARROW);
     wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
     wcx.lpszMenuName  = NULL;
     wcx.lpszClassName = CLASS_NAME;
     wcx.hIconSm       = NULL;
 
     assert(RegisterClassExW(&wcx));
+}
+
+/*--------------------------------------
+ * Function: unregisterWindowClass()
+ *
+ * Description:
+ *   Avregistrerar fönsterklassen.
+ *------------------------------------*/
+static void unregisterWindowClass() {
+    UnregisterClassW(CLASS_NAME, GetModuleHandleW(NULL));
 }
 
 /*--------------------------------------
@@ -120,21 +132,40 @@ static void registerWindowClass() {
  *   klientytan.
  *------------------------------------*/
 windowADT createWindow(stringT title, int width, int height) {
-    if (!class_registered) {
+    /*
+     * Varje fönster behöver en fönsterklass, men flera fönster kan dela på en
+     * och samma klass. Så vi har en global variabel för att hålla reda på om vi
+     * registrerat vår fönsterklass eller ej.
+     */
+    if (!class_registered)
         registerWindowClass();
-        class_registered = TRUE;
-    }
 
     RECT  rect  = { 0, 0, width, height };
     DWORD style = WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX;
 
+    /*
+     * Här justerar vi storleken på fönstret så att de angivna dimensionerna
+     * inte inkluderar fönsterdekorationer så som kanter, titel m.m.
+     */
     assert(AdjustWindowRectEx(&rect, style, FALSE, WS_EX_LEFT));
 
+    /* Dags att allokera den konkreta datatypen. */
     windowADT window = malloc(sizeof(struct windowCDT));
 
+    /*
+     * Eftersom CreateWindowExW()-funktionen vill ha Unicode-strängar, så vi
+     * måste konvertera titel-strängen till en Unicode-sträng och skicka den
+     * till funktionen.
+     */
+    size_t   window_name_length = mbstowcs(NULL, title, 0) + 1;
+    wchar_t *window_name        = malloc(sizeof(wchar_t) * window_name_length);
+
+    mbstowcs(window_name, title, window_name_length);
+
+    /* Här skapar vi fönstret med ett anrop ner i Windows API. */
     window->hwnd = CreateWindowExW(WS_EX_LEFT,
                                    CLASS_NAME,
-                                   title,
+                                   window_name,
                                    style,
                                    CW_USEDEFAULT,
                                    CW_USEDEFAULT,
@@ -142,11 +173,19 @@ windowADT createWindow(stringT title, int width, int height) {
                                    rect.bottom - rect.top,
                                    HWND_DESKTOP,
                                    NULL,
-                                   GetModuleHandle(NULL),
+                                   GetModuleHandleW(NULL),
                                    NULL);
 
+    /*
+     * CreateWindowEx()-funktionen kopierar titel-strängen så det är ok att
+     * deallokera den här.
+     */
+    free(window_name);
+
+    /* Om window->hwnd är NULL så skapades inget fönster. */
     assert(window->hwnd != NULL);
 
+    /* Utan detta anrop syns inte fönstret. */
     ShowWindow(window->hwnd, SW_SHOW);
 
     return window;
@@ -167,6 +206,21 @@ void destroyWindow(windowADT window) {
 }
 
 /*--------------------------------------
+ * Function: isWindowOpen()
+ * Parameters:
+ *   window  Fönstret som anropet gäller.
+ *
+ * Returns:
+ *   Sant om det specificerade fönstret är öppet.
+ *
+ * Description:
+ *   Kontrollerar om det specificerade fönstret är öppet.
+ *------------------------------------*/
+boolT isWindowOpen(windowADT window) {
+    return FALSE;
+}
+
+/*--------------------------------------
  * Function: updateWindow()
  * Parameters:
  *   window  Fönstret som ska uppdateras.
@@ -181,3 +235,5 @@ void updateWindow(windowADT window) {
         DispatchMessageW(&msg);
     }
 }
+
+#endif /* _WIN32 */

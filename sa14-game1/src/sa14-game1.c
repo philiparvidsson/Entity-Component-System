@@ -46,7 +46,7 @@ main() {
 
     windowADT window = createWindow("Main Window", 640, 480);
 
-    while (TRUE) {
+    while (isWindowOpen(window)) {
         updateWindow(window);
     }
 

@@ -57,4 +57,4 @@ typedef enum { FALSE, TRUE } boolT;
  *------------------------------------*/
 typedef char *stringT;
 
-#endif // _common_h_
+#endif /* _common_h_ */

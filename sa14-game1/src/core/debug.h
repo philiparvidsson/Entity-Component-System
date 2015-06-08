@@ -43,4 +43,4 @@
  *------------------------------------*/
 void exitWithMessage(stringT message, stringT func_name, int line);
 
-#endif // _debug_h_
+#endif /* _debug_h_ */

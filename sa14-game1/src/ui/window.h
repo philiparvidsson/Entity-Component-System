@@ -63,6 +63,19 @@ windowADT createWindow(stringT title, int width, int height);
 void destroyWindow(windowADT window);
 
 /*--------------------------------------
+ * Function: isWindowOpen()
+ * Parameters:
+ *   window  Fönstret som anropet gäller.
+ *
+ * Returns:
+ *   Sant om det specificerade fönstret är öppet.
+ *
+ * Description:
+ *   Kontrollerar om det specificerade fönstret är öppet.
+ *------------------------------------*/
+boolT isWindowOpen(windowADT window);
+
+/*--------------------------------------
  * Function: updateWindow()
  * Parameters:
  *   window  Fönstret som ska uppdateras.
@@ -72,4 +85,4 @@ void destroyWindow(windowADT window);
  *------------------------------------*/
 void updateWindow(windowADT window);
 
-#endif // _window_h_
+#endif /* _window_h_ */
