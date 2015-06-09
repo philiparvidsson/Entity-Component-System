@@ -52,7 +52,7 @@ typedef struct {
 
     int    max_elems; /* Arrayens nuvarande kapacitet. */
     void  *data;      /* Datablock där elementen lagras. */
-} *arrayT_;
+} arrayT_;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -67,7 +67,7 @@ typedef struct {
  * Description:
  *   Dubblar kapaciteten för den specificerade arrayen.
  *------------------------------------*/
-static void doubleArrayCapacity(arrayT_ a) {
+static void doubleArrayCapacity(arrayT_ *a) {
     /*
      * Vi dubblar kapaciteten och kopierar över de gamla elementen till den nya
      * minnesplatsen, sen släpper vi den gamla arrayen ur minnet.
@@ -95,15 +95,15 @@ static void doubleArrayCapacity(arrayT_ a) {
  * Description:
  *   Skapar en ny, dynamisk array.
  *------------------------------------*/
-arrayT newArray(size_t elem_size) {
-    arrayT_ a = malloc(sizeof(*(arrayT_)NULL));
+arrayT *newArray(size_t elem_size) {
+    arrayT_ *a = malloc(sizeof(*(arrayT_ *)NULL));
 
     a->data      = malloc(elem_size * INITIAL_MAX_ELEMS);
     a->num_elems = 0;
     a->max_elems = INITIAL_MAX_ELEMS;
     a->elem_size = elem_size;
 
-    return ((arrayT)a);
+    return ((arrayT *)a);
 }
 
 
@@ -115,8 +115,8 @@ arrayT newArray(size_t elem_size) {
  * Description:
  *   Deallokerar en array.
  *------------------------------------*/
-void freeArray(arrayT a) {
-    free(((arrayT_)a)->data);
+void freeArray(arrayT *a) {
+    free(((arrayT_ *)a)->data);
     free(a);
 }
 
@@ -133,15 +133,15 @@ void freeArray(arrayT a) {
  * Description:
  *   Lägger till ett element i den specificerade arrayen.
  *------------------------------------*/
-void *arrayAdd(arrayT a, const void *data) {
+void *arrayAdd(arrayT *a, const void *data) {
     /* Om det är fullt så gör vi helt enkelt utrymme för fler element. */
-    if (a->num_elems >= ((arrayT_)a)->max_elems)
+    if (a->num_elems >= ((arrayT_ *)a)->max_elems)
         doubleArrayCapacity(a);
 
-    void *dest = (char *)((arrayT_)a)->data + a->num_elems * a->elem_size;
+    void *dest = (char *)((arrayT_ *)a)->data + a->num_elems * a->elem_size;
     
     memcpy(dest, data, a->elem_size);
-    ((arrayT_)a)->num_elems++;
+    ((arrayT_ *)a)->num_elems++;
 
     return dest;
 }

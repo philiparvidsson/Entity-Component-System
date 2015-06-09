@@ -45,8 +45,8 @@ static void printIntroMessage() {
 main() {
     printIntroMessage();
 
-    windowT window = createWindow("Main Window", 640, 480);
-    graphicsT graphics = initGraphics(window);
+    windowT   *window   = createWindow("Main Window", 640, 480);
+    graphicsT *graphics = initGraphics(window);
 
     while (window->is_open) {
         clearCanvas(graphics, 1.0f, 0.0f, 1.0f);

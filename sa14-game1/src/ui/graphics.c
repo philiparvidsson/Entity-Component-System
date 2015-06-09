@@ -32,7 +32,7 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Type: graphicsT
+ * Type: graphicsT_
  *
  * Description:
  *   Typ som representerar ett grafik för ett visst fönster. Den publika delen
@@ -41,13 +41,13 @@
 typedef struct {
     /* --- Public --- */
 
-    windowT window; /* Det fönster som grafikobjektet är initierat för. */
+    windowT *window; /* Fönstret som grafikobjektet är initierat för. */
 
     /* --- Private --- */
 
     HDC     hdc;
     HGLRC   hglrc;
-} *graphicsT_;
+} graphicsT_;
 
 /*------------------------------------------------
  * GLOBALS
@@ -59,13 +59,13 @@ typedef struct {
  * Description:
  *   Det grafikobjekt som vi ritar till "just nu."
  *------------------------------------*/
-static graphicsT_ current = NULL;
+static graphicsT_ *current = NULL;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-static void initPixelFormat(windowT window, HDC hdc) {
+static void initPixelFormat(windowT *window, HDC hdc) {
     PIXELFORMATDESCRIPTOR pfd;
     pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR);
     pfd.nVersion   = 1;
@@ -82,7 +82,7 @@ static void initPixelFormat(windowT window, HDC hdc) {
     assert(SetPixelFormat(hdc, pixel_format, &pfd));
 }
 
-static void makeCurrent(graphicsT_ g) {
+static void makeCurrent(graphicsT_ *g) {
     if (g == current)
         return;
 
@@ -92,7 +92,7 @@ static void makeCurrent(graphicsT_ g) {
         wglMakeCurrent(g->hdc, g->hglrc);
 }
 
-graphicsT initGraphics(windowT window) {
+graphicsT *initGraphics(windowT *window) {
     HDC hdc = GetDC(_getHwnd(window));
 
     initPixelFormat(window, hdc);
@@ -102,7 +102,7 @@ graphicsT initGraphics(windowT window) {
     assert(hglrc != NULL);
     assert(wglMakeCurrent(hdc, hglrc));
 
-    graphicsT_ g = malloc(sizeof(*(graphicsT_)NULL));
+    graphicsT_ *g = malloc(sizeof(*(graphicsT_ *)NULL));
 
     g->window = window;
     g->hdc    = hdc;
@@ -124,33 +124,35 @@ graphicsT initGraphics(windowT window) {
     glEnable   (GL_LINE_SMOOTH);
     glHint     (GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    return ((graphicsT)g);
+    return ((graphicsT *)g);
 }
 
-void freeGraphics(graphicsT g) {
+void freeGraphics(graphicsT *g) {
     if (g == current) {
-        wglMakeCurrent(((graphicsT_)g)->hdc, NULL);
+        wglMakeCurrent(((graphicsT_ *)g)->hdc, NULL);
         current = NULL;
     }
 
-    wglDeleteContext(((graphicsT_)g)->hglrc);
+    wglDeleteContext(((graphicsT_ *)g)->hglrc);
 
     free(g);
 }
 
-void clearCanvas(graphicsT g, float red, float green, float blue) {
-    makeCurrent((graphicsT_)g);
+void clearCanvas(graphicsT *g, float red, float green, float blue) {
+    makeCurrent((graphicsT_ *)g);
 
     glClearColor(red, green, blue, 1.0f);
     glClear     (GL_COLOR_BUFFER_BIT);
 }
 
-void setColor(graphicsT g, float red, float green, float blue) {
-    makeCurrent((graphicsT_)g);
+void setColor(graphicsT *g, float red, float green, float blue) {
+    makeCurrent((graphicsT_ *)g);
 
     glColor3f(red, green, blue);
 }
 
-void swapBuffers(graphicsT g) {
-    SwapBuffers(((graphicsT_)g)->hdc);
+void swapBuffers(graphicsT *g) {
+    makeCurrent((graphicsT_ *)g);
+
+    SwapBuffers(((graphicsT_ *)g)->hdc);
 }

@@ -10,8 +10,8 @@
  *
  *----------------------------------------------------------------------------*/
 
-#ifndef graphics_h__
-#define graphics_h__
+#ifndef graphics_h_
+#define graphics_h_
 
 /*------------------------------------------------
  * INCLUDES
@@ -30,20 +30,20 @@
  *   Typ som representerar ett grafik för ett visst fönster.
  *------------------------------------*/
 typedef struct {
-    const windowT window; /* Det fönster som grafikobjektet är initierat för. */
-} *graphicsT;
+    const windowT *window; /* Fönstret som grafikobjektet är initierat för. */
+} graphicsT;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-graphicsT initGraphics(windowT window);
-void freeGraphics(graphicsT g);
+graphicsT *initGraphics(windowT *window);
+void freeGraphics(graphicsT *g);
 
-void clearCanvas(graphicsT g, float red, float green, float blue);
+void clearCanvas(graphicsT *g, float red, float green, float blue);
 
-void setColor(graphicsT g, float red, float green, float blue);
+void setColor(graphicsT *g, float red, float green, float blue);
 
-void swapBuffers(graphicsT g);
+void swapBuffers(graphicsT *g);
 
-#endif /* graphics_h__ */
+#endif /* graphics_h_ */

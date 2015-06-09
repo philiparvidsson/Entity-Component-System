@@ -10,8 +10,8 @@
  *
  *----------------------------------------------------------------------------*/
 
-#ifndef _debug_h_
-#define _debug_h_
+#ifndef debug_h_
+#define debug_h_
 
 /*------------------------------------------------
  * INCLUDES
@@ -43,4 +43,4 @@
  *------------------------------------*/
 void exitWithMessage(stringT message, stringT func_name, int line);
 
-#endif /* _debug_h_ */
+#endif /* debug_h_ */

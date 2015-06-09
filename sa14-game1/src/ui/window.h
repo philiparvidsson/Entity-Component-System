@@ -10,8 +10,8 @@
  *
  *----------------------------------------------------------------------------*/
 
-#ifndef window_h__
-#define window_h__
+#ifndef window_h_
+#define window_h_
 
 /*------------------------------------------------
  * INCLUDES
@@ -34,7 +34,7 @@ typedef struct {
     const int     width,   /* Fönstrets bredd i antal pixlar.              */
                   height;  /* Fönstrets höjd i antal pixlar.               */
     const stringT title;   /* Fönstrets titel.                             */
-} *windowT;
+} windowT;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -55,7 +55,7 @@ typedef struct {
  *   och höjden inkluderar inte fönsterdekorationer, utan endast storleken på
  *   klientytan.
  *------------------------------------*/
-windowT createWindow(stringT title, int width, int height);
+windowT *createWindow(stringT title, int width, int height);
 
 /*--------------------------------------
  * Function: destroyWindow()
@@ -65,7 +65,7 @@ windowT createWindow(stringT title, int width, int height);
  * Description:
  *   Stänger och förstör det specificerade fönstret.
  *------------------------------------*/
-void destroyWindow(windowT window);
+void destroyWindow(windowT *window);
 
 /*--------------------------------------
  * Function: updateWindow()
@@ -75,6 +75,6 @@ void destroyWindow(windowT window);
  * Description:
  *   Uppdaterar det specificerade fönstret.
  *------------------------------------*/
-void updateWindow(windowT window);
+void updateWindow(windowT *window);
 
-#endif /* window_h__ */
+#endif /* window_h_ */

@@ -10,8 +10,8 @@
  *
  *----------------------------------------------------------------------------*/
 
-#ifndef _common_h_
-#define _common_h_
+#ifndef common_h_
+#define common_h_
 
 /*------------------------------------------------
  * CONFIG
@@ -61,4 +61,4 @@ typedef enum { FALSE, TRUE } boolT;
  *------------------------------------*/
 typedef char *stringT;
 
-#endif /* _common_h_ */
+#endif /* common_h_ */

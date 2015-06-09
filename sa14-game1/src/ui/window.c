@@ -69,7 +69,7 @@ typedef struct {
     /* --- Private --- */
 
     HWND  hwnd; /* Systemets egna "handtag" till fönstret.     */
-} *windowT_;
+} windowT_;
 
 /*------------------------------------------------
  * GLOBALS
@@ -97,7 +97,7 @@ static int num_windows = 0;
  * Description:
  *   De fönster som är öppna "just nu."
  *------------------------------------*/
-static windowT_ windows[MAX_WINDOWS] = { 0 };
+static windowT_ *windows[MAX_WINDOWS] = { 0 };
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -119,7 +119,7 @@ static windowT_ windows[MAX_WINDOWS] = { 0 };
  * Description:
  *   Letar upp ett fönster utifrån ett specificerat hwnd-värde.
  *------------------------------------*/
-static windowT_ findWindow(HWND hwnd) {
+static windowT_ *findWindow(HWND hwnd) {
     /*
      * En hash-tabell kanske hade varit snyggare, men jag räknar inte med att
      * någon kommer öppna speciellt många fönster samtidigt så detta duger fint.
@@ -143,7 +143,7 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
                                    _In_ WPARAM wParam,
                                    _In_ LPARAM lParam)
 {
-    windowT_ window = findWindow(hwnd);
+    windowT_ *window = findWindow(hwnd);
     
     switch (uMsg) {
 
@@ -217,8 +217,8 @@ static void unregisterWindowClass() {
  * Description:
  *   Returnerar fönstrets "handtag."
  *------------------------------------*/
-HWND _getHwnd(windowT window) {
-    return ((windowT_)window)->hwnd;
+HWND _getHwnd(const windowT *window) {
+    return ((windowT_ *)window)->hwnd;
 }
 
 /*------------------------------------------------------------------------------
@@ -241,7 +241,7 @@ HWND _getHwnd(windowT window) {
  *   och höjden inkluderar inte fönsterdekorationer, utan endast storleken på
  *   klientytan.
  *------------------------------------*/
-windowT createWindow(stringT title, int width, int height) {
+windowT *createWindow(stringT title, int width, int height) {
     /*
      * Varje fönster behöver en fönsterklass, men flera fönster kan dela på en
      * och samma klass. Så vi har en global variabel för att hålla reda på om vi
@@ -260,7 +260,7 @@ windowT createWindow(stringT title, int width, int height) {
     assert(AdjustWindowRectEx(&rect, style, FALSE, WS_EX_LEFT));
 
     /* Dags att allokera den konkreta datatypen. */
-    windowT_ window = malloc(sizeof(*(windowT_)NULL));
+    windowT_ *window = malloc(sizeof(*(windowT_ *)NULL));
 
     /*
      * Eftersom CreateWindowExW()-funktionen vill ha Unicode-strängar, så vi
@@ -316,7 +316,7 @@ windowT createWindow(stringT title, int width, int height) {
         }
     }
 
-    return ((windowT)window);
+    return ((windowT *)window);
 }
 
 /*--------------------------------------
@@ -327,8 +327,8 @@ windowT createWindow(stringT title, int width, int height) {
  * Description:
  *   Stänger och förstör det specificerade fönstret.
  *------------------------------------*/
-void destroyWindow(windowT window) {
-    if (!DestroyWindow(((windowT_)window)->hwnd))
+void destroyWindow(windowT *window) {
+    if (!DestroyWindow(((windowT_ *)window)->hwnd))
         return; /* Om vi inte lyckas förstöra fönstret så avbryter vi här. */
 
     /* @To-do: Är det en bra idé att anropa updateWindow() här? */
@@ -363,7 +363,7 @@ void destroyWindow(windowT window) {
  * Description:
  *   Uppdaterar det specificerade fönstret.
  *------------------------------------*/
-void updateWindow(windowT window) {
+void updateWindow(windowT *window) {
     /*
      * Här ser vi till att fönstret inte hänger sig genom att ta emot och
      * hantera fönstermeddelanden. De skickas vidare av anropet till
@@ -371,7 +371,7 @@ void updateWindow(windowT window) {
      */
 
     MSG msg;
-    while (PeekMessageW(&msg, ((windowT_)window)->hwnd, 0, 0, PM_REMOVE)) {
+    while (PeekMessageW(&msg, ((windowT_ *)window)->hwnd, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
         DispatchMessageW(&msg);
     }

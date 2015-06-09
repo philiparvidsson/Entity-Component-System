@@ -10,8 +10,8 @@
  *
  *----------------------------------------------------------------------------*/
 
-#ifndef array_h__
-#define array_h__
+#ifndef array_h_
+#define array_h_
 
 /*------------------------------------------------
  * INCLUDES
@@ -32,7 +32,7 @@
 typedef struct {
     const size_t elem_size; /* Storleken på elementen i arrayen, i bytes. */
     const int    num_elems; /* Antal element i arrayen. */
-} *arrayT;
+} arrayT;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -49,7 +49,7 @@ typedef struct {
  * Description:
  *   Skapar en ny, dynamisk array.
  *------------------------------------*/
-arrayT newArray(size_t elem_size);
+arrayT *newArray(size_t elem_size);
 
 /*--------------------------------------
  * Function: freeArray()
@@ -59,7 +59,7 @@ arrayT newArray(size_t elem_size);
  * Description:
  *   Deallokerar en array.
  *------------------------------------*/
-void freeArray(arrayT a);
+void freeArray(arrayT *a);
 
 /*--------------------------------------
  * Function: arrayAdd()
@@ -73,6 +73,6 @@ void freeArray(arrayT a);
  * Description:
  *   Lägger till ett element i den specificerade arrayen.
  *------------------------------------*/
-void *arrayAdd(arrayT a, const void *data);
+void *arrayAdd(arrayT *a, const void *data);
 
-#endif /* array_h__ */
+#endif /* array_h_ */
