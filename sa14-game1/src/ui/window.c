@@ -61,14 +61,14 @@
 typedef struct {
     /* --- Public --- */
 
-    boolT    is_open; /* Indikerar om fönstret stängts av användaren. */
-    int      width,   /* Fönstrets bredd i antal pixlar.              */
-             height;  /* Fönstrets höjd i antal pixlar.               */
-    stringT  title;   /* Fönstrets titel.                             */
+    boolT   is_open; /* Indikerar om fönstret stängts av användaren. */
+    int     width,   /* Fönstrets bredd i antal pixlar.              */
+            height;  /* Fönstrets höjd i antal pixlar.               */
+    stringT title;   /* Fönstrets titel.                             */
 
     /* --- Private --- */
 
-    HWND  hwnd; /* Systemets egna "handtag" till fönstret.     */
+    HWND hwnd; /* Systemets egna "handtag" till fönstret.     */
 } windowT_;
 
 /*------------------------------------------------

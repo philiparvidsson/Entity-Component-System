@@ -30,10 +30,10 @@
  *   Datatyp som representerar ett fönster.
  *------------------------------------*/
 typedef struct windowT {
-    const boolT    is_open; /* Indikerar om fönstret stängts av användaren. */
-    const int      width,   /* Fönstrets bredd i antal pixlar.              */
-                   height;  /* Fönstrets höjd i antal pixlar.               */
-    const stringT  title;   /* Fönstrets titel.                             */
+    const boolT   is_open; /* Indikerar om fönstret stängts av användaren. */
+    const int     width,   /* Fönstrets bredd i antal pixlar.              */
+                  height;  /* Fönstrets höjd i antal pixlar.               */
+    const stringT title;   /* Fönstrets titel.                             */
 } windowT;
 
 /*------------------------------------------------
