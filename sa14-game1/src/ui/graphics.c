@@ -28,6 +28,21 @@
 #include <GL/gl.h>
 
 /*------------------------------------------------
+ * MACROS
+ *----------------------------------------------*/
+
+/*--------------------------------------
+ * Macro: readHwnd()
+ * Parameters:
+ *   wnd  Det fönster vars hwnd-värde ska läsas ut.
+ *
+ * Description:
+ *   Läser ut det specificerade fönstrets hwnd-värde. Detta är lite av ett hack
+ *   för att komma åt fönstrets privata data.
+ *------------------------------------*/
+#define readHwnd(wnd) (*(HWND *)((windowT *)wnd+1))
+
+/*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
 
@@ -123,7 +138,7 @@ static void makeCurrent(graphicsT_ *g) {
  *   Initierar grafik för det specificerade fönstret.
  *------------------------------------*/
 graphicsT *initGraphics(windowT *window) {
-    HDC hdc = GetDC(_getHwnd(window));
+    HDC hdc = GetDC(readHwnd(window));
 
     initPixelFormat(hdc);
 
@@ -132,7 +147,7 @@ graphicsT *initGraphics(windowT *window) {
     assert(hglrc != NULL);
     assert(wglMakeCurrent(hdc, hglrc));
 
-    graphicsT_ *g = malloc(sizeof(*(graphicsT_ *)NULL));
+    graphicsT_ *g = malloc(sizeof(graphicsT_));
 
     g->window = window;
     g->hdc    = hdc;

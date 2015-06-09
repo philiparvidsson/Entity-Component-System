@@ -202,26 +202,6 @@ static void unregisterWindowClass(void) {
 }
 
 /*------------------------------------------------------------------------------
- * Nedan är de interna funktionerna som används för att sammankoppla andra
- * moduler med funktionaliteten i denna modul.
- *----------------------------------------------------------------------------*/
-
-/*--------------------------------------
- * Function: _getHwnd()
- * Parameters:
- *   title   Det fönster som anropet gäller.
- *
- * Returns:
- *   Fönstrets "handtag."
- *
- * Description:
- *   Returnerar fönstrets "handtag."
- *------------------------------------*/
-HWND _getHwnd(const windowT *window) {
-    return ((windowT_ *)window)->hwnd;
-}
-
-/*------------------------------------------------------------------------------
  * Här nedanför är de publika funktionerna som är tänkta att användas av klient-
  * programmen för att skapa fönster etc.
  *----------------------------------------------------------------------------*/
@@ -260,7 +240,7 @@ windowT *createWindow(stringT title, int width, int height) {
     assert(AdjustWindowRectEx(&rect, style, FALSE, WS_EX_LEFT));
 
     /* Dags att allokera den konkreta datatypen. */
-    windowT_ *window = malloc(sizeof(*(windowT_ *)NULL));
+    windowT_ *window = malloc(sizeof(windowT_));
 
     /*
      * Eftersom CreateWindowExW()-funktionen vill ha Unicode-strängar, så vi

@@ -96,7 +96,7 @@ static void doubleArrayCapacity(arrayT_ *a) {
  *   Skapar en ny, dynamisk array.
  *------------------------------------*/
 arrayT *newArray(size_t elem_size) {
-    arrayT_ *a = malloc(sizeof(*(arrayT_ *)NULL));
+    arrayT_ *a = malloc(sizeof(arrayT_));
 
     a->data      = malloc(elem_size * INITIAL_MAX_ELEMS);
     a->num_elems = 0;
