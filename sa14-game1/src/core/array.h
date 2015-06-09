@@ -10,8 +10,8 @@
  *
  *----------------------------------------------------------------------------*/
 
-#ifndef _array_h_
-#define _array_h_
+#ifndef array_h__
+#define array_h__
 
 /*------------------------------------------------
  * INCLUDES
@@ -85,4 +85,4 @@ void freeArray(arrayADT array);
  *------------------------------------*/
 arrayADT newArray(size_t element_size);
 
-#endif /* _array_h_ */
+#endif /* array_h__ */

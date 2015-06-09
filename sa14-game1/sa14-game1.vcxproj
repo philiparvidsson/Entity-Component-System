@@ -82,7 +82,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\core\collections\array.c" />
+    <ClCompile Include="src\core\array.c" />
     <ClCompile Include="src\ui\graphics.c" />
     <ClCompile Include="src\ui\window.c" />
     <ClCompile Include="src\core\debug.c" />
@@ -92,7 +92,7 @@
     <Text Include="doc\readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\collections\array.h" />
+    <ClInclude Include="src\core\array.h" />
     <ClInclude Include="src\core\common.h" />
     <ClInclude Include="src\core\debug.h" />
     <ClInclude Include="src\ui\graphics.h" />

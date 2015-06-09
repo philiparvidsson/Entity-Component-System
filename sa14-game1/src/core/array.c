@@ -67,7 +67,7 @@ static void doubleArrayCapacity(arrayADT a) {
      * minnesplatsen, sen släpper vi den gamla arrayen ur minnet.
      */
 
-    void *old_data         = a->data;
+    void *old_data      = a->data;
     int   old_max_elems = a->max_elems;
 
     a->max_elems *= 2;
