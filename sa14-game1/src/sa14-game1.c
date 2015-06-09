@@ -47,6 +47,7 @@ main() {
     windowADT window = createWindow("Main Window", 640, 480);
 
     while (isWindowOpen(window)) {
+        printf("%d\t%d\n", getMouseX(window), getMouseY(window));
         updateWindow(window);
     }
 

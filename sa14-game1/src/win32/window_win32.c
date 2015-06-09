@@ -60,7 +60,7 @@
  *   Typ som representerar ett fönster.
  *------------------------------------*/
 struct windowCDT {
-    HWND hwnd;     /* Systemets egna "handtag" till fönstret.     */
+    HWND  hwnd;    /* Systemets egna "handtag" till fönstret.     */
     boolT is_open; /* Indikerar om fönstret stängs av användaren. */
 };
 
@@ -97,31 +97,6 @@ windowADT windows[MAX_WINDOWS] = { 0 };
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Function: WindowProc()
- *
- * Description:
- *   http://en.wikipedia.org/wiki/WindowProc
- *------------------------------------*/
-LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
-                            _In_ UINT   uMsg,
-                            _In_ WPARAM wParam,
-                            _In_ LPARAM lParam)
-{
-    windowADT window = findWindow(hwnd);
-    
-    switch (uMsg) {
-
-    case WM_CLOSE: {
-        window->is_open = FALSE;
-        break;
-    }
-
-    };
-
-    return (DefWindowProc(hwnd, uMsg, wParam, lParam));
-}
-
-/*--------------------------------------
  * Function: findWindow()
  * Parameters:
  *   hwnd  Handtag till fönstret.
@@ -146,6 +121,32 @@ static windowADT findWindow(HWND hwnd) {
 }
 
 /*--------------------------------------
+ * Function: WindowProc()
+ *
+ * Description:
+ *   http://en.wikipedia.org/wiki/WindowProc
+ *------------------------------------*/
+LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
+                            _In_ UINT   uMsg,
+                            _In_ WPARAM wParam,
+                            _In_ LPARAM lParam)
+{
+    windowADT window = findWindow(hwnd);
+    
+    switch (uMsg) {
+
+    case WM_CLOSE: {
+        /* Användaren har stängt fönstret, så vi markerar det som stängt. */
+        window->is_open = FALSE;
+        break;
+    }
+
+    };
+
+    return (DefWindowProc(hwnd, uMsg, wParam, lParam));
+}
+
+/*--------------------------------------
  * Function: registerWindowClass()
  *
  * Description:
@@ -154,7 +155,8 @@ static windowADT findWindow(HWND hwnd) {
 static void registerWindowClass() {
     /*
      * Innan vi kan skapa fönster kräver Windows att vi registrerar en fönster-
-     * klass. */
+     * klass.
+     */
 
     WNDCLASSEXW wcx = { 0 };
 
@@ -261,6 +263,7 @@ windowADT createWindow(stringT title, int width, int height) {
     ShowWindow(window->hwnd, SW_SHOW);
 
     window->is_open = TRUE;
+
     num_windows++;
 
     /*

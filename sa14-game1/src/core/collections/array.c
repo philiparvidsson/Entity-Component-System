@@ -99,6 +99,8 @@ void *arrayAdd(arrayADT array, const void *data) {
     
     memcpy(dest, data, array->elem_size);
     array->num_elems++;
+
+    return dest;
 }
 
 /*--------------------------------------
@@ -140,7 +142,7 @@ void freeArray(arrayADT array) {
  * Description:
  *   Skapar en ny, dynamisk array.
  *------------------------------------*/
-arrayADT *newArray(size_t elem_size) {
+arrayADT newArray(size_t elem_size) {
     arrayADT array = malloc(sizeof(struct arrayCDT));
 
     array->data      = malloc(elem_size * INITIAL_MAX_ELEMS);

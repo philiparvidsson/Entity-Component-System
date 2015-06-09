@@ -83,6 +83,6 @@ void freeArray(arrayADT array);
  * Description:
  *   Skapar en ny, dynamisk array.
  *------------------------------------*/
-arrayADT *newArray(size_t element_size);
+arrayADT newArray(size_t element_size);
 
 #endif /* _array_h_ */
