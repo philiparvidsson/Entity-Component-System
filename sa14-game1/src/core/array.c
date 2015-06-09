@@ -41,12 +41,17 @@
  * Description:
  *   Den konkreta typen som används för att implementera dynamiska arrayer.
  *------------------------------------*/
-struct arrayCDT {
-    void *data;
-    int num_elems;
-    int max_elems;
-    size_t elem_size;
-};
+typedef struct {
+    /* --- Public --- */
+
+    size_t elem_size; /* Storleken på elementen i arrayen, i bytes. */
+    int    num_elems; /* Antal element i arrayen. */
+
+    /* --- Private --- */
+
+    int    max_elems; /* Arrayens nuvarande kapacitet. */
+    void  *data;      /* Datablock där elementen lagras. */
+} *arrayT_;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -61,7 +66,7 @@ struct arrayCDT {
  * Description:
  *   Dubblar kapaciteten för den specificerade arrayen.
  *------------------------------------*/
-static void doubleArrayCapacity(arrayADT a) {
+static void doubleArrayCapacity(arrayT_ a) {
     /*
      * Vi dubblar kapaciteten och kopierar över de gamla elementen till den nya
      * minnesplatsen, sen släpper vi den gamla arrayen ur minnet.
@@ -79,59 +84,6 @@ static void doubleArrayCapacity(arrayADT a) {
 }
 
 /*--------------------------------------
- * Function: arrayAdd()
- * Parameters:
- *   array  Arrayen till vilken ett element ska läggas.
- *   data   En pekare till elementdatan.
- *
- * Returns:
- *   En pekare till minnesplatsen dit elementet kopierades.
- *
- * Description:
- *   Lägger till ett element i den specificerade arrayen.
- *------------------------------------*/
-void *arrayAdd(arrayADT array, const void *data) {
-    /* Om det är fullt så gör vi helt enkelt utrymme för fler element. */
-    if (array->num_elems >= array->max_elems)
-        doubleArrayCapacity(array);
-
-    void *dest = (char *)array->data + array->num_elems * array->elem_size;
-    
-    memcpy(dest, data, array->elem_size);
-    array->num_elems++;
-
-    return dest;
-}
-
-/*--------------------------------------
- * Function: arrayLength()
- * Parameters:
- *   array  Arrayen som anropet gäller.
- *
- * Returns:
- *   Det antal element som den specificerade arrayen innehåller.
- *
- * Description:
- *   Returnerar längden, i antal element, på den specificerade arrayen.
- *------------------------------------*/
-int arrayLength(arrayADT array) {
-    return array->num_elems;
-}
-
-/*--------------------------------------
- * Function: freeArray()
- * Parameters:
- *   array  Arrayen som ska deallokeras.
- *
- * Description:
- *   Deallokerar en array.
- *------------------------------------*/
-void freeArray(arrayADT array) {
-    free(array->data);
-    free(array);
-}
-
-/*--------------------------------------
  * Function: newArray()
  * Parameters:
  *   elem_size  Storleken på elementen i arrayen.
@@ -142,13 +94,53 @@ void freeArray(arrayADT array) {
  * Description:
  *   Skapar en ny, dynamisk array.
  *------------------------------------*/
-arrayADT newArray(size_t elem_size) {
-    arrayADT array = malloc(sizeof(struct arrayCDT));
+arrayT newArray(size_t elem_size) {
+    arrayT_ a = malloc(sizeof(*(arrayT_)NULL));
 
-    array->data      = malloc(elem_size * INITIAL_MAX_ELEMS);
-    array->num_elems = 0;
-    array->max_elems = INITIAL_MAX_ELEMS;
-    array->elem_size = elem_size;
+    a->data      = malloc(elem_size * INITIAL_MAX_ELEMS);
+    a->num_elems = 0;
+    a->max_elems = INITIAL_MAX_ELEMS;
+    a->elem_size = elem_size;
 
-    return (array);
+    return ((arrayT)a);
+}
+
+
+/*--------------------------------------
+ * Function: freeArray()
+ * Parameters:
+ *   a  Arrayen som ska deallokeras.
+ *
+ * Description:
+ *   Deallokerar en array.
+ *------------------------------------*/
+void freeArray(arrayT a) {
+    free(((arrayT_)a)->data);
+    free(a);
+}
+
+
+/*--------------------------------------
+ * Function: arrayAdd()
+ * Parameters:
+ *   a     Arrayen till vilken ett element ska läggas.
+ *   data  En pekare till elementdatan.
+ *
+ * Returns:
+ *   En pekare till minnesplatsen dit elementet kopierades.
+ *
+ * Description:
+ *   Lägger till ett element i den specificerade arrayen.
+ *------------------------------------*/
+void *arrayAdd(arrayT a, const void *data) {
+    /* Om det är fullt så gör vi helt enkelt utrymme för fler element. */
+    if (a->num_elems >= ((arrayT_)a)->max_elems)
+        doubleArrayCapacity(a);
+
+    void *dest = (char *)((arrayT_)a)->data + a->num_elems * a->elem_size;
+    
+    memcpy(dest, data, a->elem_size);
+    ((arrayT_)a)->num_elems++;
+
+    return dest;
 }
