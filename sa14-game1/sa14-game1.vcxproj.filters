@@ -24,10 +24,13 @@
     <ClCompile Include="src\core\debug.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\win32\window_win32.c">
+    <ClCompile Include="src\core\collections\array.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\collections\array.c">
+    <ClCompile Include="src\ui\window.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\graphics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,6 +50,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\collections\array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

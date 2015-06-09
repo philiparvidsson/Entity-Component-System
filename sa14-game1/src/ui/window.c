@@ -10,8 +10,6 @@
  *
  *----------------------------------------------------------------------------*/
 
-#ifdef _WIN32
-
 /*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
@@ -54,15 +52,24 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Type: windowCDT
+ * Type: windowT_
  *
  * Description:
- *   Typ som representerar ett fönster.
+ *   Typ som representerar ett fönster. Den publika delen får exponeras utåt mot
+ *   klienter. Den privata delen används endast internt.
  *------------------------------------*/
-struct windowCDT {
-    HWND  hwnd;    /* Systemets egna "handtag" till fönstret.     */
-    boolT is_open; /* Indikerar om fönstret stängs av användaren. */
-};
+typedef struct {
+    /* --- Public --- */
+
+    boolT   is_open; /* Indikerar om fönstret stängts av användaren. */
+    int     width,   /* Fönstrets bredd i antal pixlar.              */
+            height;  /* Fönstrets höjd i antal pixlar.               */
+    stringT title;   /* Fönstrets titel.                             */
+
+    /* --- Private --- */
+
+    HWND  hwnd; /* Systemets egna "handtag" till fönstret.     */
+} *windowT_;
 
 /*------------------------------------------------
  * GLOBALS
@@ -74,7 +81,7 @@ struct windowCDT {
  * Description:
  *   Fönsterklassen.
  *------------------------------------*/
-boolT class_registered = FALSE;
+static boolT class_registered = FALSE;
 
 /*--------------------------------------
  * Variable: num_windows
@@ -82,7 +89,7 @@ boolT class_registered = FALSE;
  * Description:
  *   Antal fönster som är öppna "just nu."
  *------------------------------------*/
-int num_windows = 0;
+static int num_windows = 0;
 
 /*--------------------------------------
  * Variable: windows
@@ -90,11 +97,16 @@ int num_windows = 0;
  * Description:
  *   De fönster som är öppna "just nu."
  *------------------------------------*/
-windowADT windows[MAX_WINDOWS] = { 0 };
+static windowT_ windows[MAX_WINDOWS] = { 0 };
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
+
+/*------------------------------------------------------------------------------
+ * Nedan är de privata funktionerna som inte är tänkta att användas utanför
+ * denna modul.
+ *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
  * Function: findWindow()
@@ -107,7 +119,7 @@ windowADT windows[MAX_WINDOWS] = { 0 };
  * Description:
  *   Letar upp ett fönster utifrån ett specificerat hwnd-värde.
  *------------------------------------*/
-static windowADT findWindow(HWND hwnd) {
+static windowT_ findWindow(HWND hwnd) {
     /*
      * En hash-tabell kanske hade varit snyggare, men jag räknar inte med att
      * någon kommer öppna speciellt många fönster samtidigt så detta duger fint.
@@ -126,12 +138,12 @@ static windowADT findWindow(HWND hwnd) {
  * Description:
  *   http://en.wikipedia.org/wiki/WindowProc
  *------------------------------------*/
-LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
-                            _In_ UINT   uMsg,
-                            _In_ WPARAM wParam,
-                            _In_ LPARAM lParam)
+static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
+                                   _In_ UINT   uMsg,
+                                   _In_ WPARAM wParam,
+                                   _In_ LPARAM lParam)
 {
-    windowADT window = findWindow(hwnd);
+    windowT_ window = findWindow(hwnd);
     
     switch (uMsg) {
 
@@ -145,7 +157,6 @@ LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
 
     return (DefWindowProc(hwnd, uMsg, wParam, lParam));
 }
-
 /*--------------------------------------
  * Function: registerWindowClass()
  *
@@ -190,6 +201,31 @@ static void unregisterWindowClass() {
     class_registered = FALSE;
 }
 
+/*------------------------------------------------------------------------------
+ * Nedan är de interna funktionerna som används för att sammankoppla andra
+ * moduler med funktionaliteten i denna modul.
+ *----------------------------------------------------------------------------*/
+
+/*--------------------------------------
+ * Function: _getHwnd()
+ * Parameters:
+ *   title   Det fönster som anropet gäller.
+ *
+ * Returns:
+ *   Fönstrets "handtag."
+ *
+ * Description:
+ *   Returnerar fönstrets "handtag."
+ *------------------------------------*/
+HWND _getHwnd(windowT window) {
+    return ((windowT_)window)->hwnd;
+}
+
+/*------------------------------------------------------------------------------
+ * Här nedanför är de publika funktionerna som är tänkta att användas av klient-
+ * programmen för att skapa fönster etc.
+ *----------------------------------------------------------------------------*/
+
 /*--------------------------------------
  * Function: createWindow()
  * Parameters:
@@ -205,7 +241,7 @@ static void unregisterWindowClass() {
  *   och höjden inkluderar inte fönsterdekorationer, utan endast storleken på
  *   klientytan.
  *------------------------------------*/
-windowADT createWindow(stringT title, int width, int height) {
+windowT createWindow(stringT title, int width, int height) {
     /*
      * Varje fönster behöver en fönsterklass, men flera fönster kan dela på en
      * och samma klass. Så vi har en global variabel för att hålla reda på om vi
@@ -224,7 +260,7 @@ windowADT createWindow(stringT title, int width, int height) {
     assert(AdjustWindowRectEx(&rect, style, FALSE, WS_EX_LEFT));
 
     /* Dags att allokera den konkreta datatypen. */
-    windowADT window = malloc(sizeof(struct windowCDT));
+    windowT_ window = malloc(sizeof(*(windowT_)NULL));
 
     /*
      * Eftersom CreateWindowExW()-funktionen vill ha Unicode-strängar, så vi
@@ -263,6 +299,9 @@ windowADT createWindow(stringT title, int width, int height) {
     ShowWindow(window->hwnd, SW_SHOW);
 
     window->is_open = TRUE;
+    window->width   = width;
+    window->height  = height;
+    window->title   = title;
 
     num_windows++;
 
@@ -277,7 +316,7 @@ windowADT createWindow(stringT title, int width, int height) {
         }
     }
 
-    return (window);
+    return ((windowT)window);
 }
 
 /*--------------------------------------
@@ -288,8 +327,8 @@ windowADT createWindow(stringT title, int width, int height) {
  * Description:
  *   Stänger och förstör det specificerade fönstret.
  *------------------------------------*/
-void destroyWindow(windowADT window) {
-    if (!DestroyWindow(window->hwnd))
+void destroyWindow(windowT window) {
+    if (!DestroyWindow(((windowT_)window)->hwnd))
         return; /* Om vi inte lyckas förstöra fönstret så avbryter vi här. */
 
     /* @To-do: Är det en bra idé att anropa updateWindow() här? */
@@ -317,21 +356,6 @@ void destroyWindow(windowADT window) {
 }
 
 /*--------------------------------------
- * Function: isWindowOpen()
- * Parameters:
- *   window  Fönstret som anropet gäller.
- *
- * Returns:
- *   Sant om det specificerade fönstret är öppet.
- *
- * Description:
- *   Kontrollerar om det specificerade fönstret är öppet.
- *------------------------------------*/
-boolT isWindowOpen(windowADT window) {
-    return (window->is_open);
-}
-
-/*--------------------------------------
  * Function: updateWindow()
  * Parameters:
  *   window  Fönstret som ska uppdateras.
@@ -339,7 +363,7 @@ boolT isWindowOpen(windowADT window) {
  * Description:
  *   Uppdaterar det specificerade fönstret.
  *------------------------------------*/
-void updateWindow(windowADT window) {
+void updateWindow(windowT window) {
     /*
      * Här ser vi till att fönstret inte hänger sig genom att ta emot och
      * hantera fönstermeddelanden. De skickas vidare av anropet till
@@ -347,10 +371,8 @@ void updateWindow(windowADT window) {
      */
 
     MSG msg;
-    while (PeekMessageW(&msg, window->hwnd, 0, 0, PM_REMOVE)) {
+    while (PeekMessageW(&msg, ((windowT_)window)->hwnd, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
         DispatchMessageW(&msg);
     }
 }
-
-#endif /* _WIN32 */

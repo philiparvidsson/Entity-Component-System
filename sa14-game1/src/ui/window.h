@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: window.h
  * Created: June 8, 2015
- * Last changed: June 8, 2015
+ * Last changed: June 9, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -10,8 +10,8 @@
  *
  *----------------------------------------------------------------------------*/
 
-#ifndef _window_h_
-#define _window_h_
+#ifndef window_h__
+#define window_h__
 
 /*------------------------------------------------
  * INCLUDES
@@ -24,12 +24,17 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Type: windowADT
+ * Type: windowT
  *
  * Description:
- *   Abstrakt pekartyp som representerar ett fönster.
+ *   Datatyp som representerar ett fönster.
  *------------------------------------*/
-typedef struct windowCDT *windowADT;
+typedef struct {
+    const boolT   is_open; /* Indikerar om fönstret stängts av användaren. */
+    const int     width,   /* Fönstrets bredd i antal pixlar.              */
+                  height;  /* Fönstrets höjd i antal pixlar.               */
+    const stringT title;   /* Fönstrets titel.                             */
+} *windowT;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -50,7 +55,7 @@ typedef struct windowCDT *windowADT;
  *   och höjden inkluderar inte fönsterdekorationer, utan endast storleken på
  *   klientytan.
  *------------------------------------*/
-windowADT createWindow(stringT title, int width, int height);
+windowT createWindow(stringT title, int width, int height);
 
 /*--------------------------------------
  * Function: destroyWindow()
@@ -60,20 +65,7 @@ windowADT createWindow(stringT title, int width, int height);
  * Description:
  *   Stänger och förstör det specificerade fönstret.
  *------------------------------------*/
-void destroyWindow(windowADT window);
-
-/*--------------------------------------
- * Function: isWindowOpen()
- * Parameters:
- *   window  Fönstret som anropet gäller.
- *
- * Returns:
- *   Sant om det specificerade fönstret är öppet.
- *
- * Description:
- *   Kontrollerar om det specificerade fönstret är öppet.
- *------------------------------------*/
-boolT isWindowOpen(windowADT window);
+void destroyWindow(windowT window);
 
 /*--------------------------------------
  * Function: updateWindow()
@@ -83,6 +75,6 @@ boolT isWindowOpen(windowADT window);
  * Description:
  *   Uppdaterar det specificerade fönstret.
  *------------------------------------*/
-void updateWindow(windowADT window);
+void updateWindow(windowT window);
 
-#endif /* _window_h_ */
+#endif /* window_h__ */
