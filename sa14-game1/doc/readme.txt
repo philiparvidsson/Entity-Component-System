@@ -4,9 +4,9 @@ Riktlinjer för programkoden:
 	Inga rader får passera kolumnbredd 80.
 	Indentering sker med 4 mellanslag.
 	Namngivning:
-		FunktionsNamn();
+		funktionsNamn
 		variabel_namn
-		typNamn
+		typNamnT
 		KONSTANT_NAMN
 
 pseudokod:

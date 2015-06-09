@@ -32,7 +32,7 @@
  * Description:
  *   Skriver ut introduktionsmeddelandet.
  *------------------------------------*/
-static void printIntroMessage() {
+static void printIntroMessage(void) {
     printf("sa14-game1 v%s by %s\n\n\n", PROGRAM_VERSION, PROGRAM_AUTHORS);
 }
 
@@ -42,7 +42,7 @@ static void printIntroMessage() {
  * Description:
  *   Programmets huvudfunktion.
  *------------------------------------*/
-main() {
+int main(void) {
     printIntroMessage();
 
     windowT   *window   = createWindow("Main Window", 640, 480);

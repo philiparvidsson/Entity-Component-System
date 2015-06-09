@@ -136,7 +136,7 @@ void freeArray(arrayT *a) {
 void *arrayAdd(arrayT *a, const void *data) {
     /* Om det är fullt så gör vi helt enkelt utrymme för fler element. */
     if (a->num_elems >= ((arrayT_ *)a)->max_elems)
-        doubleArrayCapacity(a);
+        doubleArrayCapacity((arrayT_ *)a);
 
     void *dest = (char *)((arrayT_ *)a)->data + a->num_elems * a->elem_size;
     

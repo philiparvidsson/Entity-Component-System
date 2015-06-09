@@ -68,13 +68,12 @@ static graphicsT_ *curr_graphics = NULL;
 /*--------------------------------------
  * Function: initPixelFormat()
  * Parameters:
- *   window  Det fönster som pixelformatet ska initieras till grafikläge för.
- *   hdc     Den DC (device context) soma ska användas i fönstret.
+ *   hdc  Den DC (device context) soma ska användas i fönstret.
  *
  * Description:
  *   Initierar grafikläge för det specificerade fönstret.
  *------------------------------------*/
-static void initPixelFormat(windowT *window, HDC hdc) {
+static void initPixelFormat(HDC hdc) {
     /* Detta krävs för att ett fönster ska acceptera OpenGL-läge. */
 
     PIXELFORMATDESCRIPTOR pfd;
@@ -126,7 +125,7 @@ static void makeCurrent(graphicsT_ *g) {
 graphicsT *initGraphics(windowT *window) {
     HDC hdc = GetDC(_getHwnd(window));
 
-    initPixelFormat(window, hdc);
+    initPixelFormat(hdc);
 
     HGLRC hglrc = wglCreateContext(hdc);
 
@@ -171,7 +170,7 @@ void freeGraphics(graphicsT *g) {
      * Om vi friar det grafikobjekt som är aktivt så ser vi till att sätta det
      * till NULL och avaktivera det.
      */
-    if (g == curr_graphics) {
+    if ((graphicsT_ *)g == curr_graphics) {
         wglMakeCurrent(((graphicsT_ *)g)->hdc, NULL);
         curr_graphics = NULL;
     }

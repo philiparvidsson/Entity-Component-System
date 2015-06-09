@@ -17,7 +17,6 @@
 #include "core/common.h"
 #include "core/debug.h"
 
-#include "ui/callbacks.h"
 #include "ui/window.h"
 
 #include <stdlib.h>
@@ -66,7 +65,6 @@ typedef struct {
     int      width,   /* Fönstrets bredd i antal pixlar.              */
              height;  /* Fönstrets höjd i antal pixlar.               */
     stringT  title;   /* Fönstrets titel.                             */
-    uiEventT onClose;
 
     /* --- Private --- */
 
@@ -152,9 +150,6 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
     case WM_CLOSE: {
         /* Användaren har stängt fönstret, så vi markerar det som stängt. */
         window->is_open = FALSE;
-
-        if (window->onClose)
-            window->onClose(window);
         break;
     }
 
@@ -168,7 +163,7 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
  * Description:
  *   Registrerar fönsterklassen.
  *------------------------------------*/
-static void registerWindowClass() {
+static void registerWindowClass(void) {
     /*
      * Innan vi kan skapa fönster kräver Windows att vi registrerar en fönster-
      * klass.
@@ -200,7 +195,7 @@ static void registerWindowClass() {
  * Description:
  *   Avregistrerar fönsterklassen.
  *------------------------------------*/
-static void unregisterWindowClass() {
+static void unregisterWindowClass(void) {
     UnregisterClassW(CLASS_NAME, GetModuleHandleW(NULL));
 
     class_registered = FALSE;
@@ -255,7 +250,7 @@ windowT *createWindow(stringT title, int width, int height) {
     if (!class_registered)
         registerWindowClass();
 
-    RECT  rect  = { 0, 0, width, height };
+    RECT  rect  = { 0 }; rect.right = width; rect.bottom = height;
     DWORD style = WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX;
 
     /*
@@ -344,7 +339,7 @@ void destroyWindow(windowT *window) {
      * platsen i arrayen.
      */
     for (int i = 0; i < MAX_WINDOWS; i++) {
-        if (windows[i] == window) {
+        if (windows[i] == (windowT_ *)window) {
             windows[i] = NULL;
             break;
         }
