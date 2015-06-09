@@ -37,13 +37,63 @@ typedef struct {
  * FUNCTIONS
  *----------------------------------------------*/
 
+/*--------------------------------------
+ * Function: initGraphics()
+ * Parameters:
+ *   window  Det fönster som grafikobjektet ska initieras för.
+ *
+ * Returns:
+ *   En pekare till grafikobjektet.
+ *
+ * Description:
+ *   Initierar grafik för det specificerade fönstret.
+ *------------------------------------*/
 graphicsT *initGraphics(windowT *window);
+
+/*--------------------------------------
+ * Function: freeGraphics()
+ * Parameters:
+ *   g  Det grafikobjekt som ska frias.
+ *
+ * Description:
+ *   Frigör det specificerade grafikobjektet.
+ *------------------------------------*/
 void freeGraphics(graphicsT *g);
 
+/*--------------------------------------
+ * Function: clearCanvas()
+ * Parameters:
+ *   g      Det grafikobjekt som anropet gäller.
+ *   red    Röd färgkomponent.
+ *   green  Grön färgkomponent.
+ *   blue   Blå färgkomponent.
+ *
+ * Description:
+ *   Rensar ritytan til den specificerade färgen.
+ *------------------------------------*/
 void clearCanvas(graphicsT *g, float red, float green, float blue);
 
+/*--------------------------------------
+ * Function: setColor()
+ * Parameters:
+ *   g      Det grafikobjekt som anropet gäller.
+ *   red    Röd färgkomponent.
+ *   green  Grön färgkomponent.
+ *   blue   Blå färgkomponent.
+ *
+ * Description:
+ *   Ändrar färg för nästkommande anrop till ritfunktioner.
+ *------------------------------------*/
 void setColor(graphicsT *g, float red, float green, float blue);
 
-void swapBuffers(graphicsT *g);
+/*--------------------------------------
+ * Function: updateGraphics()
+ * Parameters:
+ *   g      Det grafikobjekt som anropet gäller.
+ *
+ * Description:
+ *   Uppdaterar grafiken och ritar upp den i det associerade fönstret.
+ *------------------------------------*/
+void updateGraphics(graphicsT *g);
 
 #endif /* graphics_h_ */

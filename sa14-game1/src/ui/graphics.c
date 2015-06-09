@@ -65,6 +65,15 @@ static graphicsT_ *current = NULL;
  * FUNCTIONS
  *----------------------------------------------*/
 
+/*--------------------------------------
+ * Function: initPixelFormat()
+ * Parameters:
+ *   window  Det fönster som pixelformatet ska initieras till grafikläge för.
+ *   hdc     Den DC (device context) soma ska användas i fönstret.
+ *
+ * Description:
+ *   Initierar grafikläge för det specificerade fönstret.
+ *------------------------------------*/
 static void initPixelFormat(windowT *window, HDC hdc) {
     PIXELFORMATDESCRIPTOR pfd;
     pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR);
@@ -82,6 +91,15 @@ static void initPixelFormat(windowT *window, HDC hdc) {
     assert(SetPixelFormat(hdc, pixel_format, &pfd));
 }
 
+/*--------------------------------------
+ * Function: makeCurrent()
+ * Parameters:
+ *   g  Det grafikobjekt som nästkommande anrop till ritfunktioner ska använda.
+ *
+ * Description:
+ *   Sätter det specificerade grafikobjektet till det grafikobjekt som används
+ *   för ritfunktioner.
+ *------------------------------------*/
 static void makeCurrent(graphicsT_ *g) {
     if (g == current)
         return;
@@ -92,6 +110,17 @@ static void makeCurrent(graphicsT_ *g) {
         wglMakeCurrent(g->hdc, g->hglrc);
 }
 
+/*--------------------------------------
+ * Function: initGraphics()
+ * Parameters:
+ *   window  Det fönster som grafikobjektet ska initieras för.
+ *
+ * Returns:
+ *   En pekare till grafikobjektet.
+ *
+ * Description:
+ *   Initierar grafik för det specificerade fönstret.
+ *------------------------------------*/
 graphicsT *initGraphics(windowT *window) {
     HDC hdc = GetDC(_getHwnd(window));
 
@@ -127,6 +156,14 @@ graphicsT *initGraphics(windowT *window) {
     return ((graphicsT *)g);
 }
 
+/*--------------------------------------
+ * Function: freeGraphics()
+ * Parameters:
+ *   g  Det grafikobjekt som ska frias.
+ *
+ * Description:
+ *   Frigör det specificerade grafikobjektet.
+ *------------------------------------*/
 void freeGraphics(graphicsT *g) {
     if (g == current) {
         wglMakeCurrent(((graphicsT_ *)g)->hdc, NULL);
@@ -138,6 +175,17 @@ void freeGraphics(graphicsT *g) {
     free(g);
 }
 
+/*--------------------------------------
+ * Function: clearCanvas()
+ * Parameters:
+ *   g      Det grafikobjekt som anropet gäller.
+ *   red    Röd färgkomponent.
+ *   green  Grön färgkomponent.
+ *   blue   Blå färgkomponent.
+ *
+ * Description:
+ *   Rensar ritytan til den specificerade färgen.
+ *------------------------------------*/
 void clearCanvas(graphicsT *g, float red, float green, float blue) {
     makeCurrent((graphicsT_ *)g);
 
@@ -145,13 +193,32 @@ void clearCanvas(graphicsT *g, float red, float green, float blue) {
     glClear     (GL_COLOR_BUFFER_BIT);
 }
 
+/*--------------------------------------
+ * Function: setColor()
+ * Parameters:
+ *   g      Det grafikobjekt som anropet gäller.
+ *   red    Röd färgkomponent.
+ *   green  Grön färgkomponent.
+ *   blue   Blå färgkomponent.
+ *
+ * Description:
+ *   Ändrar färg för nästkommande anrop till ritfunktioner.
+ *------------------------------------*/
 void setColor(graphicsT *g, float red, float green, float blue) {
     makeCurrent((graphicsT_ *)g);
 
     glColor3f(red, green, blue);
 }
 
-void swapBuffers(graphicsT *g) {
+/*--------------------------------------
+ * Function: updateGraphics()
+ * Parameters:
+ *   g      Det grafikobjekt som anropet gäller.
+ *
+ * Description:
+ *   Uppdaterar grafiken och ritar upp den i det associerade fönstret.
+ *------------------------------------*/
+void updateGraphics(graphicsT *g) {
     makeCurrent((graphicsT_ *)g);
 
     SwapBuffers(((graphicsT_ *)g)->hdc);
