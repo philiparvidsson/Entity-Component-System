@@ -143,7 +143,7 @@ void freeArray(arrayADT array) {
 arrayADT *newArray(size_t elem_size) {
     arrayADT array = malloc(sizeof(struct arrayCDT));
 
-    array->data         = malloc(elem_size * INITIAL_MAX_ELEMS);
+    array->data      = malloc(elem_size * INITIAL_MAX_ELEMS);
     array->num_elems = 0;
     array->max_elems = INITIAL_MAX_ELEMS;
     array->elem_size = elem_size;

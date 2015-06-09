@@ -42,6 +42,10 @@
  *
  * Description:
  *  Maximalt antal fönster som får vara öppna vid ett och samma tillfälle.
+ *  Detta är i själva verket lite av ett fulhack eftersom ingen övre begränsning
+ *  egentligen behöver finnas. Men lösningen blir bra mycket mer komplex då, och
+ *  det är inte särskilt troligt att någon behöver öppna fler än tio fönster
+ *  från ett och samma program, så det är en ok avvägning ändå.
  *------------------------------------*/
 #define MAX_WINDOWS (10)
 
@@ -50,14 +54,14 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Type: window
+ * Type: windowCDT
  *
  * Description:
  *   Typ som representerar ett fönster.
  *------------------------------------*/
 struct windowCDT {
-    HWND hwnd;
-    boolT is_open;
+    HWND hwnd;     /* Systemets egna "handtag" till fönstret.     */
+    boolT is_open; /* Indikerar om fönstret stängs av användaren. */
 };
 
 /*------------------------------------------------
@@ -76,7 +80,7 @@ boolT class_registered = FALSE;
  * Variable: num_windows
  *
  * Description:
- *   Antal fönster som är öppna just nu.
+ *   Antal fönster som är öppna "just nu."
  *------------------------------------*/
 int num_windows = 0;
 
@@ -84,7 +88,7 @@ int num_windows = 0;
  * Variable: windows
  *
  * Description:
- *   De fönster som är öppna just nu.
+ *   De fönster som är öppna "just nu."
  *------------------------------------*/
 windowADT windows[MAX_WINDOWS] = { 0 };
 
@@ -148,6 +152,10 @@ static windowADT findWindow(HWND hwnd) {
  *   Registrerar fönsterklassen.
  *------------------------------------*/
 static void registerWindowClass() {
+    /*
+     * Innan vi kan skapa fönster kräver Windows att vi registrerar en fönster-
+     * klass. */
+
     WNDCLASSEXW wcx = { 0 };
 
     wcx.cbSize        = sizeof(WNDCLASSEXW);
@@ -297,6 +305,10 @@ void destroyWindow(windowADT window) {
 
     free(window);
 
+    /*
+     * Om det är det sista fönstret vi stänger så avregistrerar vi fönster-
+     * klassen här.
+     */
     if (--num_windows == 0)
         unregisterWindowClass();
 }
@@ -325,6 +337,12 @@ boolT isWindowOpen(windowADT window) {
  *   Uppdaterar det specificerade fönstret.
  *------------------------------------*/
 void updateWindow(windowADT window) {
+    /*
+     * Här ser vi till att fönstret inte hänger sig genom att ta emot och
+     * hantera fönstermeddelanden. De skickas vidare av anropet till
+     * DispatchMessageW() och blir sedan hanterade i WindowProc()-funktionen.
+     */
+
     MSG msg;
     while (PeekMessageW(&msg, window->hwnd, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
