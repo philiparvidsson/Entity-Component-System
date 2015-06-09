@@ -60,8 +60,8 @@ typedef struct {
 
     /* --- Private --- */
 
-    HDC     hdc;   /* Den DC (device context) som används. */
-    HGLRC   hglrc; /* Den renderingskontext som används. */
+    HDC   hdc;   /* Den DC (device context) som används. */
+    HGLRC hglrc; /* Den renderingskontext som används. */
 } graphicsT_;
 
 /*------------------------------------------------
@@ -162,12 +162,12 @@ graphicsT *initGraphics(windowT *window) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     /* Runda, fina prickar! :-) */
-    glEnable   (GL_POINT_SMOOTH);
-    glHint     (GL_POINT_SMOOTH_HINT, GL_NICEST);
+    glEnable(GL_POINT_SMOOTH);
+    glHint  (GL_POINT_SMOOTH_HINT, GL_NICEST);
 
     /* Mjuka, fina linjer! */
-    glEnable   (GL_LINE_SMOOTH);
-    glHint     (GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glEnable(GL_LINE_SMOOTH);
+    glHint  (GL_LINE_SMOOTH_HINT, GL_NICEST);
 
     return ((graphicsT *)g);
 }
@@ -233,7 +233,7 @@ void setColor(graphicsT *g, float red, float green, float blue) {
 /*--------------------------------------
  * Function: updateGraphics()
  * Parameters:
- *   g      Det grafikobjekt som anropet gäller.
+ *   g  Det grafikobjekt som anropet gäller.
  *
  * Description:
  *   Uppdaterar grafiken och ritar upp den i det associerade fönstret.

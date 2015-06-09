@@ -89,7 +89,7 @@ void setColor(graphicsT *g, float red, float green, float blue);
 /*--------------------------------------
  * Function: updateGraphics()
  * Parameters:
- *   g      Det grafikobjekt som anropet gäller.
+ *   g  Det grafikobjekt som anropet gäller.
  *
  * Description:
  *   Uppdaterar grafiken och ritar upp den i det associerade fönstret.
