@@ -17,6 +17,7 @@
 #include "core/common.h"
 #include "core/debug.h"
 
+#include "ui/callbacks.h"
 #include "ui/window.h"
 
 #include <stdlib.h>
@@ -61,10 +62,11 @@
 typedef struct {
     /* --- Public --- */
 
-    boolT   is_open; /* Indikerar om fönstret stängts av användaren. */
-    int     width,   /* Fönstrets bredd i antal pixlar.              */
-            height;  /* Fönstrets höjd i antal pixlar.               */
-    stringT title;   /* Fönstrets titel.                             */
+    boolT    is_open; /* Indikerar om fönstret stängts av användaren. */
+    int      width,   /* Fönstrets bredd i antal pixlar.              */
+             height;  /* Fönstrets höjd i antal pixlar.               */
+    stringT  title;   /* Fönstrets titel.                             */
+    uiEventT onClose;
 
     /* --- Private --- */
 
@@ -150,6 +152,9 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
     case WM_CLOSE: {
         /* Användaren har stängt fönstret, så vi markerar det som stängt. */
         window->is_open = FALSE;
+
+        if (window->onClose)
+            window->onClose(window);
         break;
     }
 

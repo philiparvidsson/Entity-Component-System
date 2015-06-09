@@ -50,7 +50,7 @@ main() {
 
     while (window->is_open) {
         clearCanvas(graphics, 1.0f, 0.0f, 1.0f);
-        swapBuffers(graphics);
+        updateGraphics(graphics);
         updateWindow(window);
     }
 

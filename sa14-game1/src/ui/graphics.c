@@ -45,8 +45,8 @@ typedef struct {
 
     /* --- Private --- */
 
-    HDC     hdc;
-    HGLRC   hglrc;
+    HDC     hdc;   /* Den DC (device context) som används. */
+    HGLRC   hglrc; /* Den renderingskontext som används. */
 } graphicsT_;
 
 /*------------------------------------------------
@@ -54,12 +54,12 @@ typedef struct {
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Variable: current
+ * Variable: curr_graphics
  *
  * Description:
  *   Det grafikobjekt som vi ritar till "just nu."
  *------------------------------------*/
-static graphicsT_ *current = NULL;
+static graphicsT_ *curr_graphics = NULL;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -75,6 +75,8 @@ static graphicsT_ *current = NULL;
  *   Initierar grafikläge för det specificerade fönstret.
  *------------------------------------*/
 static void initPixelFormat(windowT *window, HDC hdc) {
+    /* Detta krävs för att ett fönster ska acceptera OpenGL-läge. */
+
     PIXELFORMATDESCRIPTOR pfd;
     pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR);
     pfd.nVersion   = 1;
@@ -101,10 +103,10 @@ static void initPixelFormat(windowT *window, HDC hdc) {
  *   för ritfunktioner.
  *------------------------------------*/
 static void makeCurrent(graphicsT_ *g) {
-    if (g == current)
+    if (g == curr_graphics)
         return;
 
-    current = g;
+    curr_graphics = g;
 
     if (g)
         wglMakeCurrent(g->hdc, g->hglrc);
@@ -165,9 +167,13 @@ graphicsT *initGraphics(windowT *window) {
  *   Frigör det specificerade grafikobjektet.
  *------------------------------------*/
 void freeGraphics(graphicsT *g) {
-    if (g == current) {
+    /*
+     * Om vi friar det grafikobjekt som är aktivt så ser vi till att sätta det
+     * till NULL och avaktivera det.
+     */
+    if (g == curr_graphics) {
         wglMakeCurrent(((graphicsT_ *)g)->hdc, NULL);
-        current = NULL;
+        curr_graphics = NULL;
     }
 
     wglDeleteContext(((graphicsT_ *)g)->hglrc);

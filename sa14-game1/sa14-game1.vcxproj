@@ -95,6 +95,7 @@
     <ClInclude Include="src\core\array.h" />
     <ClInclude Include="src\core\common.h" />
     <ClInclude Include="src\core\debug.h" />
+    <ClInclude Include="src\ui\callbacks.h" />
     <ClInclude Include="src\ui\graphics.h" />
     <ClInclude Include="src\ui\window.h" />
   </ItemGroup>
