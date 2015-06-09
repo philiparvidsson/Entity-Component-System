@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: debug.h
  * Created: June 8, 2015
- * Last changed: June 8, 2015
+ * Last changed: June 9, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -23,8 +23,25 @@
  * MACROS
  *----------------------------------------------*/
 
+/*--------------------------------------
+ * Macro: error()
+ * Parameters:
+ *   msg  Meddelandet som ska visas.
+ *
+ * Description:
+ *   Avslutar programmet med ett meddelande.
+ *------------------------------------*/
 #define error(msg) exitWithMessage(msg, __FUNCTION__, __LINE__)
 
+/*--------------------------------------
+ * Macro: assert()
+ * Parameters:
+ *   expr  Uttrycket som måste evaluera till sant.
+ *
+ * Description:
+ *   Avslutar programmet med ett meddelande om det givna uttrycket inte
+ *   evaluerar till sant.
+ *------------------------------------*/
 #define assert(expr) if (!(expr)) { error("The assertion '" #expr "' failed"); }
 
 /*------------------------------------------------

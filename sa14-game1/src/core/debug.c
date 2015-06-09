@@ -36,7 +36,7 @@
 void exitWithMessage(stringT message, stringT func_name, int line) {
     printf("\n----------------------------------------\n"
            "ERROR: %s in %s() on line %d.\n\n"
-           "This program will now crash.\n"
+           "This program will now exit.\n"
            "Press ENTER to continue...", message, func_name, line);
     getchar();
 #ifdef _MSC_VER

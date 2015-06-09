@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: array.h
  * Created: June 8, 2015
- * Last changed: June 8, 2015
+ * Last changed: June 9, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *

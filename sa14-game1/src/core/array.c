@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: array.c
  * Created: June 8, 2015
- * Last changed: June 8, 2015
+ * Last changed: June 9, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -29,7 +29,7 @@
  * Description:
  *   Det initiala maximala antalet element i en array.
  *------------------------------------*/
-#define INITIAL_MAX_ELEMS 8 /* Åtta är nog lagom. */
+#define INITIAL_MAX_ELEMS (8) /* Åtta är nog lagom. */
 
 /*------------------------------------------------
  * TYPES
