@@ -36,10 +36,11 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Type: arrayCDT
+ * Type: arrayT_
  *
  * Description:
- *   Den konkreta typen som används för att implementera dynamiska arrayer.
+ *   Representerar en array. Denna datatyp används internt, men exponrerar även
+ *   en publik del.
  *------------------------------------*/
 typedef struct {
     /* --- Public --- */
