@@ -16,8 +16,7 @@
 
 #include "core/common.h"
 
-#include "ui/graphics.h"
-#include "ui/window.h"
+#include "graphics.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,17 +44,14 @@ static void printIntroMessage(void) {
 int main(void) {
     printIntroMessage();
 
-    windowT   *window   = createWindow("Main Window", 640, 480);
-    graphicsT *graphics = initGraphics(window);
+    initGraphics("Main Window", 640, 480);
 
-    while (window->is_open) {
-        clearCanvas(graphics, 1.0f, 0.0f, 1.0f);
-        updateGraphics(graphics);
-        updateWindow(window);
+    while (windowIsOpen()) {
+        clearCanvas(1.0f, 0.0f, 1.0f);
+        updateDisplay();
     }
 
-    freeGraphics(graphics);
-    destroyWindow(window);
+    exitGraphics();
 
     system("pause");
 }

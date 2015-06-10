@@ -24,13 +24,10 @@
     <ClCompile Include="src\core\debug.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ui\window.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\graphics.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\array.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -43,16 +40,13 @@
     <ClInclude Include="src\core\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\core\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\graphics.h">
+    <ClInclude Include="src\core\array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\array.h">
+    <ClInclude Include="src\graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

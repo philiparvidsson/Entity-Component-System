@@ -83,8 +83,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\core\array.c" />
-    <ClCompile Include="src\ui\graphics.c" />
-    <ClCompile Include="src\ui\window.c" />
+    <ClCompile Include="src\graphics.c" />
     <ClCompile Include="src\core\debug.c" />
     <ClCompile Include="src\sa14-game1.c" />
   </ItemGroup>
@@ -95,8 +94,7 @@
     <ClInclude Include="src\core\array.h" />
     <ClInclude Include="src\core\common.h" />
     <ClInclude Include="src\core\debug.h" />
-    <ClInclude Include="src\ui\graphics.h" />
-    <ClInclude Include="src\ui\window.h" />
+    <ClInclude Include="src\graphics.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
