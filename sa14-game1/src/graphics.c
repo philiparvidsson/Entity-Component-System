@@ -42,9 +42,18 @@
  * Constant: DEFAULT_FRAME_RATE
  *
  * Description:
- *   Antal bildrutor som ska visas per sekund.
+ *   Antal bildrutor som ska visas per sekund. Detta går att ändra med
+ *   setFrameRate()-funktionen.
  *------------------------------------*/
 #define DEFAULT_FRAME_RATE (30.0f)
+
+/*--------------------------------------
+ * Constant: UNLIMITED_FPS
+ *
+ * Description:
+ *   Obegränsat antal bildrutor per sekund.
+ *------------------------------------*/
+#define UNLIMITED_FPS (-1)
 
 /*------------------------------------------------
  * TYPES
@@ -64,10 +73,10 @@ typedef struct {
 
     /* Nedan är plattformsspecifika, systemrelaterade variabler. */
 
-    HWND          hwnd;        /* Systemets egna "handtag" till fönstret. */
-    HDC           hdc;         /* Den DC (device context) som används.    */
-    HGLRC         hglrc;       /* Den renderingskontext som används.      */
-    LARGE_INTEGER last_update;
+    HWND          hwnd;        /* Systemets egna "handtag" till fönstret.    */
+    HDC           hdc;         /* Den DC (device context) som används.       */
+    HGLRC         hglrc;       /* Den renderingskontext som används.         */
+    LARGE_INTEGER last_update; /* Tidsstämpel för senaste bilduppdateringen. */
 } windowT;
 
 /*------------------------------------------------
@@ -116,13 +125,13 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
 }
 
 /*--------------------------------------
- * Function: checkInitGraphics()
+ * Function: checkGraphicsInited()
  * Parameters:
  *
  * Description:
  *   Avslutar programmet med ett felmeddelande om grafikläget inte är initierat.
  *------------------------------------*/
-static void checkInitGraphics(void) {
+static void checkGraphicsInited(void) {
     if (!window)
         error("Graphics not initialized");
 }
@@ -228,13 +237,13 @@ static void registerWindowClass(void) {
 }
 
 /*--------------------------------------
- * Function: setPixelFormat()
+ * Function: setupPixelFormat()
  * Parameters:
  *
  * Description:
  *   Initierar grafikläge för fönstret.
  *------------------------------------*/
-static void setPixelFormat(void) {
+static void setupPixelFormat(void) {
     /* Detta krävs för att ett fönster ska acceptera OpenGL-läge. */
 
     PIXELFORMATDESCRIPTOR pfd;
@@ -286,15 +295,12 @@ static void unregisterWindowClass(void) {
  *   storleken på klientytan.
  *------------------------------------*/
 void initGraphics(const char *title, int width, int height) {
-    assert(window == NULL);
+    if (window)
+        error("Graphics already initialized");
 
-    /*
-     * Först måste vi registrera fönsterklassen, annars går det inte att skapa
-     * ett fönster.
-     */
     registerWindowClass();
-    createWindow       (title, width, height);
-    setPixelFormat     ();
+    createWindow(title, width, height);
+    setupPixelFormat();
 
     window->hglrc = wglCreateContext(window->hdc);
 
@@ -351,20 +357,29 @@ void exitGraphics(void) {
 /*--------------------------------------
 * Function: setFrameRate()
 * Parameters:
+*   fps  Antal bildrutor som ska visas per sekund.
 *
 * Description:
 *   Ställer in hur många bildrutor som ska visas per sekund. Ange noll för
 *   obegränsad hastighet.
 *------------------------------------*/
 void setFrameRate(float fps) {
-    checkInitGraphics();
+    checkGraphicsInited();
+
+    /*
+     * Om man anger noll fps så stänger vi av synkroniseringen genom att sätta
+     * den tid som varje bildruta ska visas till noll. */
+    if (fps == 0.0f) {
+        window->frame_time = UNLIMITED_FPS;
+        return;
+    }
 
     LARGE_INTEGER freq;
-
     assert(QueryPerformanceFrequency(&freq));
-    assert(QueryPerformanceCounter(&window->last_update));
 
-    window->frame_time = freq.QuadPart / fps;
+    window->frame_time = (int)(freq.QuadPart / fps);
+
+    assert(QueryPerformanceCounter(&window->last_update));
 }
 
 /*------------------------------------------------------------------------------
@@ -383,7 +398,7 @@ void setFrameRate(float fps) {
  *   Rensar ritytan til den specificerade färgen.
  *------------------------------------*/
 void clearCanvas(float r, float g, float b) {
-    checkInitGraphics();
+    checkGraphicsInited();
 
     glClearColor(r, g, b, 1.0f);
     glClear     (GL_COLOR_BUFFER_BIT);
@@ -400,7 +415,7 @@ void clearCanvas(float r, float g, float b) {
  *   Ändrar färg för nästkommande anrop till ritfunktioner.
  *------------------------------------*/
 void setColor(float r, float g, float b) {
-    checkInitGraphics();
+    checkGraphicsInited();
 
     glColor3f(r, g, b);
 }
@@ -413,7 +428,7 @@ void setColor(float r, float g, float b) {
  *   Uppdaterar grafikfönstret.
  *------------------------------------*/
 void updateDisplay(void) {
-    checkInitGraphics();
+    checkGraphicsInited();
 
     /* Här presenterar vi ritytan i fönstret genom att "swappa" in bufferten. */
     if (window->hdc)
@@ -424,7 +439,7 @@ void updateDisplay(void) {
      * upprätthålla rätt intervall för antal bildrutor per sekund.
      */
     LARGE_INTEGER perf_count;
-    while (TRUE) {
+    do {
         /*
          * Här ser vi till att fönstret inte hänger sig genom att ta emot och
          * hantera fönstermeddelanden. Funktionen DispatchMessageW() skickar dem
@@ -436,20 +451,23 @@ void updateDisplay(void) {
             DispatchMessageW(&msg);
         }
 
-        /* Om window är NULL här så har användaren stängt fönstret. */
+        /*
+         * Om window är NULL här så har användaren stängt fönstret, varpå
+         * exitGraphics()-funktionen anropats av WindowProc()-funktionen, som i
+         * sin tur anropats av DispatchMessageW()-funktionen.
+         */
         if (!window)
             return;
 
-        assert(QueryPerformanceCounter(&perf_count));
-
         /*
-         * Vi jämför och ser om vi snurrat i den här loopen tillräckligt länge
-         * för att visa bildrutan precis så länge som vi ska.
+         * Vi räknar ut den tid som gått sedan den senate bilduppdateringen, och
+         * om tillräckligt mycket tid passerat så går vi ur loopen då vi visat
+         * denna bildruta precis så länge som behövs för att synkronisera
+         * antalet bildrutor per sekund till rätt antal.
          */
+        assert(QueryPerformanceCounter(&perf_count));
         perf_count.QuadPart -= window->last_update.QuadPart;
-        if (perf_count.QuadPart > window->frame_time)
-            break;
-    }
+    } while (perf_count.QuadPart < window->frame_time);
 
     assert(QueryPerformanceCounter(&window->last_update));
 }
