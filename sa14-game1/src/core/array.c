@@ -26,12 +26,12 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Constant: INITIAL_MAX_ELEMS
+ * Constant: InitialMaxElems
  *
  * Description:
  *   Det initiala maximala antalet element i en array.
  *------------------------------------*/
-#define INITIAL_MAX_ELEMS (8) /* Åtta är nog lagom. */
+#define InitialMaxElems (8) /* Åtta är nog lagom. */
 
 /*------------------------------------------------
  * TYPES
@@ -108,7 +108,7 @@ static void doubleArrayCapacity(arrayT_ *a) {
 arrayT *newArray(size_t elem_size) {
     arrayT_ *a = malloc(sizeof(arrayT_));
 
-    a->data      = malloc(elem_size * INITIAL_MAX_ELEMS);
+    a->data      = malloc(elem_size * InitialMaxElems);
     a->num_elems = 0;
     a->max_elems = INITIAL_MAX_ELEMS;
     a->elem_size = elem_size;

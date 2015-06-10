@@ -43,20 +43,20 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Constant: PROGRAM_AUTHORS
+ * Constant: ProgramAuthors
  *
  * Description:
  *   De programmerare som varit med och programmerat programmet.
  *------------------------------------*/
-#define PROGRAM_AUTHORS ("Philip Arvidsson (philip@philiparvidsson.com)")
+#define ProgramAuthors ("Philip Arvidsson (philip@philiparvidsson.com)")
 
 /*--------------------------------------
- * Constant: PROGRAM_VERSION
+ * Constant: ProgramVersion
  *
  * Description:
  *   Programmets version.
  *------------------------------------*/
-#define PROGRAM_VERSION ("0.01b")
+#define ProgramVersion ("0.01b")
 
 /*------------------------------------------------
  * TYPES

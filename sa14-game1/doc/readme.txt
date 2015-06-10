@@ -7,7 +7,7 @@ RIKTLINJER.
      inställningar.
 
   3. Namngivning:
-       KONSTANT_NAMN
+       KonstantNamn
        typNamnT;
        variabel_namn
        funktionsNamn();

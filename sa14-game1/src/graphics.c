@@ -29,29 +29,29 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Constant: CLASS_NAME
+ * Constant: ClassName
  *
  * Description:
  *   Namnet på klassen som används för att skapa grafikfönstret.
  *------------------------------------*/
-#define CLASS_NAME (L"sa14-game1")
+#define ClassName (L"sa14-game1")
 
 /*--------------------------------------
- * Constant: DEFAULT_FRAME_RATE
+ * Constant: DefaultFPS
  *
  * Description:
  *   Antal bildrutor som ska visas per sekund. Detta går att ändra med
  *   setFrameRate()-funktionen.
  *------------------------------------*/
-#define DEFAULT_FRAME_RATE (30.0f)
+#define DefaultFPS (30.0f)
 
 /*--------------------------------------
- * Constant: UNLIMITED_FPS
+ * Constant: UnlimitedFPS
  *
  * Description:
  *   Obegränsat antal bildrutor per sekund.
  *------------------------------------*/
-#define UNLIMITED_FPS (-1)
+#define UnlimitedFPS (-1)
 
 /*------------------------------------------------
  * TYPES
@@ -171,7 +171,7 @@ static void createWindow(const char *title, int width, int height) {
 
     /* Här skapar vi fönstret med ett anrop ner i Windows API. */
     window->hwnd = CreateWindowExW(WS_EX_LEFT,
-                                   CLASS_NAME,
+                                   ClassName,
                                    window_name,
                                    style,
                                    CW_USEDEFAULT,
@@ -228,7 +228,7 @@ static void registerWindowClass(void) {
     wcx.hCursor       = LoadCursorW(NULL, IDC_ARROW);
     wcx.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
     wcx.lpszMenuName  = NULL;
-    wcx.lpszClassName = CLASS_NAME;
+    wcx.lpszClassName = ClassName;
     wcx.hIconSm       = NULL;
 
     assert(RegisterClassExW(&wcx));
@@ -268,7 +268,7 @@ static void setupPixelFormat(void) {
  *   Avregistrerar fönsterklassen.
  *------------------------------------*/
 static void unregisterWindowClass(void) {
-    assert(UnregisterClassW(CLASS_NAME, GetModuleHandleW(NULL)));
+    assert(UnregisterClassW(ClassName, GetModuleHandleW(NULL)));
 }
 
 /*------------------------------------------------------------------------------
@@ -320,7 +320,7 @@ void initGraphics(const char *title, int width, int height) {
     glEnable(GL_LINE_SMOOTH);
     glHint  (GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    setFrameRate(DEFAULT_FRAME_RATE);
+    setFrameRate(DefaultFPS);
 }
 
 /*--------------------------------------
@@ -367,9 +367,10 @@ void setFrameRate(float fps) {
 
     /*
      * Om man anger noll fps så stänger vi av synkroniseringen genom att sätta
-     * den tid som varje bildruta ska visas till noll. */
+     * den tid som varje bildruta ska visas till noll.
+     */
     if (fps == 0.0f) {
-        window->frame_time = UNLIMITED_FPS;
+        window->frame_time = UnlimitedFPS;
         return;
     }
 
