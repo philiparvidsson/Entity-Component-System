@@ -18,11 +18,21 @@
  *----------------------------------------------*/
 
 #ifdef _MSC_VER
-    #pragma comment(lib, "opengl32.lib")
 
-    /* warning C4711: 'function selected for automatic inline expansion' */
-    #pragma warning(disable:4711)
+#pragma comment(lib, "opengl32.lib")
+
+/* warning C4711: 'function selected for automatic inline expansion' */
+#pragma warning(disable:4711)
+
 #endif
+
+/*------------------------------------------------
+ * INCLUDES
+ *----------------------------------------------*/
+
+#include "core/debug.h"
+
+#include <stdbool.h>
 
 /*------------------------------------------------
  * CONSTANTS
@@ -47,21 +57,5 @@
 /*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
-
-/*--------------------------------------
- * Type: bool
- *
- * Description:
- *   Boolesk typ.
- *------------------------------------*/
-typedef enum { FALSE, TRUE } boolT;
-
-/*--------------------------------------
- * Type: string
- *
- * Description:
- *   Strängtyp.
- *------------------------------------*/
-typedef char *stringT;
 
 #endif /* common_h_ */

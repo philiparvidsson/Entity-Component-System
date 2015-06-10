@@ -18,7 +18,6 @@
 #include "graphics.h"
 
 #include "core/common.h"
-#include "core/debug.h"
 
 #include <stdlib.h>
 
@@ -485,6 +484,6 @@ void updateDisplay(void) {
  * Description:
  *   Returnerar sant om grafikfönstret är öppet.
  *------------------------------------*/
-boolT windowIsOpen(void) {
+bool windowIsOpen(void) {
     return (window != NULL);
 }

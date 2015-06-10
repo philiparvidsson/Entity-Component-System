@@ -35,7 +35,7 @@
  * Description:
  *   Avslutar programmet med ett meddelande.
  *------------------------------------*/
-void exitWithMessage(stringT message, stringT func_name, int line) {
+void exitWithMessage(const char *message, const char *func_name, int line) {
     printf("\n----------------------------------------\n"
            "ERROR: %s in %s() on line %d.\n\n"
            "This program will now exit.\n"

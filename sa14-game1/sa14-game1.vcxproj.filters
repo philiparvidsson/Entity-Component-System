@@ -35,6 +35,9 @@
     <Text Include="doc\readme.txt">
       <Filter>Documentation Files</Filter>
     </Text>
+    <Text Include="license.txt">
+      <Filter>Documentation Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\common.h">

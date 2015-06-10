@@ -58,6 +58,6 @@
  * Description:
  *   Avslutar programmet med ett meddelande.
  *------------------------------------*/
-void exitWithMessage(stringT message, stringT func_name, int line);
+void exitWithMessage(const char *message, const char *func_name, int line);
 
 #endif /* debug_h_ */

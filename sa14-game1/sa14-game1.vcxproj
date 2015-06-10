@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt" />
+    <Text Include="license.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\array.h" />

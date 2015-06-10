@@ -114,6 +114,6 @@ void updateDisplay(void);
  * Description:
  *   Returnerar sant om grafikfönstret är öppet.
  *------------------------------------*/
-boolT windowIsOpen(void);
+bool windowIsOpen(void);
 
 #endif /* graphics_h_ */
