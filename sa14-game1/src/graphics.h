@@ -58,7 +58,7 @@ void exitGraphics(void);
  *
  * Description:
  *   Ställer in hur många bildrutor som ska visas per sekund. Ange noll för
- *   obegränsad hastighet.
+ *   obegränsat antal.
  *------------------------------------*/
 void setFrameRate(float fps);
 

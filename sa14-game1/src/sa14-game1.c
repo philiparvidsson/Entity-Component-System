@@ -45,7 +45,8 @@ int main(void) {
     printIntroMessage();
 
     initGraphics("Main Window", 640, 480);
-    setFrameRate(60.0f);
+    setFrameRate(240.0f);
+    toggleFullscreen();
 
     while (windowIsOpen()) {
         clearCanvas(1.0f, 0.0f, 1.0f);
