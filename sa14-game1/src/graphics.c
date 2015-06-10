@@ -64,10 +64,10 @@
  *   Datatyp som representerar ett fönster.
  *------------------------------------*/
 typedef struct {
-    int         frame_time; /* Den tid som varje bildruta ska visas. */
     const char* title;      /* Fönstrets titel.                      */
     int         width,      /* Fönstrets bredd i antal pixlar.       */
                 height;     /* Fönstrets höjd i antal pixlar.        */
+    int         frame_time; /* Den tid som varje bildruta ska visas. */
 
     /* Nedan är plattformsspecifika, systemrelaterade variabler. */
 
