@@ -45,6 +45,7 @@ int main(void) {
     printIntroMessage();
 
     initGraphics("Main Window", 640, 480);
+    setFrameRate(2.0f);
 
     while (windowIsOpen()) {
         clearCanvas(1.0f, 0.0f, 1.0f);

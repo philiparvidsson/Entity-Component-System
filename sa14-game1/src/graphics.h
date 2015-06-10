@@ -24,6 +24,11 @@
  * FUNCTIONS
  *----------------------------------------------*/
 
+/*------------------------------------------------------------------------------
+ * Funktioner för att initiera grafikläge, avsluta grafikläge samt konfigurera
+ * grafikläget och ställa in parametrar.
+ *----------------------------------------------------------------------------*/
+
 /*--------------------------------------
  * Function: initGraphics()
  * Parameters:
@@ -46,6 +51,21 @@ void initGraphics(const char *title, int width, int height);
  *   Stänger grafikfönstret.
  *------------------------------------*/
 void exitGraphics(void);
+
+/*--------------------------------------
+ * Function: setFrameRate()
+ * Parameters:
+ *
+ * Description:
+ *   Ställer in hur många bildrutor som ska visas per sekund. Ange noll för
+ *   obegränsad hastighet.
+ *------------------------------------*/
+void setFrameRate(float fps);
+
+/*------------------------------------------------------------------------------
+ * Funktioner för att rensa ritytan, rita geomtriska figurer och texturer samt
+ * för att presentera ritytan på skärmen m.m.
+ *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
  * Function: clearCanvas()
@@ -79,6 +99,10 @@ void setColor(float r, float g, float b);
  *   Uppdaterar det grafikfönstret.
  *------------------------------------*/
 void updateDisplay(void);
+
+/*------------------------------------------------------------------------------
+ * Funktioner för att läsa ut inställningar och information om grafikläget m.m.
+ *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
  * Function: windowIsOpen()

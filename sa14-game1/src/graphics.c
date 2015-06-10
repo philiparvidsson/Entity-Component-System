@@ -38,6 +38,14 @@
  *------------------------------------*/
 #define CLASS_NAME (L"sa14-game1")
 
+/*--------------------------------------
+ * Constant: DEFAULT_FRAME_RATE
+ *
+ * Description:
+ *   Antal bildrutor som ska visas per sekund.
+ *------------------------------------*/
+#define DEFAULT_FRAME_RATE (30.0f)
+
 /*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
@@ -49,23 +57,30 @@
  *   Datatyp som representerar ett fönster.
  *------------------------------------*/
 typedef struct {
-    boolT       is_open; /* Indikerar om fönstret stängts av användaren. */
-    const char* title;   /* Fönstrets titel.                             */
-    int         width,   /* Fönstrets bredd i antal pixlar.              */
-                height;  /* Fönstrets höjd i antal pixlar.               */
+    int         frame_time; /* Den tid som varje bildruta ska visas. */
+    const char* title;      /* Fönstrets titel.                      */
+    int         width,      /* Fönstrets bredd i antal pixlar.       */
+                height;     /* Fönstrets höjd i antal pixlar.        */
 
     /* Nedan är plattformsspecifika, systemrelaterade variabler. */
 
-    HWND  hwnd;  /* Systemets egna "handtag" till fönstret. */
-    HDC   hdc;   /* Den DC (device context) som används.    */
-    HGLRC hglrc; /* Den renderingskontext som används.      */
+    HWND          hwnd;        /* Systemets egna "handtag" till fönstret. */
+    HDC           hdc;         /* Den DC (device context) som används.    */
+    HGLRC         hglrc;       /* Den renderingskontext som används.      */
+    LARGE_INTEGER last_update;
 } windowT;
 
 /*------------------------------------------------
  * GLOBALS
  *----------------------------------------------*/
 
-windowT window = { 0 };
+/*--------------------------------------
+ * Variable: window
+ *
+ * Description:
+ *   Pekare till grafikfönstret.
+ *------------------------------------*/
+static windowT *window = NULL;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -90,8 +105,8 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
     switch (uMsg) {
 
     case WM_CLOSE: {
-        /* Användaren har stängt fönstret, så vi markerar det som stängt. */
-        window.is_open = FALSE;
+        /* Användaren har stängt fönstret, så vi avslutar grafikläget. */
+        exitGraphics();
         break;
     }
 
@@ -100,11 +115,30 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
     return (DefWindowProc(hwnd, uMsg, wParam, lParam));
 }
 
+/*--------------------------------------
+ * Function: checkInitGraphics()
+ * Parameters:
+ *
+ * Description:
+ *   Avslutar programmet med ett felmeddelande om grafikläget inte är initierat.
+ *------------------------------------*/
 static void checkInitGraphics(void) {
-    if (!window.hwnd)
+    if (!window)
         error("Graphics not initialized");
 }
 
+/*--------------------------------------
+ * Function: createWindow()
+ * Parameters:
+ *   title   Fönstrets titel.
+ *   width   Fönstrets bredd, i antal pixlar.
+ *   height  Fönstrets höjd, i antal pixlar.
+ *
+ * Description:
+ *   Skapar ett grafikfönster med de specificerade dimensionerna. Den angivna
+ *   bredden och höjden inkluderar inte fönsterdekorationer, utan endast
+ *   storleken på klientytan.
+ *------------------------------------*/
 static void createWindow(const char *title, int width, int height) {
     RECT  rect  = { 0 }; rect.right = width; rect.bottom = height;
     DWORD style = WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX;
@@ -114,6 +148,9 @@ static void createWindow(const char *title, int width, int height) {
      * inte inkluderar fönsterdekorationer så som kantområden, titelområde m.m.
      */
     assert(AdjustWindowRectEx(&rect, style, FALSE, WS_EX_LEFT));
+
+    /* Dags att allokera fönsterdatatypen. */
+    window = malloc(sizeof(windowT));
 
     /*
      * Eftersom CreateWindowExW()-funktionen vill ha Unicode-strängar, så måste
@@ -126,18 +163,18 @@ static void createWindow(const char *title, int width, int height) {
     mbstowcs(window_name, title, window_name_length);
 
     /* Här skapar vi fönstret med ett anrop ner i Windows API. */
-    window.hwnd = CreateWindowExW(WS_EX_LEFT,
-                                  CLASS_NAME,
-                                  window_name,
-                                  style,
-                                  CW_USEDEFAULT,
-                                  CW_USEDEFAULT,
-                                  rect.right - rect.left,
-                                  rect.bottom - rect.top,
-                                  HWND_DESKTOP,
-                                  NULL,
-                                  GetModuleHandleW(NULL),
-                                  NULL);
+    window->hwnd = CreateWindowExW(WS_EX_LEFT,
+                                   CLASS_NAME,
+                                   window_name,
+                                   style,
+                                   CW_USEDEFAULT,
+                                   CW_USEDEFAULT,
+                                   rect.right - rect.left,
+                                   rect.bottom - rect.top,
+                                   HWND_DESKTOP,
+                                   NULL,
+                                   GetModuleHandleW(NULL),
+                                   NULL);
 
     /*
      * CreateWindowEx()-funktionen kopierar titel-strängen så det är ok att
@@ -145,20 +182,19 @@ static void createWindow(const char *title, int width, int height) {
      */
     free(window_name);
 
-    /* Om window.hwnd är NULL så skapades inget fönster. */
-    assert(window.hwnd != NULL);
+    /* Om window->hwnd är NULL så skapades inget fönster. */
+    assert(window->hwnd != NULL);
 
     /* Utan detta anrop syns inte fönstret. */
-    ShowWindow(window.hwnd, SW_SHOW);
+    ShowWindow(window->hwnd, SW_SHOW);
 
-    window.is_open = TRUE;
-    window.width   = width;
-    window.height  = height;
-    window.title   = title;
+    window->width  = width;
+    window->height = height;
+    window->title  = title;
 
-    window.hdc = GetDC(window.hwnd);
+    window->hdc = GetDC(window->hwnd);
     
-    assert(window.hdc != NULL);
+    assert(window->hdc != NULL);
 }
 
 /*--------------------------------------
@@ -198,7 +234,7 @@ static void registerWindowClass(void) {
  * Description:
  *   Initierar grafikläge för fönstret.
  *------------------------------------*/
-static void setPixelFormat() {
+static void setPixelFormat(void) {
     /* Detta krävs för att ett fönster ska acceptera OpenGL-läge. */
 
     PIXELFORMATDESCRIPTOR pfd;
@@ -211,10 +247,10 @@ static void setPixelFormat() {
     pfd.cDepthBits = 32;
     pfd.iLayerType = PFD_MAIN_PLANE;
 
-    int pixel_format = ChoosePixelFormat(window.hdc, &pfd);
+    int pixel_format = ChoosePixelFormat(window->hdc, &pfd);
 
     assert(pixel_format != 0);
-    assert(SetPixelFormat(window.hdc, pixel_format, &pfd));
+    assert(SetPixelFormat(window->hdc, pixel_format, &pfd));
 }
 
 /*--------------------------------------
@@ -232,6 +268,11 @@ static void unregisterWindowClass(void) {
  * programmen för att initiera grafikläget m.m.
  *----------------------------------------------------------------------------*/
 
+/*------------------------------------------------------------------------------
+ * Funktioner för att initiera grafikläge, avsluta grafikläge samt konfigurera
+ * grafikläget och ställa in parametrar.
+ *----------------------------------------------------------------------------*/
+
 /*--------------------------------------
  * Function: initGraphics()
  * Parameters:
@@ -245,6 +286,8 @@ static void unregisterWindowClass(void) {
  *   storleken på klientytan.
  *------------------------------------*/
 void initGraphics(const char *title, int width, int height) {
+    assert(window == NULL);
+
     /*
      * Först måste vi registrera fönsterklassen, annars går det inte att skapa
      * ett fönster.
@@ -253,10 +296,10 @@ void initGraphics(const char *title, int width, int height) {
     createWindow       (title, width, height);
     setPixelFormat     ();
 
-    window.hglrc = wglCreateContext(window.hdc);
+    window->hglrc = wglCreateContext(window->hdc);
 
-    assert(window.hglrc != NULL);
-    assert(wglMakeCurrent(window.hdc, window.hglrc));
+    assert(window->hglrc != NULL);
+    assert(wglMakeCurrent(window->hdc, window->hglrc));
 
     /* Här nedanför initierar vi OpenGL. */
 
@@ -271,6 +314,8 @@ void initGraphics(const char *title, int width, int height) {
     /* Mjuka, fina linjer! */
     glEnable(GL_LINE_SMOOTH);
     glHint  (GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+    setFrameRate(DEFAULT_FRAME_RATE);
 }
 
 /*--------------------------------------
@@ -281,15 +326,17 @@ void initGraphics(const char *title, int width, int height) {
  *   Stänger grafikfönstret.
  *------------------------------------*/
 void exitGraphics(void) {
-    checkInitGraphics();
+    /* Om window redan är NULL så är vi inte i grafikläge. */
+    if (!window)
+        return;
 
-    wglMakeCurrent  (window.hdc, NULL);
-    wglDeleteContext(window.hglrc);
+    wglMakeCurrent  (window->hdc, NULL);
+    wglDeleteContext(window->hglrc);
 
-    window.hdc   = NULL;
-    window.hglrc = NULL;
+    window->hdc   = NULL;
+    window->hglrc = NULL;
 
-    assert(DestroyWindow(window.hwnd));
+    DestroyWindow(window->hwnd);
 
     /* @To-do: Är det en bra idé att anropa updateWindow() här? */
     updateDisplay();
@@ -297,9 +344,33 @@ void exitGraphics(void) {
     /* Vi städar upp efter oss genom att avregistrera fönsterklassen här. */
     unregisterWindowClass();
 
-    /* Nolla all fönsterdata så inga spår finns kvar. */
-    memset(&window, 0, sizeof(windowT));
+    free(window);
+    window = NULL;
 }
+
+/*--------------------------------------
+* Function: setFrameRate()
+* Parameters:
+*
+* Description:
+*   Ställer in hur många bildrutor som ska visas per sekund. Ange noll för
+*   obegränsad hastighet.
+*------------------------------------*/
+void setFrameRate(float fps) {
+    checkInitGraphics();
+
+    LARGE_INTEGER freq;
+
+    assert(QueryPerformanceFrequency(&freq));
+    assert(QueryPerformanceCounter(&window->last_update));
+
+    window->frame_time = freq.QuadPart / fps;
+}
+
+/*------------------------------------------------------------------------------
+ * Funktioner för att rensa ritytan, rita geomtriska figurer och texturer samt
+ * för att presentera ritytan på skärmen m.m.
+ *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
  * Function: clearCanvas()
@@ -344,23 +415,48 @@ void setColor(float r, float g, float b) {
 void updateDisplay(void) {
     checkInitGraphics();
 
+    /* Här presenterar vi ritytan i fönstret genom att "swappa" in bufferten. */
+    if (window->hdc)
+        assert(SwapBuffers(window->hdc));
+
     /*
-     * Här ser vi till att fönstret inte hänger sig genom att ta emot och
-     * hantera fönstermeddelanden. De skickas vidare av anropet till
-     * DispatchMessageW() och blir sedan hanterade i WindowProc()-funktionen.
+     * Nedan snurrar vi i en loop tills vi pausat så länge som behövs för att
+     * upprätthålla rätt intervall för antal bildrutor per sekund.
      */
+    LARGE_INTEGER perf_count;
     while (TRUE) {
+        /*
+         * Här ser vi till att fönstret inte hänger sig genom att ta emot och
+         * hantera fönstermeddelanden. Funktionen DispatchMessageW() skickar dem
+         * vidare, varpå de blir hanterade i WindowProc()-funktionen.
+         */
         MSG msg;
-        while (PeekMessageW(&msg, window.hwnd, 0, 0, PM_REMOVE)) {
+        while (window && PeekMessageW(&msg, window->hwnd, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessageW(&msg);
         }
 
-        if (window.hdc)
-            SwapBuffers(window.hdc);
-        break;
+        /* Om window är NULL här så har användaren stängt fönstret. */
+        if (!window)
+            return;
+
+        assert(QueryPerformanceCounter(&perf_count));
+
+        /*
+         * Vi jämför och ser om vi snurrat i den här loopen tillräckligt länge
+         * för att visa bildrutan precis så länge som vi ska.
+         */
+        perf_count.QuadPart -= window->last_update.QuadPart;
+        if (perf_count.QuadPart > window->frame_time)
+            break;
     }
+
+    assert(QueryPerformanceCounter(&window->last_update));
 }
+
+/*------------------------------------------------------------------------------
+ * Funktioner för att läsa ut inställningar och information om grafikläget m.m.
+ *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
  * Function: windowIsOpen()
@@ -373,7 +469,5 @@ void updateDisplay(void) {
  *   Returnerar sant om grafikfönstret är öppet.
  *------------------------------------*/
 boolT windowIsOpen(void) {
-    checkInitGraphics();
-
-    return (window.is_open);
+    return (window != NULL);
 }
