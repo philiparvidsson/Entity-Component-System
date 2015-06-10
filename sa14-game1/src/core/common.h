@@ -17,6 +17,10 @@
  * CONFIGURATION
  *----------------------------------------------*/
 
+/*
+ * Här konfigurerar vi kompileringen och länkningen en del. I alla fall om vi
+ * använder Microsoft Visual C++-kompilatorn.
+ */
 #ifdef _MSC_VER
 
 #pragma comment(lib, "opengl32.lib")
@@ -24,7 +28,7 @@
 /* warning C4711: 'function selected for automatic inline expansion' */
 #pragma warning(disable:4711)
 
-#endif
+#endif /* _MSC_VER */
 
 /*------------------------------------------------
  * INCLUDES
