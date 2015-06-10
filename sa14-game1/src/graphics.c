@@ -244,7 +244,8 @@ static void registerWindowClass(void) {
 static void setupPixelFormat(void) {
     /* Detta krävs för att ett fönster ska acceptera OpenGL-läge. */
 
-    PIXELFORMATDESCRIPTOR pfd;
+    PIXELFORMATDESCRIPTOR pfd = { 0 };
+
     pfd.nSize      = sizeof(PIXELFORMATDESCRIPTOR);
     pfd.nVersion   = 1;
     pfd.dwFlags    = PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL;

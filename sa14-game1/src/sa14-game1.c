@@ -50,7 +50,7 @@ int main(void) {
     setFrameRate(60.0f);
 
     while (windowIsOpen()) {
-        clearCanvas(1.0f, 0.0f, 1.0f);
+        clearCanvas(0.0f, 0.0f, 0.25f);
         updateDisplay();
     }
 
