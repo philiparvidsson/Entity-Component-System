@@ -19,6 +19,9 @@
 
 #ifdef _MSC_VER
     #pragma comment(lib, "opengl32.lib")
+
+    /* warning C4711: 'function selected for automatic inline expansion' */
+    #pragma warning(disable:4711)
 #endif
 
 /*------------------------------------------------

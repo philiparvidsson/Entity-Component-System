@@ -21,7 +21,6 @@
 #include "core/debug.h"
 
 #include <stdlib.h>
-#include <string.h> /* memset() */
 
 #include <Windows.h>
 #include <GL/gl.h>

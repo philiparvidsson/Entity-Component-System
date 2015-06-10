@@ -33,6 +33,8 @@
  *------------------------------------*/
 static void printIntroMessage(void) {
     printf("sa14-game1 v%s by %s\n\n\n", PROGRAM_VERSION, PROGRAM_AUTHORS);
+    printf("Some time in the not too distant future, this program will be a\n"
+           "really cool game instead of this crap that does nothing...\n");
 }
 
 /*--------------------------------------
@@ -45,8 +47,7 @@ int main(void) {
     printIntroMessage();
 
     initGraphics("Main Window", 640, 480);
-    setFrameRate(240.0f);
-    toggleFullscreen();
+    setFrameRate(60.0f);
 
     while (windowIsOpen()) {
         clearCanvas(1.0f, 0.0f, 1.0f);

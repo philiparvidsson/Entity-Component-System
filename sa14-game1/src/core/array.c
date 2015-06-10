@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: array.c
  * Created: June 8, 2015
- * Last changed: June 9, 2015
+ * Last changed: June 10, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -15,6 +15,8 @@
  *----------------------------------------------*/
 
 #include "array.h"
+
+#include "core/common.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -58,6 +60,10 @@ typedef struct {
  * FUNCTIONS
  *----------------------------------------------*/
 
+/*------------------------------------------------------------------------------
+ * Privata funktioner.
+ *----------------------------------------------------------------------------*/
+
 /*--------------------------------------
  * Function: doubleArrayCapacity()
  * Parameters:
@@ -84,6 +90,10 @@ static void doubleArrayCapacity(arrayT_ *a) {
     free(old_data);
 }
 
+/*------------------------------------------------------------------------------
+ * Publika funktioner.
+ *----------------------------------------------------------------------------*/
+
 /*--------------------------------------
  * Function: newArray()
  * Parameters:
@@ -106,7 +116,6 @@ arrayT *newArray(size_t elem_size) {
     return ((arrayT *)a);
 }
 
-
 /*--------------------------------------
  * Function: freeArray()
  * Parameters:
@@ -119,7 +128,6 @@ void freeArray(arrayT *a) {
     free(((arrayT_ *)a)->data);
     free(a);
 }
-
 
 /*--------------------------------------
  * Function: arrayAdd()

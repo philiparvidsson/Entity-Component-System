@@ -16,6 +16,8 @@
 
 #include "debug.h"
 
+#include "core/common.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
