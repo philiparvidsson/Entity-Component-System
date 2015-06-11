@@ -43,13 +43,15 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\</OutDir>
     <IntDir>$(SolutionDir)\build\</IntDir>
-    <IncludePath>$(ProjectDir)\src\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\include\;$(ProjectDir)\source\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\</OutDir>
     <IntDir>$(SolutionDir)\build\</IntDir>
-    <IncludePath>$(ProjectDir)\src\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\include\;$(ProjectDir)\source\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -82,20 +84,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\core\array.c" />
-    <ClCompile Include="src\graphics.c" />
-    <ClCompile Include="src\core\debug.c" />
-    <ClCompile Include="src\sa14-game1.c" />
+    <ClCompile Include="source\core\array.c" />
+    <ClCompile Include="source\graphics.c" />
+    <ClCompile Include="source\core\debug.c" />
+    <ClCompile Include="source\core\io.c" />
+    <ClCompile Include="source\sa14-game1.c" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt" />
     <Text Include="license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\array.h" />
-    <ClInclude Include="src\core\common.h" />
-    <ClInclude Include="src\core\debug.h" />
-    <ClInclude Include="src\graphics.h" />
+    <ClInclude Include="include\glew.h" />
+    <ClInclude Include="include\glxew.h" />
+    <ClInclude Include="source\core\array.h" />
+    <ClInclude Include="source\core\common.h" />
+    <ClInclude Include="source\core\debug.h" />
+    <ClInclude Include="source\graphics.h" />
+    <ClInclude Include="source\core\io.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\glew32.dll" />
+    <None Include="shaders\null.frag" />
+    <None Include="shaders\null.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\glew32.lib" />
+    <Library Include="lib\glew32s.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

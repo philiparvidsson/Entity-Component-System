@@ -21,6 +21,8 @@
 
 #include <stdlib.h>
 
+#include <glew.h>
+
 #include <Windows.h>
 #include <GL/gl.h>
 
@@ -305,20 +307,7 @@ void initGraphics(const char *title, int width, int height) {
 
     assert(window->hglrc != NULL);
     assert(wglMakeCurrent(window->hdc, window->hglrc));
-
-    /* Här nedanför initierar vi OpenGL. */
-
-    /* Utan GL_BLEND fungerar inte kantutjämningen för linjer. */
-    glEnable   (GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    /* Runda, fina prickar! :-) */
-    glEnable(GL_POINT_SMOOTH);
-    glHint  (GL_POINT_SMOOTH_HINT, GL_NICEST);
-
-    /* Mjuka, fina linjer! */
-    glEnable(GL_LINE_SMOOTH);
-    glHint  (GL_LINE_SMOOTH_HINT, GL_NICEST);
+    assert(glewInit() == GLEW_OK);
 
     setFrameRate(DefaultFPS);
 }
@@ -401,7 +390,7 @@ void clearCanvas(float r, float g, float b) {
     checkGraphicsInited();
 
     glClearColor(r, g, b, 1.0f);
-    glClear     (GL_COLOR_BUFFER_BIT);
+    glClear     (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 /*--------------------------------------
