@@ -67,7 +67,7 @@ void freeArray(arrayT *a);
  * Function: arrayAdd()
  * Parameters:
  *   a     Arrayen till vilken ett element ska läggas.
- *   data  En pekare till elementdatan.
+ *   elem  En pekare till elementdatan.
  *
  * Returns:
  *   En pekare till minnesplatsen dit elementet kopierades.
@@ -75,8 +75,18 @@ void freeArray(arrayT *a);
  * Description:
  *   Lägger till ett element i den specificerade arrayen.
  *------------------------------------*/
-void *arrayAdd(arrayT *a, const void *data);
+void *arrayAdd(arrayT *a, const void *elem);
 
-void arrayGet(const arrayT *a, int i, void *dest);
+/*--------------------------------------
+ * Function: arrayGet()
+ * Parameters:
+ *   a     Arrayen från vilket ett element ska läsas ut.
+ *   i     Index till det element som ska läsas ut.
+ *   elem  Pekare till datablock där elementat ska lagras.
+ *
+ * Description:
+ *   Läser ut ett element från arrayen.
+ *------------------------------------*/
+void arrayGet(const arrayT *a, int i, void *elem);
 
 #endif /* array_h_ */

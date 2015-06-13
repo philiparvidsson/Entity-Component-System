@@ -59,24 +59,20 @@
     <ClInclude Include="source\graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\glew.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\glxew.h">
+    <ClInclude Include="include\GL\glew.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\null.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="shaders\null.frag">
-      <Filter>Shader Files</Filter>
-    </None>
     <None Include="bin\glew32.dll" />
+    <None Include="shaders\test_shader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shaders\test_shader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="lib\glew32s.lib" />
     <Library Include="lib\glew32.lib" />
   </ItemGroup>
 </Project>

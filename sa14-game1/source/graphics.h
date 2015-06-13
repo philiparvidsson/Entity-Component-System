@@ -24,6 +24,12 @@
  * TYPES
  *----------------------------------------------*/
 
+/*--------------------------------------
+ * Type: shaderProgramADT
+ *
+ * Description:
+ *   Abstrakt pekartyp för ett shader-program.
+ *------------------------------------*/
 typedef struct shaderProgramCDT *shaderProgramADT;
 
 /*------------------------------------------------
@@ -58,12 +64,77 @@ void initGraphics(string title, int width, int height);
  *------------------------------------*/
 void exitGraphics(void);
 
-shaderProgramADT createShaderProgram();
-void loadFragmentShader(shaderProgramADT p, string source);
-void loadVertexShader(shaderProgramADT p, string source);
-void useShaderProgram(shaderProgramADT p);
-void setShaderParam(shaderProgramADT p, string name, float value);
-void deleteShaderProgram(shaderProgramADT p);
+/*--------------------------------------
+ * Function: createShaderProgram()
+ * Parameters:
+ *
+ * Returns:
+ *   En pekare till ett shader-program.
+ *
+ * Description:
+ *   Skapar ett nytt shader-program.
+ *------------------------------------*/
+shaderProgramADT createShaderProgram(void);
+
+/*--------------------------------------
+ * Function: compileFragmentShader()
+ * Parameters:
+ *   program  Det shader-program som shadern ska läggas till i.
+ *   source   GLSL-koden som ska kompileras och länkas till det specificerade
+ *            shader-programmet.
+ *
+ * Description:
+ *   Kompilerar och länkar GLSL-kod till en fragment-shader i det specificerade
+ *   shader-programmet.
+ *------------------------------------*/
+void compileFragmentShader(shaderProgramADT program, string source);
+
+/*--------------------------------------
+ * Function: compileVertexShader()
+ * Parameters:
+ *   program  Det shader-program som shadern ska läggas till i.
+ *   source   GLSL-koden som ska kompileras och länkas till det specificerade
+ *            shader-programmet.
+ *
+ * Description:
+ *   Kompilerar och länkar GLSL-kod till en vertex-shader i det specificerade
+ *   shader-programmet.
+ *------------------------------------*/
+void compileVertexShader(shaderProgramADT program, string source);
+
+/*--------------------------------------
+ * Function: setShaderParam()
+ * Parameters:
+ *   program  Det shader-program vars parametrar ska ställas in.
+ *   name     Namnet på uniform-parametern.
+ *   val      Värdet på parametern.
+ *
+ * Description:
+ *   Sätter den specificerade uniform-parametern till det specificerade värdet.
+ *   Se nyckelordet uniform i språkspecifikationen för GLSL för mer information.
+ *------------------------------------*/
+void setShaderParam(shaderProgramADT program, string name, float value);
+
+/*--------------------------------------
+ * Function: useShaderProgram()
+ * Parameters:
+ *   program  Det shader-program som ska användas för nästkommande ritoperationer.
+ *
+ * Description:
+ *   Aktiverar det specificerade shader-programmet.
+ *------------------------------------*/
+void useShaderProgram(shaderProgramADT program);
+
+/*--------------------------------------
+ * Function: deleteShaderProgram()
+ * Parameters:
+ *   program  Det shader-program som ska tas bort.
+ *
+ * Description:
+ *   Tar bort det specificerade shader-programmet inklusive alla tillhörande
+ *   shaders.
+ *------------------------------------*/
+void deleteShaderProgram(shaderProgramADT program);
 
 /*--------------------------------------
  * Function: setFrameRate()

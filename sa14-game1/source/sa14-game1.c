@@ -21,9 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <Windows.h>
-#include "glew.h"
-#include <GL/gl.h>
+#include <GL/glew.h>
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -59,24 +57,26 @@ int main(void) {
         0.0f, 1.0f, 0.0f
     };
 
-    glGenBuffers(1, &vb);
-    glBindBuffer(GL_ARRAY_BUFFER, vb);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vb), vb, GL_STATIC_DRAW);
+    GLuint vbid;
 
+    glGenBuffers(1, &vbid);
+    glBindBuffer(GL_ARRAY_BUFFER, vbid);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vb), vb, GL_STATIC_DRAW);
 
     shaderProgramADT shader_program = createShaderProgram();
 
-    loadVertexShader(shader_program, readFile("shaders/null.vert"));
-    loadFragmentShader(shader_program, readFile("shaders/null.frag"));
+    compileVertexShader(shader_program, readFile("shaders/test_shader.vert"));
+    compileFragmentShader(shader_program, readFile("shaders/test_shader.frag"));
 
     float ff = 0.0f;
     while (windowIsOpen()) {
         clearDisplay(0.0f, 0.0f, 0.4f);
         ff += 0.25 / 60.0f;
+        vb[0] = ff;
         setShaderParam(shader_program, "some_val", ff);
         useShaderProgram(shader_program);
         glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vb);
+        glBindBuffer(GL_ARRAY_BUFFER, vbid);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);

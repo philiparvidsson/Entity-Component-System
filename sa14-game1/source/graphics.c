@@ -22,10 +22,9 @@
 
 #include <stdlib.h>
 
-#include <glew.h>
+#include <GL/glew.h>
 
 #include <Windows.h>
-#include <GL/gl.h>
 
 /*------------------------------------------------
  * CONSTANTS
@@ -60,9 +59,15 @@
  * TYPES
  *----------------------------------------------*/
 
+/*--------------------------------------
+ * Type: shaderProgramCDT
+ *
+ * Description:
+ *   Abstrakt pekartyp för ett shader-program.
+ *------------------------------------*/
 struct shaderProgramCDT {
-    GLuint id;
-    arrayT *shaders;
+    GLuint  id;      /* Shader-programmets interna ID-nummer. */
+    arrayT *shaders; /* Pekare till array med programmets shaders. */
 };
 
 /*--------------------------------------
@@ -143,6 +148,39 @@ static void checkGraphicsInited(void) {
 }
 
 /*--------------------------------------
+ * Function: compileShader()
+ * Parameters:
+ *   type    Den typ av shader som ska kompileras.
+ *   prog    Shader-programmet som shadern ska kompileras in i och länkas till.
+ *   source  Shader-programmets GLSL-kod..
+ *
+ * Description:
+ *   Kompilerar en shader och länkar den till det specificerade shader-
+ *   programmet.
+ *------------------------------------*/
+static void compileShader(GLenum type, shaderProgramADT prog, string source) {
+    GLuint shader_id = glCreateShader(type);
+
+    glShaderSource (shader_id, 1, &source, NULL);
+    glCompileShader(shader_id);
+
+    /*
+     * Om GL_COMPILE_STATUS returnerar GL_FALSE i result-parametern så miss-
+     * lyckades kompileringen, förmodligen på grund av trasig kod. Vi kan inte
+     * fortsätta då utan genererar ett fel istället.
+     */
+    GLint result;
+    glGetShaderiv(shader_id, GL_COMPILE_STATUS, &result);
+    if (result == GL_FALSE)
+        error("Shader failed to compile");
+
+    glAttachShader(prog->id, shader_id);
+    glLinkProgram (prog->id);
+
+    arrayAdd(prog->shaders, &shader_id);
+}
+
+/*--------------------------------------
  * Function: createWindow()
  * Parameters:
  *   title   Fönstrets titel.
@@ -210,18 +248,6 @@ static void createWindow(string title, int width, int height) {
     window->hdc = GetDC(window->hwnd);
     
     assert(window->hdc != NULL);
-}
-
-static void loadShader(GLenum type, shaderProgramADT p, string source) {
-    GLuint shader_id = glCreateShader(type);
-
-    glShaderSource(shader_id, 1, &source, NULL);
-    glCompileShader(shader_id);
-    glAttachShader(p->id, shader_id);
-
-    arrayAdd(p->shaders, &shader_id);
-
-    glLinkProgram(p->id);
 }
 
 /*--------------------------------------
@@ -360,43 +386,103 @@ void exitGraphics(void) {
     window = NULL;
 }
 
-shaderProgramADT createShaderProgram() {
-    shaderProgramADT p = malloc(sizeof(struct shaderProgramCDT));
+/*--------------------------------------
+ * Function: createShaderProgram()
+ * Parameters:
+ *
+ * Returns:
+ *   En pekare till ett shader-program.
+ *
+ * Description:
+ *   Skapar ett nytt shader-program.
+ *------------------------------------*/
+shaderProgramADT createShaderProgram(void) {
+    shaderProgramADT program = malloc(sizeof(struct shaderProgramCDT));
 
-    p->id      = glCreateProgram();
-    p->shaders = newArray(sizeof(GLuint));
+    program->id = glCreateProgram();
+    program->shaders = newArray(sizeof(GLuint));
 
-    return (p);
+    return (program);
 }
 
-void loadFragmentShader(shaderProgramADT p, string source) {
-    loadShader(GL_FRAGMENT_SHADER, p, source);
+/*--------------------------------------
+ * Function: compileFragmentShader()
+ * Parameters:
+ *   program  Det shader-program som shadern ska läggas till i.
+ *   source   GLSL-koden som ska kompileras och länkas till det specificerade
+ *            shader-programmet.
+ *
+ * Description:
+ *   Kompilerar och länkar GLSL-kod till en fragment-shader i det specificerade
+ *   shader-programmet.
+ *------------------------------------*/
+void compileFragmentShader(shaderProgramADT program, string source) {
+    compileShader(GL_FRAGMENT_SHADER, program, source);
 }
 
-void loadVertexShader(shaderProgramADT p, string source) {
-    loadShader(GL_VERTEX_SHADER, p, source);
+/*--------------------------------------
+ * Function: compileVertexShader()
+ * Parameters:
+ *   program  Det shader-program som shadern ska läggas till i.
+ *   source   GLSL-koden som ska kompileras och länkas till det specificerade
+ *            shader-programmet.
+ *
+ * Description:
+ *   Kompilerar och länkar GLSL-kod till en vertex-shader i det specificerade
+ *   shader-programmet.
+ *------------------------------------*/
+void compileVertexShader(shaderProgramADT program, string source) {
+    compileShader(GL_VERTEX_SHADER, program, source);
 }
 
-void useShaderProgram(shaderProgramADT p) {
-    glUseProgram(p ? p->id : 0);
+/*--------------------------------------
+ * Function: setShaderParam()
+ * Parameters:
+ *   program  Det shader-program vars parametrar ska ställas in.
+ *   name     Namnet på uniform-parametern.
+ *   val      Värdet på parametern.
+ *
+ * Description:
+ *   Sätter den specificerade uniform-parametern till det specificerade värdet.
+ *   Se nyckelordet uniform i språkspecifikationen för GLSL för mer information.
+ *------------------------------------*/
+void setShaderParam(shaderProgramADT program, string name, float value) {
+    glUniform1f(glGetUniformLocation(program->id, name), value);
 }
 
-void setShaderParam(shaderProgramADT p, string name, float value) {
-    glUniform1f(glGetUniformLocation(p->id, name), value);
+/*--------------------------------------
+ * Function: useShaderProgram()
+ * Parameters:
+ *   program  Det shader-program som ska användas för nästkommande ritoperationer.
+ *
+ * Description:
+ *   Aktiverar det specificerade shader-programmet.
+ *------------------------------------*/
+void useShaderProgram(shaderProgramADT program) {
+    glUseProgram(program ? program->id : 0);
 }
 
-void deleteShaderProgram(shaderProgramADT p) {
-    for (int i = 0; i < p->shaders->num_elems; i++) {
+/*--------------------------------------
+ * Function: deleteShaderProgram()
+ * Parameters:
+ *   program  Det shader-program som ska tas bort.
+ *
+ * Description:
+ *   Tar bort det specificerade shader-programmet inklusive alla tillhörande
+ *   shaders.
+ *------------------------------------*/
+void deleteShaderProgram(shaderProgramADT program) {
+    for (int i = 0; i < program->shaders->num_elems; i++) {
         GLuint shader_id;
-        arrayGet(p->shaders, i, &shader_id);
+        arrayGet(program->shaders, i, &shader_id);
         glDeleteShader(shader_id);
     }
 
     glUseProgram(0);
-    glDeleteProgram(p->id);
+    glDeleteProgram(program->id);
 
-    freeArray(p->shaders);
-    free(p);
+    freeArray(program->shaders);
+    free(program);
 }
 
 /*--------------------------------------

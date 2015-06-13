@@ -133,7 +133,7 @@ void freeArray(arrayT *a) {
  * Function: arrayAdd()
  * Parameters:
  *   a     Arrayen till vilken ett element ska läggas.
- *   data  En pekare till elementdatan.
+ *   elem  En pekare till elementdatan.
  *
  * Returns:
  *   En pekare till minnesplatsen dit elementet kopierades.
@@ -141,19 +141,28 @@ void freeArray(arrayT *a) {
  * Description:
  *   Lägger till ett element i den specificerade arrayen.
  *------------------------------------*/
-void *arrayAdd(arrayT *a, const void *data) {
+void *arrayAdd(arrayT *a, const void *elem) {
     /* Om det är fullt så gör vi helt enkelt utrymme för fler element. */
     if (a->num_elems >= ((arrayT_ *)a)->max_elems)
         doubleArrayCapacity((arrayT_ *)a);
 
     void *dest = (char *)((arrayT_ *)a)->data + (a->num_elems * a->elem_size);
     
-    memcpy(dest, data, a->elem_size);
+    memcpy(dest, elem, a->elem_size);
     ((arrayT_ *)a)->num_elems++;
 
     return (dest);
 }
-
+/*--------------------------------------
+ * Function: arrayGet()
+ * Parameters:
+ *   a     Arrayen från vilket ett element ska läsas ut.
+ *   i     Index till det element som ska läsas ut.
+ *   elem  Pekare till datablock där elementat ska lagras.
+ *
+ * Description:
+ *   Läser ut ett element från arrayen.
+ *------------------------------------*/
 void arrayGet(const arrayT *a, int i, void *dest) {
     assert(0 <= i && i < a->num_elems);
 
