@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: graphics.c
  * Created: June 8, 2015
- * Last changed: June 10, 2015
+ * Last changed: June 13, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -17,6 +17,7 @@
 
 #include "graphics.h"
 
+#include "core/array.h"
 #include "core/common.h"
 
 #include <stdlib.h>
@@ -58,6 +59,11 @@
 /*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
+
+struct shaderProgramCDT {
+    GLuint id;
+    arrayT *shaders;
+};
 
 /*--------------------------------------
  * Type: windowT
@@ -148,7 +154,7 @@ static void checkGraphicsInited(void) {
  *   bredden och höjden inkluderar inte fönsterdekorationer, utan endast
  *   storleken på klientytan.
  *------------------------------------*/
-static void createWindow(const char *title, int width, int height) {
+static void createWindow(string title, int width, int height) {
     RECT  rect  = { 0 }; rect.right = width; rect.bottom = height;
     DWORD style = WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX;
 
@@ -204,6 +210,18 @@ static void createWindow(const char *title, int width, int height) {
     window->hdc = GetDC(window->hwnd);
     
     assert(window->hdc != NULL);
+}
+
+static void loadShader(GLenum type, shaderProgramADT p, string source) {
+    GLuint shader_id = glCreateShader(type);
+
+    glShaderSource(shader_id, 1, &source, NULL);
+    glCompileShader(shader_id);
+    glAttachShader(p->id, shader_id);
+
+    arrayAdd(p->shaders, &shader_id);
+
+    glLinkProgram(p->id);
 }
 
 /*--------------------------------------
@@ -295,7 +313,7 @@ static void unregisterWindowClass(void) {
  *   bredden och höjden inkluderar inte fönsterdekorationer, utan endast
  *   storleken på klientytan.
  *------------------------------------*/
-void initGraphics(const char *title, int width, int height) {
+void initGraphics(string title, int width, int height) {
     if (window)
         error("Graphics already initialized");
 
@@ -324,13 +342,13 @@ void exitGraphics(void) {
     if (!window)
         return;
 
-    wglMakeCurrent  (window->hdc, NULL);
-    wglDeleteContext(window->hglrc);
+    assert(wglMakeCurrent(window->hdc, NULL));
+    assert(wglDeleteContext(window->hglrc));
 
     window->hdc   = NULL;
     window->hglrc = NULL;
 
-    DestroyWindow(window->hwnd);
+    assert(DestroyWindow(window->hwnd));
 
     /* @To-do: Är det en bra idé att anropa updateWindow() här? */
     updateDisplay();
@@ -340,6 +358,45 @@ void exitGraphics(void) {
 
     free(window);
     window = NULL;
+}
+
+shaderProgramADT createShaderProgram() {
+    shaderProgramADT p = malloc(sizeof(struct shaderProgramCDT));
+
+    p->id      = glCreateProgram();
+    p->shaders = newArray(sizeof(GLuint));
+
+    return (p);
+}
+
+void loadFragmentShader(shaderProgramADT p, string source) {
+    loadShader(GL_FRAGMENT_SHADER, p, source);
+}
+
+void loadVertexShader(shaderProgramADT p, string source) {
+    loadShader(GL_VERTEX_SHADER, p, source);
+}
+
+void useShaderProgram(shaderProgramADT p) {
+    glUseProgram(p ? p->id : 0);
+}
+
+void setShaderParam(shaderProgramADT p, string name, float value) {
+    glUniform1f(glGetUniformLocation(p->id, name), value);
+}
+
+void deleteShaderProgram(shaderProgramADT p) {
+    for (int i = 0; i < p->shaders->num_elems; i++) {
+        GLuint shader_id;
+        arrayGet(p->shaders, i, &shader_id);
+        glDeleteShader(shader_id);
+    }
+
+    glUseProgram(0);
+    glDeleteProgram(p->id);
+
+    freeArray(p->shaders);
+    free(p);
 }
 
 /*--------------------------------------
@@ -377,7 +434,7 @@ void setFrameRate(float fps) {
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
- * Function: clearCanvas()
+ * Function: clearDisplay()
  * Parameters:
  *   r  Röd färgkomponent.
  *   g  Grön färgkomponent.
@@ -386,7 +443,7 @@ void setFrameRate(float fps) {
  * Description:
  *   Rensar ritytan til den specificerade färgen.
  *------------------------------------*/
-void clearCanvas(float r, float g, float b) {
+void clearDisplay(float r, float g, float b) {
     checkGraphicsInited();
 
     glClearColor(r, g, b, 1.0f);

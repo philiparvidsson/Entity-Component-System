@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: array.c
  * Created: June 8, 2015
- * Last changed: June 10, 2015
+ * Last changed: June 13, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -146,10 +146,18 @@ void *arrayAdd(arrayT *a, const void *data) {
     if (a->num_elems >= ((arrayT_ *)a)->max_elems)
         doubleArrayCapacity((arrayT_ *)a);
 
-    void *dest = (char *)((arrayT_ *)a)->data + a->num_elems * a->elem_size;
+    void *dest = (char *)((arrayT_ *)a)->data + (a->num_elems * a->elem_size);
     
     memcpy(dest, data, a->elem_size);
     ((arrayT_ *)a)->num_elems++;
 
     return (dest);
+}
+
+void arrayGet(const arrayT *a, int i, void *dest) {
+    assert(0 <= i && i < a->num_elems);
+
+    void *src = ((char *)((arrayT_ *)a)->data + (i * a->elem_size));
+
+    memcpy(dest, src, a->elem_size);
 }

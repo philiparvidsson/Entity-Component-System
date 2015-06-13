@@ -21,6 +21,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <Windows.h>
+#include "glew.h"
+#include <GL/gl.h>
+
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
@@ -49,10 +53,39 @@ int main(void) {
     initGraphics("Main Window", 640, 480);
     setFrameRate(60.0f);
 
+    GLfloat vb[] = {
+        -1.0f, -1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f
+    };
+
+    glGenBuffers(1, &vb);
+    glBindBuffer(GL_ARRAY_BUFFER, vb);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vb), vb, GL_STATIC_DRAW);
+
+
+    shaderProgramADT shader_program = createShaderProgram();
+
+    loadVertexShader(shader_program, readFile("shaders/null.vert"));
+    loadFragmentShader(shader_program, readFile("shaders/null.frag"));
+
+    float ff = 0.0f;
     while (windowIsOpen()) {
-        clearCanvas(0.0f, 0.0f, 0.25f);
+        clearDisplay(0.0f, 0.0f, 0.4f);
+        ff += 0.25 / 60.0f;
+        setShaderParam(shader_program, "some_val", ff);
+        useShaderProgram(shader_program);
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, vb);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDisableVertexAttribArray(0);
+        
         updateDisplay();
     }
+
+    deleteShaderProgram(shader_program);
 
     exitGraphics();
 

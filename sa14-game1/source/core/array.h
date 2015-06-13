@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: array.h
  * Created: June 8, 2015
- * Last changed: June 9, 2015
+ * Last changed: June 13, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -76,5 +76,7 @@ void freeArray(arrayT *a);
  *   Lägger till ett element i den specificerade arrayen.
  *------------------------------------*/
 void *arrayAdd(arrayT *a, const void *data);
+
+void arrayGet(const arrayT *a, int i, void *dest);
 
 #endif /* array_h_ */

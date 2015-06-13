@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: common.h
  * Created: June 7, 2015
- * Last changed: June 7, 2015
+ * Last changed: June 13, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -32,12 +32,16 @@
 #endif /* _MSC_VER */
 
 /*------------------------------------------------
- * INCLUDES
+ * MACROS
  *----------------------------------------------*/
 
-#include "core/debug.h"
-
-#include <stdbool.h>
+/*--------------------------------------
+ * Macro: string
+ *
+ * Description:
+ *   Makro för strängtyp.
+ *------------------------------------*/
+#define string stringT
 
 /*------------------------------------------------
  * CONSTANTS
@@ -62,5 +66,21 @@
 /*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
+
+/*--------------------------------------
+ * Type: stringT
+ *
+ * Description:
+ *   Strängtyp.
+ *------------------------------------*/
+typedef char *stringT;
+
+/*------------------------------------------------
+ * INCLUDES
+ *----------------------------------------------*/
+
+#include "core/debug.h"
+
+#include <stdbool.h>
 
 #endif /* common_h_ */

@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: debug.h
  * Created: June 8, 2015
- * Last changed: June 9, 2015
+ * Last changed: June 13, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -51,13 +51,13 @@
 /*--------------------------------------
  * Function: exitWithMessage()
  * Parameters:
- *   message    Meddelandet som ska visas.
+ *   msg        Meddelandet som ska visas.
  *   func_name  Namnet på den funktion som programmet kraschade i.
  *   line       Den rad i koden som programmet kraschade på.
  *
  * Description:
  *   Avslutar programmet med ett meddelande.
  *------------------------------------*/
-void exitWithMessage(const char *message, const char *func_name, int line);
+void exitWithMessage(string msg, string func_name, int line);
 
 #endif /* debug_h_ */

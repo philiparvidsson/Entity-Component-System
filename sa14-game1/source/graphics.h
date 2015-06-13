@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: graphics.h
  * Created: June 8, 2015
- * Last changed: June 10, 2015
+ * Last changed: June 13, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -19,6 +19,12 @@
  *----------------------------------------------*/
 
 #include "core/common.h"
+
+/*------------------------------------------------
+ * TYPES
+ *----------------------------------------------*/
+
+typedef struct shaderProgramCDT *shaderProgramADT;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -41,7 +47,7 @@
  *   bredden och höjden inkluderar inte fönsterdekorationer, utan endast storleken
  *   storleken på klientytan.
  *------------------------------------*/
-void initGraphics(const char *title, int width, int height);
+void initGraphics(string title, int width, int height);
 
 /*--------------------------------------
  * Function: exitGraphics()
@@ -51,6 +57,13 @@ void initGraphics(const char *title, int width, int height);
  *   Stänger grafikfönstret.
  *------------------------------------*/
 void exitGraphics(void);
+
+shaderProgramADT createShaderProgram();
+void loadFragmentShader(shaderProgramADT p, string source);
+void loadVertexShader(shaderProgramADT p, string source);
+void useShaderProgram(shaderProgramADT p);
+void setShaderParam(shaderProgramADT p, string name, float value);
+void deleteShaderProgram(shaderProgramADT p);
 
 /*--------------------------------------
  * Function: setFrameRate()
@@ -68,7 +81,7 @@ void setFrameRate(float fps);
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
- * Function: clearCanvas()
+ * Function: clearDisplay()
  * Parameters:
  *   r  Röd färgkomponent.
  *   g  Grön färgkomponent.
@@ -77,7 +90,7 @@ void setFrameRate(float fps);
  * Description:
  *   Rensar ritytan til den specificerade färgen.
  *------------------------------------*/
-void clearCanvas(float r, float g, float b);
+void clearDisplay(float r, float g, float b);
 
 /*--------------------------------------
  * Function: setColor()

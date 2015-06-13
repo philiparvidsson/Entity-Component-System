@@ -11,6 +11,7 @@ RIKTLINJER.
        typNamnT;
        variabel_namn
        funktionsNamn();
+       fil_namn
 
 ------------------------------------------------------------
 

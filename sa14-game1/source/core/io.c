@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: io.c
  * Created: June 11, 2015
- * Last changed: June 11, 2015
+ * Last changed: June 13, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -36,7 +36,7 @@
  * Description:
  *   Returnerar storleken på den specificerade filen, i antal bytes.
  *------------------------------------*/
-long fileSize(const char *file_name) {
+long fileSize(string file_name) {
     FILE* fp = fopen(file_name, "rb");
 
     if (!fp)
@@ -61,7 +61,7 @@ long fileSize(const char *file_name) {
  *   Läser in en fil till en sträng. Glöm inte att anropa free() på pekaren.
  *   Funktionen lägger till en null-char i slutet.
  *------------------------------------*/
-char *readFile(const char *file_name) {
+string readFile(string file_name) {
     FILE* fp = fopen(file_name, "rb");
 
     if (!fp)
@@ -71,7 +71,7 @@ char *readFile(const char *file_name) {
     long num_bytes = ftell(fp);
     rewind(fp);
 
-    char *s = malloc(num_bytes+1);
+    string s = malloc(num_bytes+1);
 
     if (s) {
         fread(s, sizeof(char), num_bytes, fp);

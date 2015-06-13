@@ -42,14 +42,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\</OutDir>
-    <IntDir>$(SolutionDir)\build\</IntDir>
+    <IntDir>$(SolutionDir)\bin\obj\</IntDir>
     <IncludePath>$(ProjectDir)\include\;$(ProjectDir)\source\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\</OutDir>
-    <IntDir>$(SolutionDir)\build\</IntDir>
+    <IntDir>$(SolutionDir)\bin\obj\</IntDir>
     <IncludePath>$(ProjectDir)\include\;$(ProjectDir)\source\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>

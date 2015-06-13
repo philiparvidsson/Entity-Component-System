@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: io.h
  * Created: June 11, 2015
- * Last changed: June 11, 2015
+ * Last changed: June 13, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -34,7 +34,7 @@
  * Description:
  *   Returnerar storleken på den specificerade filen, i antal bytes.
  *------------------------------------*/
-long fileSize(const char *file_name);
+long fileSize(string file_name);
 
 /*--------------------------------------
  * Function: readFile()
@@ -48,6 +48,6 @@ long fileSize(const char *file_name);
  *   Läser in en fil till en sträng. Glöm inte att anropa free() på pekaren.
  *   Funktionen lägger till en null-char i slutet.
  *------------------------------------*/
-char *readFile(const char *file_name);
+string readFile(string file_name);
 
 #endif
