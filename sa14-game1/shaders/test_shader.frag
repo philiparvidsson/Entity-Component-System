@@ -1,9 +1,9 @@
-#version 150
+#version 430
 
-uniform float some_val;
-
-out vec4 final_color;
+layout(location = 0) out vec4 color;
+layout(location = 1) in float light_mult;
 
 void main() {
-    final_color = vec4(some_val, 1.0, 1.0-some_val, 0.0);
+    float lm = clamp(light_mult, 0.3, 1.0);
+    color = vec4(vec3(1.0, 1.0, 1.0) * lm, 1.0);
 }

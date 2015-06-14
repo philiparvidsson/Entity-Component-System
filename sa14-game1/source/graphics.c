@@ -19,6 +19,7 @@
 
 #include "core/array.h"
 #include "core/common.h"
+#include "core/math.h"
 
 #include <stdlib.h>
 
@@ -58,6 +59,20 @@
 /*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
+
+typedef struct {
+    /* --- Public --- */
+
+    vector3T *verts;
+    vector3T *normals;
+    int       num_verts;
+    triT     *tris;
+    int       num_tris;
+
+    /* --- Private --- */
+
+    GLuint vbo, nbo, ibo;
+} geometryT_;
 
 /*--------------------------------------
  * Type: shaderProgramCDT
@@ -171,8 +186,15 @@ static void compileShader(GLenum type, shaderProgramADT prog, string source) {
      */
     GLint result;
     glGetShaderiv(shader_id, GL_COMPILE_STATUS, &result);
-    if (result == GL_FALSE)
+    if (result == GL_FALSE) {
+        GLint info_log_length;
+        glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
+        GLchar *log = malloc(sizeof(GLchar) * info_log_length);
+        glGetShaderInfoLog(shader_id, info_log_length, NULL, log);
+        printf("\n%s", log);
+        free(log);
         error("Shader failed to compile");
+    }
 
     glAttachShader(prog->id, shader_id);
     glLinkProgram (prog->id);
@@ -353,6 +375,13 @@ void initGraphics(string title, int width, int height) {
     assert(wglMakeCurrent(window->hdc, window->hglrc));
     assert(glewInit() == GLEW_OK);
 
+    /*
+     * Vi sätter på GL_BLEND så att alpha-kanalen används, d.v.s. transparens
+     * blir möjligt.
+     */
+    glEnable   (GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     setFrameRate(DefaultFPS);
 }
 
@@ -436,17 +465,17 @@ void compileVertexShader(shaderProgramADT program, string source) {
 }
 
 /*--------------------------------------
- * Function: setShaderParam()
+ * Function: setShaderUniform()
  * Parameters:
  *   program  Det shader-program vars parametrar ska ställas in.
- *   name     Namnet på uniform-parametern.
- *   val      Värdet på parametern.
+ *   name     Namnet på uniform-variabeln.
+ *   val      Värdet som uniform-variabeln ska tilldelas.
  *
  * Description:
- *   Sätter den specificerade uniform-parametern till det specificerade värdet.
+ *   Sätter den specificerade uniform-variabeln till det specificerade värdet.
  *   Se nyckelordet uniform i språkspecifikationen för GLSL för mer information.
  *------------------------------------*/
-void setShaderParam(shaderProgramADT program, string name, float value) {
+void setShaderUniform(shaderProgramADT program, string name, float value) {
     glUniform1f(glGetUniformLocation(program->id, name), value);
 }
 
@@ -519,6 +548,131 @@ void setFrameRate(float fps) {
  * för att presentera ritytan på skärmen m.m.
  *----------------------------------------------------------------------------*/
 
+geometryT *createBox(float width, float height, float length) {
+    /*
+     * Vi delar dimensionerna i hälften eftersom vi kommer att använda dem för
+     * att konstruera lådan nedan och då använder -width till width som bredden
+     * på den. D.v.s. den skulle bli dubbelt så stor som önskat annars.
+     */
+    width  /= 2.0f;
+    height /= 2.0f;
+    length /= 2.0f;
+
+    geometryT_ *box = malloc(sizeof(geometryT_));
+
+    /* En låda har sex sidor, och varje sida består av två trianglar. */
+    box->tris     = malloc(sizeof(triT) * 12);
+    box->num_tris = 12;
+
+    /*
+     * En låda har åtta hörn, men varje sida vill ha egna hörn. Vi får alltså
+     * fyra hörn per sida, och sex sidor, d.v.s. 24 hörn.
+     */
+    box->normals   = malloc(sizeof(vector3T) * 24);
+    box->verts     = malloc(sizeof(vector3T) * 24);
+    box->num_verts = 8;
+
+    /* Alias-pekare bara för att få lite enklare kod nedan. */
+    vector3T *v = box->verts, *n = box->normals;
+    triT     *t = box->tris;
+
+    /* Framsida. */
+    v[0] = (vector3T) { -width, -height, -length };
+    v[1] = (vector3T) { -width,  height, -length };
+    v[2] = (vector3T) {  width,  height, -length };
+    v[3] = (vector3T) {  width, -height, -length };
+
+    n[0] = n[1] = n[2] = n[3] = (vector3T) { 0.0f, 0.0f, -1.0f };
+
+    t[0] = (triT) { 0, 2, 1 };
+    t[1] = (triT) { 0, 3, 2 };
+
+    /* Högersida. */
+    v[4] = (vector3T) { width, -height, -length };
+    v[5] = (vector3T) { width,  height, -length };
+    v[6] = (vector3T) { width,  height,  length };
+    v[7] = (vector3T) { width, -height,  length };
+
+    n[4] = n[5] = n[6] = n[7] = (vector3T) { 1.0f, 0.0f, 0.0f };
+
+    t[2] = (triT) { 4, 6, 5 };
+    t[3] = (triT) { 4, 7, 6 };
+
+    /* Baksida. */
+    v[ 8] = (vector3T) {  width, -height, length };
+    v[ 9] = (vector3T) {  width,  height, length };
+    v[10] = (vector3T) { -width,  height, length };
+    v[11] = (vector3T) { -width, -height, length };
+
+    n[8] = n[9] = n[10] = n[11] = (vector3T) { 0.0f, 0.0f, 1.0f };
+
+    t[4] = (triT) { 8, 10, 9 };
+    t[5] = (triT) { 8, 11, 10 };
+
+    /* Vänstersida. */
+    v[12] = (vector3T) { -width, -height,  length };
+    v[13] = (vector3T) { -width,  height,  length };
+    v[14] = (vector3T) { -width,  height, -length };
+    v[15] = (vector3T) { -width, -height, -length };
+
+    n[12] = n[13] = n[14] = n[15] = (vector3T) { -1.0f, 0.0f, 0.0f };
+
+    t[6] = (triT) { 12, 14, 13 };
+    t[7] = (triT) { 12, 15, 14 };
+
+    /* Ovansida. */
+    v[16] = (vector3T) { -width, height, -length };
+    v[17] = (vector3T) { -width, height,  length };
+    v[18] = (vector3T) {  width, height,  length };
+    v[19] = (vector3T) {  width, height, -length };
+
+    n[16] = n[17] = n[18] = n[19] = (vector3T) { 0.0f, 1.0f, 0.0f };
+
+    t[8] = (triT) { 16, 18, 17 };
+    t[9] = (triT) { 16, 19, 18 };
+
+    /* Undersida. */
+    v[20] = (vector3T) { -width, -height,  length };
+    v[21] = (vector3T) { -width, -height, -length };
+    v[22] = (vector3T) {  width, -height, -length };
+    v[23] = (vector3T) {  width, -height,  length };
+
+    n[20] = n[21] = n[22] = n[23] = (vector3T) { 0.0f, -1.0f, 0.0f };
+
+    t[10] = (triT) { 20, 22, 21 };
+    t[11] = (triT) { 20, 23, 22 };
+
+
+    glGenBuffers(1, &box->vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, box->vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vector3T) * 24, box->verts, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &box->nbo);
+    glBindBuffer(GL_ARRAY_BUFFER, box->nbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vector3T) * 24, box->normals, GL_STATIC_DRAW);
+
+
+    glGenBuffers(1, &box->ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box->ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triT) * 12, box->tris, GL_STATIC_DRAW);
+
+    return ((geometryT *)box);
+}
+
+/*--------------------------------------
+ * Function: deleteGeometry()
+ * Parameters:
+ *   geom Den geometri som ska tas bort.
+ *
+ * Description:
+ *   Tar bort den specificerade geometrin.
+ *------------------------------------*/
+void deleteGeometry(geometryT *geom) {
+    free(geom->tris);
+    free(geom->verts);
+    free(geom);
+}
+
 /*--------------------------------------
  * Function: clearDisplay()
  * Parameters:
@@ -542,14 +696,33 @@ void clearDisplay(float r, float g, float b) {
  *   r  Röd färgkomponent.
  *   g  Grön färgkomponent.
  *   b  Blå färgkomponent.
+ *   a  Alpha-värde.
  *
  * Description:
  *   Ändrar färg för nästkommande anrop till ritfunktioner.
  *------------------------------------*/
-void setColor(float r, float g, float b) {
+void setColor(float r, float g, float b, float a) {
     checkGraphicsInited();
 
-    glColor3f(r, g, b);
+    glColor4f(r, g, b, a);
+}
+
+void drawGeometry(const geometryT *geom) {
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->vbo);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vector3T), (void *)0);
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->nbo);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vector3T), (void *)0);
+
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((geometryT_ *)geom)->ibo);
+    glDrawElements(GL_TRIANGLES, geom->num_tris*3, GL_UNSIGNED_INT, (void *)0);
+
+    glDisableVertexAttribArray(0);
 }
 
 /*--------------------------------------

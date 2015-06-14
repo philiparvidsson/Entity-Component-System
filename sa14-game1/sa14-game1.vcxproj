@@ -99,6 +99,7 @@
     <ClInclude Include="source\core\array.h" />
     <ClInclude Include="source\core\common.h" />
     <ClInclude Include="source\core\debug.h" />
+    <ClInclude Include="source\core\math.h" />
     <ClInclude Include="source\graphics.h" />
     <ClInclude Include="source\core\io.h" />
   </ItemGroup>

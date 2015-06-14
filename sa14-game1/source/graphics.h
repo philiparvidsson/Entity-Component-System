@@ -19,10 +19,39 @@
  *----------------------------------------------*/
 
 #include "core/common.h"
+#include "core/math.h"
 
 /*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
+
+typedef struct {
+    int lol;
+} lightSourceT;
+
+/*--------------------------------------
+ * Type: triT
+ *
+ * Description:
+ *   Representerar en triangel i en geometri.
+ *------------------------------------*/
+typedef struct {
+    int v0, v1, v2;
+} triT;
+
+/*--------------------------------------
+ * Type: geometryT
+ *
+ * Description:
+ *   Representerar en bit geometri.
+ *------------------------------------*/
+typedef struct {
+          vector3T *const verts;
+          vector3T *const normals;
+    const int             num_verts;
+          triT     *const tris;
+    const int             num_tris;
+} geometryT;
 
 /*--------------------------------------
  * Type: shaderProgramADT
@@ -103,17 +132,17 @@ void compileFragmentShader(shaderProgramADT program, string source);
 void compileVertexShader(shaderProgramADT program, string source);
 
 /*--------------------------------------
- * Function: setShaderParam()
+ * Function: setShaderUniform()
  * Parameters:
  *   program  Det shader-program vars parametrar ska ställas in.
- *   name     Namnet på uniform-parametern.
- *   val      Värdet på parametern.
+ *   name     Namnet på uniform-variabeln.
+ *   val      Värdet som uniform-variabeln ska tilldelas.
  *
  * Description:
- *   Sätter den specificerade uniform-parametern till det specificerade värdet.
+ *   Sätter den specificerade uniform-variabeln till det specificerade värdet.
  *   Se nyckelordet uniform i språkspecifikationen för GLSL för mer information.
  *------------------------------------*/
-void setShaderParam(shaderProgramADT program, string name, float value);
+void setShaderUniform(shaderProgramADT program, string name, float value);
 
 /*--------------------------------------
  * Function: useShaderProgram()
@@ -151,6 +180,18 @@ void setFrameRate(float fps);
  * för att presentera ritytan på skärmen m.m.
  *----------------------------------------------------------------------------*/
 
+geometryT *createBox(float width, float height, float length);
+
+/*--------------------------------------
+ * Function: deleteGeometry()
+ * Parameters:
+ *   geom Den geometri som ska tas bort.
+ *
+ * Description:
+ *   Tar bort den specificerade geometrin.
+ *------------------------------------*/
+void deleteGeometry(geometryT *geom);
+
 /*--------------------------------------
  * Function: clearDisplay()
  * Parameters:
@@ -169,11 +210,14 @@ void clearDisplay(float r, float g, float b);
  *   r  Röd färgkomponent.
  *   g  Grön färgkomponent.
  *   b  Blå färgkomponent.
+ *   a  Alpha-värde.
  *
  * Description:
  *   Ändrar färg för nästkommande anrop till ritfunktioner.
  *------------------------------------*/
-void setColor(float r, float g, float b);
+void setColor(float r, float g, float b, float a);
+
+void drawGeometry(const geometryT *geom);
 
 /*--------------------------------------
  * Function: updateDisplay()

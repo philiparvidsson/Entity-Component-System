@@ -48,46 +48,30 @@ static void printIntroMessage(void) {
 int main(void) {
     printIntroMessage();
 
-    initGraphics("Main Window", 640, 480);
+    initGraphics("Main Window", 640, 640);
     setFrameRate(60.0f);
-
-    GLfloat vb[] = {
-        -1.0f, -1.0f, 0.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
-    };
-
-    GLuint vbid;
-
-    glGenBuffers(1, &vbid);
-    glBindBuffer(GL_ARRAY_BUFFER, vbid);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vb), vb, GL_STATIC_DRAW);
 
     shaderProgramADT shader_program = createShaderProgram();
 
     compileVertexShader(shader_program, readFile("shaders/test_shader.vert"));
     compileFragmentShader(shader_program, readFile("shaders/test_shader.frag"));
 
+    geometryT *box = createBox(0.4f, 0.4f, 0.4f);
+
     float ff = 0.0f;
     while (windowIsOpen()) {
         clearDisplay(0.0f, 0.0f, 0.4f);
         ff += 0.25 / 60.0f;
-        vb[0] = ff;
-        setShaderParam(shader_program, "some_val", ff);
+        setShaderUniform(shader_program, "some_val", ff);
         useShaderProgram(shader_program);
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vbid);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDisableVertexAttribArray(0);
+        //setColor(1.0f, 0.5f, 1.0, 0.5f);
+        drawGeometry(box);
         
         updateDisplay();
     }
 
+    deleteGeometry(box);
     deleteShaderProgram(shader_program);
 
     exitGraphics();
-
-    system("pause");
 }
