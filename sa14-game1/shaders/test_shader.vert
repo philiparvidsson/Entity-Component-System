@@ -1,11 +1,12 @@
 #version 430
 
-uniform float some_val;
 
-layout(location = 0) in vec4 position;
-layout(location = 1) in vec3 normal;
+layout(location = 0) in vec4 Position;
+layout(location = 1) in vec4 Normal;
 
 layout(location = 1) out float light_mult;
+
+uniform float SomeVal;
 
 mat4 lookAt(vec3 eye, vec3 target) {
     vec3 up = vec3(0, 1, 0);
@@ -21,10 +22,9 @@ mat4 lookAt(vec3 eye, vec3 target) {
     ));
 }
 
-void main() {
-    float a = some_val * 2.0;
-    float b = some_val * 1.2;
-
+vec4 rotAndStuff(vec4 pos) {
+    float a = SomeVal * 2.0;
+    float b = SomeVal * 1.2;
     mat4 rotZ = mat4(
         cos(a), -sin(a), 0.0, 0.0,
         sin(a),  cos(a), 0.0, 0.0,
@@ -43,11 +43,17 @@ void main() {
     vec3 target = vec3(0, 0, 0);
     vec3 eye = vec3(0, 0, -1);
 
+    return transpose(lookAt(eye, target)) * rot * pos;
+}
+
+void main() {
     vec3 light = normalize(vec3(-1, 1, -1));
-    vec4 lol = transpose(lookAt(eye, target)) * rot * vec4(normal, 1.0);
-    float dp = dot(lol.xyz, light);
+    vec4 lol = rotAndStuff(Normal);
+    float dp = dot(normalize(lol.xyz), light);
+
+    if (dp < 0.0) dp = 0.0;
 
     light_mult = dp;
 
-    gl_Position = transpose(lookAt(eye, target)) * rot * position;
+    gl_Position =rotAndStuff(Position);
 }

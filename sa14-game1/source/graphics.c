@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: graphics.c
  * Created: June 8, 2015
- * Last changed: June 13, 2015
+ * Last changed: June 14, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -63,15 +63,17 @@
 typedef struct {
     /* --- Public --- */
 
-    vector3T *verts;
-    vector3T *normals;
-    int       num_verts;
-    triT     *tris;
-    int       num_tris;
+    vector3T *verts;     /* Geometrins "hörnpunkter."   */
+    vector3T *normals;   /* Varje punkts normal-vektor. */
+    int       num_verts; /* Antal punkter i geometrin.  */
+    triT     *tris;      /* Geometrins trianglar.       */
+    int       num_tris;  /* Antal trianglar i geometrin.*/
 
     /* --- Private --- */
 
-    GLuint vbo, nbo, ibo;
+    GLuint vbo, /* Vertex-bufferten i GPU:n. */
+           nbo, /* Normal-bufferten i GPU:n. */
+           ibo; /* Index-bufferten i GPU:n.  */
 } geometryT_;
 
 /*--------------------------------------
@@ -382,6 +384,12 @@ void initGraphics(string title, int width, int height) {
     glEnable   (GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    /* Ignorera trianglar som "tittar bort" från kameran. */
+    glEnable(GL_CULL_FACE);
+
+    /* Z-buffer. */
+    glEnable(GL_DEPTH_TEST);
+
     setFrameRate(DefaultFPS);
 }
 
@@ -548,6 +556,19 @@ void setFrameRate(float fps) {
  * för att presentera ritytan på skärmen m.m.
  *----------------------------------------------------------------------------*/
 
+/*--------------------------------------
+ * Function: createBox()
+ * Parameters:
+ *   width   Lådans bredd.
+ *   height  Lådans höjd.
+ *   depth   Lådans längd.
+ *
+ * Returns:
+ *   En pekare till lådans geometri.
+ *
+ * Description:
+ *   Skapar geometrin för en lådform.
+ *------------------------------------*/
 geometryT *createBox(float width, float height, float length) {
     /*
      * Vi delar dimensionerna i hälften eftersom vi kommer att använda dem för
@@ -642,21 +663,46 @@ geometryT *createBox(float width, float height, float length) {
     t[10] = (triT) { 20, 22, 21 };
     t[11] = (triT) { 20, 23, 22 };
 
+    /* Nu skickar vi datan till OpenGL så att vi kan rendera den med GPU:n. */
+
+    size_t vb_size = sizeof(vector3T) * 24;
+    size_t ib_size = sizeof(triT    ) * 12;
 
     glGenBuffers(1, &box->vbo);
     glBindBuffer(GL_ARRAY_BUFFER, box->vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vector3T) * 24, box->verts, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vb_size, box->verts, GL_STATIC_DRAW);
 
     glGenBuffers(1, &box->nbo);
     glBindBuffer(GL_ARRAY_BUFFER, box->nbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vector3T) * 24, box->normals, GL_STATIC_DRAW);
-
+    glBufferData(GL_ARRAY_BUFFER, vb_size, box->normals, GL_STATIC_DRAW);
 
     glGenBuffers(1, &box->ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box->ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(triT) * 12, box->tris, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ib_size, box->tris, GL_STATIC_DRAW);
 
     return ((geometryT *)box);
+}
+
+/*--------------------------------------
+ * Function: updateGeometry()
+ * Parameters:
+ *   geom Den geometri som ska uppdateras.
+ *
+ * Description:
+ *   Uppdaterar geometridatan i GPU:n genom att ladda upp den på nytt.
+ *------------------------------------*/
+void updateGeometry(const geometryT *geom) {
+    size_t vb_size = sizeof(vector3T) * geom->num_verts;
+    size_t ib_size = sizeof(triT    ) * geom->num_tris;
+
+    glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->vbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vb_size, geom->verts);
+
+    glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->nbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vb_size, geom->normals);
+
+    glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->ibo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, ib_size, geom->tris);
 }
 
 /*--------------------------------------
@@ -668,6 +714,10 @@ geometryT *createBox(float width, float height, float length) {
  *   Tar bort den specificerade geometrin.
  *------------------------------------*/
 void deleteGeometry(geometryT *geom) {
+    glDeleteBuffers(1, &((geometryT_ *)geom)->vbo);
+    glDeleteBuffers(1, &((geometryT_ *)geom)->nbo);
+    glDeleteBuffers(1, &((geometryT_ *)geom)->ibo);
+
     free(geom->tris);
     free(geom->verts);
     free(geom);
@@ -691,25 +741,14 @@ void clearDisplay(float r, float g, float b) {
 }
 
 /*--------------------------------------
- * Function: setColor()
+ * Function: drawGeometry()
  * Parameters:
- *   r  Röd färgkomponent.
- *   g  Grön färgkomponent.
- *   b  Blå färgkomponent.
- *   a  Alpha-värde.
+ *   geom  Geometrin som ska ritas upp.
  *
  * Description:
- *   Ändrar färg för nästkommande anrop till ritfunktioner.
+ *   Ritar den specificerade geometrin.
  *------------------------------------*/
-void setColor(float r, float g, float b, float a) {
-    checkGraphicsInited();
-
-    glColor4f(r, g, b, a);
-}
-
 void drawGeometry(const geometryT *geom) {
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->vbo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vector3T), (void *)0);
@@ -723,6 +762,7 @@ void drawGeometry(const geometryT *geom) {
     glDrawElements(GL_TRIANGLES, geom->num_tris*3, GL_UNSIGNED_INT, (void *)0);
 
     glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
 }
 
 /*--------------------------------------

@@ -56,15 +56,15 @@ int main(void) {
     compileVertexShader(shader_program, readFile("shaders/test_shader.vert"));
     compileFragmentShader(shader_program, readFile("shaders/test_shader.frag"));
 
-    geometryT *box = createBox(0.4f, 0.4f, 0.4f);
+    geometryT *box = createBox(0.2f, 0.4f, 0.6f);
 
     float ff = 0.0f;
     while (windowIsOpen()) {
         clearDisplay(0.0f, 0.0f, 0.4f);
         ff += 0.25 / 60.0f;
-        setShaderUniform(shader_program, "some_val", ff);
+        setShaderUniform(shader_program, "SomeVal", ff);
         useShaderProgram(shader_program);
-        //setColor(1.0f, 0.5f, 1.0, 0.5f);
+
         drawGeometry(box);
         
         updateDisplay();

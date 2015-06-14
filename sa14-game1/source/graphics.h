@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: graphics.h
  * Created: June 8, 2015
- * Last changed: June 13, 2015
+ * Last changed: June 14, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -25,10 +25,6 @@
  * TYPES
  *----------------------------------------------*/
 
-typedef struct {
-    int lol;
-} lightSourceT;
-
 /*--------------------------------------
  * Type: triT
  *
@@ -46,11 +42,11 @@ typedef struct {
  *   Representerar en bit geometri.
  *------------------------------------*/
 typedef struct {
-          vector3T *const verts;
-          vector3T *const normals;
-    const int             num_verts;
-          triT     *const tris;
-    const int             num_tris;
+          vector3T *const verts;     /* Geometrins "hörnpunkter."   */
+          vector3T *const normals;   /* Varje punkts normal-vektor. */
+    const int             num_verts; /* Antal punkter i geometrin.  */
+          triT     *const tris;      /* Geometrins trianglar.       */
+    const int             num_tris;  /* Antal trianglar i geometrin.*/
 } geometryT;
 
 /*--------------------------------------
@@ -180,7 +176,30 @@ void setFrameRate(float fps);
  * för att presentera ritytan på skärmen m.m.
  *----------------------------------------------------------------------------*/
 
+/*--------------------------------------
+ * Function: createBox()
+ * Parameters:
+ *   width   Lådans bredd.
+ *   height  Lådans höjd.
+ *   depth   Lådans längd.
+ *
+ * Returns:
+ *   En pekare till lådans geometri.
+ *
+ * Description:
+ *   Skapar geometrin för en lådform.
+ *------------------------------------*/
 geometryT *createBox(float width, float height, float length);
+
+/*--------------------------------------
+ * Function: updateGeometry()
+ * Parameters:
+ *   geom Den geometri som ska uppdateras.
+ *
+ * Description:
+ *   Uppdaterar geometridatan i GPU:n genom att ladda upp den på nytt.
+ *------------------------------------*/
+void updateGeometry(const geometryT *geom);
 
 /*--------------------------------------
  * Function: deleteGeometry()
@@ -205,18 +224,13 @@ void deleteGeometry(geometryT *geom);
 void clearDisplay(float r, float g, float b);
 
 /*--------------------------------------
- * Function: setColor()
+ * Function: drawGeometry()
  * Parameters:
- *   r  Röd färgkomponent.
- *   g  Grön färgkomponent.
- *   b  Blå färgkomponent.
- *   a  Alpha-värde.
+ *   geom  Geometrin som ska ritas upp.
  *
  * Description:
- *   Ändrar färg för nästkommande anrop till ritfunktioner.
+ *   Ritar den specificerade geometrin.
  *------------------------------------*/
-void setColor(float r, float g, float b, float a);
-
 void drawGeometry(const geometryT *geom);
 
 /*--------------------------------------
