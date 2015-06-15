@@ -191,13 +191,14 @@ static void compileShader(GLenum type, shaderProgramADT prog, string source) {
     glShaderSource (shader_id, 1, &source, NULL);
     glCompileShader(shader_id);
 
+    GLint result;
+
     /*
      * Om GL_COMPILE_STATUS returnerar GL_FALSE i result-parametern så miss-
      * lyckades kompileringen, förmodligen på grund av trasig kod. Vi kan inte
      * fortsätta då utan genererar ett fel istället, samt skriver ut vad OpenGL
      * innehåller för loggmeddelanden kring kompileringen.
      */
-    GLint result;
     glGetShaderiv(shader_id, GL_COMPILE_STATUS, &result);
     if (result == GL_FALSE) {
         GLint info_log_length;
@@ -211,6 +212,17 @@ static void compileShader(GLenum type, shaderProgramADT prog, string source) {
 
     glAttachShader(prog->id, shader_id);
     glLinkProgram (prog->id);
+
+    glGetProgramiv(prog->id, GL_LINK_STATUS, &result);
+    if (result == GL_FALSE) {
+        GLint info_log_length;
+        glGetProgramiv(prog->id, GL_INFO_LOG_LENGTH, &info_log_length);
+        GLchar *log = malloc(sizeof(GLchar) * info_log_length);
+        glGetProgramInfoLog(prog->id, info_log_length, NULL, log);
+        printf("\n%s", log);
+        free(log);
+        error("Shader program failed to link");
+    }
 
     arrayAdd(prog->shaders, &shader_id);
 }

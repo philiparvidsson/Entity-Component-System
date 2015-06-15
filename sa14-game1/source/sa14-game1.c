@@ -62,19 +62,19 @@ int main(void) {
 
     mat4x4 proj = mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -0.1f, -3.0f);
     mat4x4 view = mat4x4_lookAt(
-        (vec3) { 0.0f, 0.5f, 0.0f },
-        (vec3) { 0.0f, 0.0f, -1.0f },
+        (vec3) { 0.0f, 0.5f, 1.0f },
+        (vec3) { 0.0f, 0.0f, 0.0f },
         (vec3) { 0.0f, 1.0f, 0.0f }
     );
 
 
     float ff = 0.0f;
     while (windowIsOpen()) {
-        box1->transform = mat4x4_mul(mat4x4_translateZ(-1.0f), mat4x4_rotateY(ff));
+        box1->transform = mat4x4_mul(mat4x4_translateZ(-0.0f), mat4x4_rotateY(ff));
         box2->transform =
             mat4x4_mul(
        
-                    mat4x4_translateZ(-1.0f),
+                    mat4x4_translateZ(-0.0f),
                 mat4x4_mul(
                     mat4x4_rotateX(ff*0.5),
                     mat4x4_rotateY(ff*0.3f)

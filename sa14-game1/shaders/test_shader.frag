@@ -4,22 +4,21 @@ uniform mat4 Model;
 uniform mat4 View;
 uniform mat4 Proj;
 
-layout(location = 0) in vec3 Position;
+layout(location = 0) in vec3 Vertex;
 layout(location = 1) in vec3 Normal;
 
 layout(location = 0) out vec4 color;
 
 void main() {
-    vec3 light_pos = vec3(0.0, 1.0, 0.0);
-    vec3 diff      = normalize(gl_FragCoord.xyz - light_pos);
-    vec3 normal    = (Model * vec4(Normal, 1.0)).xyz;
+    vec3 light_pos = vec3(-1.0, 4.0, 2.0);
 
-    float dp = dot(normal, diff);
-    if (dp < 0.0) dp = 0.0;
+    vec3 n = (Model * vec4(Normal, 1.0)).xyz;
+    vec3 d = (View * vec4(light_pos, 1.0)).xyz - (Model * vec4(Vertex, 1.0)).xyz;
 
-    float light_mult = dp;
+    n = normalize(n);
+    d = normalize(d);
 
-
-    float f = clamp(light_mult, 0.3, 1.0);
+    float l=clamp(dot(n, d), 0.0, 1.0);
+    float f = l+0.1;
     color = vec4(vec3(1.0, 1.0, 1.0) * f, 1.0);
 }
