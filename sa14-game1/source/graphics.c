@@ -19,7 +19,7 @@
 
 #include "core/array.h"
 #include "core/common.h"
-#include "core/math.h"
+#include "core/linmath.h"
 
 #include <stdlib.h>
 
@@ -63,11 +63,11 @@
 typedef struct {
     /* --- Public --- */
 
-    vector3T *verts;     /* Geometrins "hörnpunkter."   */
-    vector3T *normals;   /* Varje punkts normal-vektor. */
-    int       num_verts; /* Antal punkter i geometrin.  */
-    triT     *tris;      /* Geometrins trianglar.       */
-    int       num_tris;  /* Antal trianglar i geometrin.*/
+    vec3 *verts;     /* Geometrins "hörnpunkter."   */
+    vec3 *normals;   /* Varje punkts normal-vektor. */
+    int   num_verts; /* Antal punkter i geometrin.  */
+    triT *tris;      /* Geometrins trianglar.       */
+    int   num_tris;  /* Antal trianglar i geometrin.*/
 
     /* --- Private --- */
 
@@ -184,7 +184,8 @@ static void compileShader(GLenum type, shaderProgramADT prog, string source) {
     /*
      * Om GL_COMPILE_STATUS returnerar GL_FALSE i result-parametern så miss-
      * lyckades kompileringen, förmodligen på grund av trasig kod. Vi kan inte
-     * fortsätta då utan genererar ett fel istället.
+     * fortsätta då utan genererar ett fel istället, samt skriver ut vad OpenGL
+     * innehåller för loggmeddelanden kring kompileringen.
      */
     GLint result;
     glGetShaderiv(shader_id, GL_COMPILE_STATUS, &result);
@@ -377,18 +378,20 @@ void initGraphics(string title, int width, int height) {
     assert(wglMakeCurrent(window->hdc, window->hglrc));
     assert(glewInit() == GLEW_OK);
 
-    /*
-     * Vi sätter på GL_BLEND så att alpha-kanalen används, d.v.s. transparens
-     * blir möjligt.
-     */
+    /* Enabling GL_BLEND makes transparency possible. */
     glEnable   (GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    /* Ignorera trianglar som "tittar bort" från kameran. */
+    /* Ignore triangles that are "looking away" from the camera. */
     glEnable(GL_CULL_FACE);
 
-    /* Z-buffer. */
+    /*
+     * Enable z-buffering and make sure it's right-handed (i.e. -z is into the
+     * screen).
+     */
     glEnable(GL_DEPTH_TEST);
+    glClearDepth(0.0f);
+    glDepthFunc(GL_GREATER);
 
     setFrameRate(DefaultFPS);
 }
@@ -472,20 +475,35 @@ void compileVertexShader(shaderProgramADT program, string source) {
     compileShader(GL_VERTEX_SHADER, program, source);
 }
 
+
+static shaderProgramADT curr_shader_program;
+
 /*--------------------------------------
  * Function: setShaderUniform()
  * Parameters:
- *   program  Det shader-program vars parametrar ska ställas in.
- *   name     Namnet på uniform-variabeln.
- *   val      Värdet som uniform-variabeln ska tilldelas.
+ *   name   Namnet på uniform-variabeln.
+ *   type   Uniform-variabelns datatype.
+ *   value  Värdet som uniform-variabeln ska tilldelas.
  *
  * Description:
  *   Sätter den specificerade uniform-variabeln till det specificerade värdet.
  *   Se nyckelordet uniform i språkspecifikationen för GLSL för mer information.
  *------------------------------------*/
-void setShaderUniform(shaderProgramADT program, string name, float value) {
-    glUniform1f(glGetUniformLocation(program->id, name), value);
+void setShaderUniform(string name, uniformTypeT type, const void *value) {
+    GLint loc = glGetUniformLocation(curr_shader_program->id, name);
+
+    switch (type) {
+    case FloatUniform:
+        glUniform1f(loc, *(float *)value);
+        break;
+    case Matrix4Uniform:
+        glUniformMatrix4fv(loc, 1, GL_TRUE, value);
+        break;
+    default:
+        error("Unknown uniform type specified");
+    }
 }
+
 
 /*--------------------------------------
  * Function: useShaderProgram()
@@ -497,6 +515,7 @@ void setShaderUniform(shaderProgramADT program, string name, float value) {
  *------------------------------------*/
 void useShaderProgram(shaderProgramADT program) {
     glUseProgram(program ? program->id : 0);
+    curr_shader_program = program;
 }
 
 /*--------------------------------------
@@ -515,7 +534,8 @@ void deleteShaderProgram(shaderProgramADT program) {
         glDeleteShader(shader_id);
     }
 
-    glUseProgram(0);
+    useShaderProgram(NULL);
+
     glDeleteProgram(program->id);
 
     freeArray(program->shaders);
@@ -559,9 +579,9 @@ void setFrameRate(float fps) {
 /*--------------------------------------
  * Function: createBox()
  * Parameters:
- *   width   Lådans bredd.
- *   height  Lådans höjd.
- *   depth   Lådans längd.
+ *   width   Lådans bredd (x).
+ *   height  Lådans höjd (y).
+ *   length  Lådans längd (z).
  *
  * Returns:
  *   En pekare till lådans geometri.
@@ -571,9 +591,8 @@ void setFrameRate(float fps) {
  *------------------------------------*/
 geometryT *createBox(float width, float height, float length) {
     /*
-     * Vi delar dimensionerna i hälften eftersom vi kommer att använda dem för
-     * att konstruera lådan nedan och då använder -width till width som bredden
-     * på den. D.v.s. den skulle bli dubbelt så stor som önskat annars.
+     * Divide the measurements in half sinve we span the box in both ways per
+     * dimension.
      */
     width  /= 2.0f;
     height /= 2.0f;
@@ -582,91 +601,92 @@ geometryT *createBox(float width, float height, float length) {
     geometryT_ *box = malloc(sizeof(geometryT_));
 
     /* En låda har sex sidor, och varje sida består av två trianglar. */
-    box->tris     = malloc(sizeof(triT) * 12);
     box->num_tris = 12;
+    box->tris     = malloc(sizeof(triT) * box->num_tris);
 
     /*
-     * En låda har åtta hörn, men varje sida vill ha egna hörn. Vi får alltså
-     * fyra hörn per sida, och sex sidor, d.v.s. 24 hörn.
+     * A box has eight corners, but every side needs their own normals for flat-
+     * shading to work properly (we don't want interpolated normals), so we get
+     * 4 corners per side times six sides. That's 24 vertices.
      */
-    box->normals   = malloc(sizeof(vector3T) * 24);
-    box->verts     = malloc(sizeof(vector3T) * 24);
-    box->num_verts = 8;
+    box->num_verts = 24;
+    box->normals   = malloc(sizeof(vec3) * box->num_verts);
+    box->verts     = malloc(sizeof(vec3) * box->num_verts);
 
-    /* Alias-pekare bara för att få lite enklare kod nedan. */
-    vector3T *v = box->verts, *n = box->normals;
-    triT     *t = box->tris;
+    /* Alias pointers for less code clutter. */
+    vec3 *v = box->verts, *n = box->normals;
+    triT *t = box->tris;
 
-    /* Framsida. */
-    v[0] = (vector3T) { -width, -height, -length };
-    v[1] = (vector3T) { -width,  height, -length };
-    v[2] = (vector3T) {  width,  height, -length };
-    v[3] = (vector3T) {  width, -height, -length };
+    /* Front. */
+    v[0] = (vec3) {  width,  height, length };
+    v[1] = (vec3) { -width,  height, length };
+    v[2] = (vec3) { -width, -height, length };
+    v[3] = (vec3) {  width, -height, length };
 
-    n[0] = n[1] = n[2] = n[3] = (vector3T) { 0.0f, 0.0f, -1.0f };
+    n[0] = n[1] = n[2] = n[3] = (vec3) { 0.0f, 0.0f, 1.0f };
 
-    t[0] = (triT) { 0, 2, 1 };
-    t[1] = (triT) { 0, 3, 2 };
+    t[0] = (triT) { 0, 1, 2 };
+    t[1] = (triT) { 2, 3, 0 };
 
-    /* Högersida. */
-    v[4] = (vector3T) { width, -height, -length };
-    v[5] = (vector3T) { width,  height, -length };
-    v[6] = (vector3T) { width,  height,  length };
-    v[7] = (vector3T) { width, -height,  length };
+    /* Right. */
+    v[4] = (vec3) { width,  height, -length };
+    v[5] = (vec3) { width,  height,  length };
+    v[6] = (vec3) { width, -height,  length };
+    v[7] = (vec3) { width, -height, -length };
 
-    n[4] = n[5] = n[6] = n[7] = (vector3T) { 1.0f, 0.0f, 0.0f };
+    n[4] = n[5] = n[6] = n[7] = (vec3) { 1.0f, 0.0f, 0.0f };
 
-    t[2] = (triT) { 4, 6, 5 };
-    t[3] = (triT) { 4, 7, 6 };
+    t[2] = (triT) { 4, 5, 6 };
+    t[3] = (triT) { 6, 7, 4 };
 
-    /* Baksida. */
-    v[ 8] = (vector3T) {  width, -height, length };
-    v[ 9] = (vector3T) {  width,  height, length };
-    v[10] = (vector3T) { -width,  height, length };
-    v[11] = (vector3T) { -width, -height, length };
+    /* Back. */
+    v[ 8] = (vec3) { -width,  height, -length };
+    v[ 9] = (vec3) {  width,  height, -length };
+    v[10] = (vec3) {  width, -height, -length };
+    v[11] = (vec3) { -width, -height, -length };
 
-    n[8] = n[9] = n[10] = n[11] = (vector3T) { 0.0f, 0.0f, 1.0f };
+    n[8] = n[9] = n[10] = n[11] = (vec3) { 0.0f, 0.0f, -1.0f };
 
-    t[4] = (triT) { 8, 10, 9 };
-    t[5] = (triT) { 8, 11, 10 };
+    t[4] = (triT) { 8,  9, 10 };
+    t[5] = (triT) { 10, 11, 8 };
 
-    /* Vänstersida. */
-    v[12] = (vector3T) { -width, -height,  length };
-    v[13] = (vector3T) { -width,  height,  length };
-    v[14] = (vector3T) { -width,  height, -length };
-    v[15] = (vector3T) { -width, -height, -length };
+    /* Left. */
+    v[12] = (vec3) { -width,  height,  length };
+    v[13] = (vec3) { -width,  height, -length };
+    v[14] = (vec3) { -width, -height, -length };
+    v[15] = (vec3) { -width, -height,  length };
 
-    n[12] = n[13] = n[14] = n[15] = (vector3T) { -1.0f, 0.0f, 0.0f };
+    n[12] = n[13] = n[14] = n[15] = (vec3) { -1.0f, 0.0f, 0.0f };
 
-    t[6] = (triT) { 12, 14, 13 };
-    t[7] = (triT) { 12, 15, 14 };
+    t[6] = (triT) { 12, 13, 14 };
+    t[7] = (triT) { 14, 15, 12 };
 
-    /* Ovansida. */
-    v[16] = (vector3T) { -width, height, -length };
-    v[17] = (vector3T) { -width, height,  length };
-    v[18] = (vector3T) {  width, height,  length };
-    v[19] = (vector3T) {  width, height, -length };
+    /* Top. */
+    v[16] = (vec3) {  width, height, -length };
+    v[17] = (vec3) { -width, height, -length };
+    v[18] = (vec3) { -width, height,  length };
+    v[19] = (vec3) {  width, height,  length };
 
-    n[16] = n[17] = n[18] = n[19] = (vector3T) { 0.0f, 1.0f, 0.0f };
+    n[16] = n[17] = n[18] = n[19] = (vec3) { 0.0f, 1.0f, 0.0f };
 
-    t[8] = (triT) { 16, 18, 17 };
-    t[9] = (triT) { 16, 19, 18 };
+    t[8] = (triT) { 16, 17, 18 };
+    t[9] = (triT) { 18, 19, 16 };
 
-    /* Undersida. */
-    v[20] = (vector3T) { -width, -height,  length };
-    v[21] = (vector3T) { -width, -height, -length };
-    v[22] = (vector3T) {  width, -height, -length };
-    v[23] = (vector3T) {  width, -height,  length };
+    /* Bottom. */
+    v[20] = (vec3) {  width, -height,  length };
+    v[21] = (vec3) { -width, -height,  length };
+    v[22] = (vec3) { -width, -height, -length };
+    v[23] = (vec3) {  width, -height, -length };
 
-    n[20] = n[21] = n[22] = n[23] = (vector3T) { 0.0f, -1.0f, 0.0f };
+    n[20] = n[21] = n[22] = n[23] = (vec3) { 0.0f, -1.0f, 0.0f };
 
-    t[10] = (triT) { 20, 22, 21 };
-    t[11] = (triT) { 20, 23, 22 };
+    t[10] = (triT) { 20, 21, 22 };
+    t[11] = (triT) { 22, 23, 20 };
 
-    /* Nu skickar vi datan till OpenGL så att vi kan rendera den med GPU:n. */
+    /* Time to upload the box to the GPU via OpenGL. */
 
-    size_t vb_size = sizeof(vector3T) * 24;
-    size_t ib_size = sizeof(triT    ) * 12;
+    size_t vb_size = sizeof(vec3) * box->num_verts;
+    size_t ib_size = sizeof(triT) * box->num_tris;
 
     glGenBuffers(1, &box->vbo);
     glBindBuffer(GL_ARRAY_BUFFER, box->vbo);
@@ -692,8 +712,8 @@ geometryT *createBox(float width, float height, float length) {
  *   Uppdaterar geometridatan i GPU:n genom att ladda upp den på nytt.
  *------------------------------------*/
 void updateGeometry(const geometryT *geom) {
-    size_t vb_size = sizeof(vector3T) * geom->num_verts;
-    size_t ib_size = sizeof(triT    ) * geom->num_tris;
+    size_t vb_size = sizeof(vec3) * geom->num_verts;
+    size_t ib_size = sizeof(triT) * geom->num_tris;
 
     glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->vbo);
     glBufferSubData(GL_ARRAY_BUFFER, 0, vb_size, geom->verts);
@@ -751,11 +771,11 @@ void clearDisplay(float r, float g, float b) {
 void drawGeometry(const geometryT *geom) {
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vector3T), (void *)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void *)0);
 
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->nbo);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vector3T), (void *)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void *)0);
 
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((geometryT_ *)geom)->ibo);

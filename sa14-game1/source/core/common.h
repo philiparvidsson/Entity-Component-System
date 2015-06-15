@@ -1,12 +1,13 @@
 /*------------------------------------------------------------------------------
  * File: common.h
  * Created: June 7, 2015
- * Last changed: June 13, 2015
+ * Last changed: June 15, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Blandade saker som behövs här och där.
+ *   Macros, constants, types, functions etc. that are common to many parts of
+ *   the program.
  *
  *----------------------------------------------------------------------------*/
 
@@ -18,15 +19,30 @@
  *----------------------------------------------*/
 
 /*
- * Här konfigurerar vi kompileringen och länkningen en del. I alla fall om vi
- * använder Microsoft Visual C++-kompilatorn.
+ * If we're on MSVC++ we can configure the compilation and linking processes
+ * here.
+ *
+ * @To-do: Move out to a makefile or such.
  */
 #ifdef _MSC_VER
 
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "opengl32.lib")
 
-/* warning C4711: 'function selected for automatic inline expansion' */
+/*
+ * This warning is not quite relevant since anonymous structs and unions are
+ * allowed in the C11 standard, but some compilers are not quite there yet and
+ * consider it nonstandard.
+ *
+ * warning C4201: 'nonstandard extension used : nameless struct/union'
+ */
+#pragma warning(disable:4201)
+
+/*
+ * We don't need to see warnings about functions being inlined.
+ *
+ * warning C4711: 'function selected for automatic inline expansion'
+ */
 #pragma warning(disable:4711)
 
 #endif /* _MSC_VER */
@@ -35,11 +51,13 @@
  * MACROS
  *----------------------------------------------*/
 
+#define inline __inline
+
 /*--------------------------------------
  * Macro: string
  *
  * Description:
- *   Makro för strängtyp.
+ *   String type macro.
  *------------------------------------*/
 #define string stringT
 
@@ -51,7 +69,7 @@
  * Constant: ProgramAuthors
  *
  * Description:
- *   De programmerare som varit med och programmerat programmet.
+ *   A string containing the program authors.
  *------------------------------------*/
 #define ProgramAuthors ("Philip Arvidsson (philip@philiparvidsson.com)")
 
@@ -59,7 +77,7 @@
  * Constant: ProgramVersion
  *
  * Description:
- *   Programmets version.
+ *   The program version.
  *------------------------------------*/
 #define ProgramVersion ("0.01b")
 
@@ -71,13 +89,18 @@
  * Type: stringT
  *
  * Description:
- *   Strängtyp.
+ *   String type definition.
  *------------------------------------*/
 typedef char *stringT;
 
 /*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
+
+/*
+ * Some includes might depend on definitions in this file, so we put them at the
+ * end of this file instead of the beginning.
+ */
 
 #include "core/debug.h"
 

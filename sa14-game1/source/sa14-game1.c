@@ -15,6 +15,7 @@
  *----------------------------------------------*/
 
 #include "core/common.h"
+#include "core/linmath.h"
 
 #include "graphics.h"
 
@@ -56,14 +57,28 @@ int main(void) {
     compileVertexShader(shader_program, readFile("shaders/test_shader.vert"));
     compileFragmentShader(shader_program, readFile("shaders/test_shader.frag"));
 
-    geometryT *box = createBox(0.2f, 0.4f, 0.6f);
+    geometryT *box = createBox(0.1f, 0.2f, 0.4f);
+
+    mat4x4 la = mat4x4_lookAt(
+        (vec3) { 0.0f, 0.5f, -1.0f },
+        (vec3) { 0.0f, 0.0f, 0.0f },
+        (vec3) { 0.0f, 1.0f, 0.0f }
+    );
+
+    mat4x4 o = mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, -3.0f);
+    //o = mat4x4_identity();
+    //cm = identityMatrix4();
+
+    mat4x4 view_matrix = o;// mat4x4_mul(o, la);
 
     float ff = 0.0f;
     while (windowIsOpen()) {
         clearDisplay(0.0f, 0.0f, 0.4f);
         ff += 0.25 / 60.0f;
-        setShaderUniform(shader_program, "SomeVal", ff);
+
         useShaderProgram(shader_program);
+        setShaderUniform("SomeVal", FloatUniform, &ff);
+        setShaderUniform("ViewMatrix", Matrix4Uniform, &view_matrix);
 
         drawGeometry(box);
         

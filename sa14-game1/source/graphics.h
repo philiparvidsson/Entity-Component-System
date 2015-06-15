@@ -19,11 +19,17 @@
  *----------------------------------------------*/
 
 #include "core/common.h"
-#include "core/math.h"
+#include "core/linmath.h"
 
 /*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
+
+typedef struct {
+    vec3 position;
+    vec3 target;
+    vec3 up;
+} cameraT;
 
 /*--------------------------------------
  * Type: triT
@@ -42,11 +48,11 @@ typedef struct {
  *   Representerar en bit geometri.
  *------------------------------------*/
 typedef struct {
-          vector3T *const verts;     /* Geometrins "hörnpunkter."   */
-          vector3T *const normals;   /* Varje punkts normal-vektor. */
-    const int             num_verts; /* Antal punkter i geometrin.  */
-          triT     *const tris;      /* Geometrins trianglar.       */
-    const int             num_tris;  /* Antal trianglar i geometrin.*/
+          vec3 *const verts;     /* Geometrins "hörnpunkter."   */
+          vec3 *const normals;   /* Varje punkts normal-vektor. */
+    const int         num_verts; /* Antal punkter i geometrin.  */
+          triT *const tris;      /* Geometrins trianglar.       */
+    const int         num_tris;  /* Antal trianglar i geometrin.*/
 } geometryT;
 
 /*--------------------------------------
@@ -56,6 +62,11 @@ typedef struct {
  *   Abstrakt pekartyp för ett shader-program.
  *------------------------------------*/
 typedef struct shaderProgramCDT *shaderProgramADT;
+
+typedef enum {
+    FloatUniform,
+    Matrix4Uniform
+} uniformTypeT;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -130,15 +141,15 @@ void compileVertexShader(shaderProgramADT program, string source);
 /*--------------------------------------
  * Function: setShaderUniform()
  * Parameters:
- *   program  Det shader-program vars parametrar ska ställas in.
- *   name     Namnet på uniform-variabeln.
- *   val      Värdet som uniform-variabeln ska tilldelas.
+ *   name   Namnet på uniform-variabeln.
+ *   type   Uniform-variabelns datatype.
+ *   value  Värdet som uniform-variabeln ska tilldelas.
  *
  * Description:
  *   Sätter den specificerade uniform-variabeln till det specificerade värdet.
  *   Se nyckelordet uniform i språkspecifikationen för GLSL för mer information.
  *------------------------------------*/
-void setShaderUniform(shaderProgramADT program, string name, float value);
+void setShaderUniform(string name, uniformTypeT type, const void *value);
 
 /*--------------------------------------
  * Function: useShaderProgram()
@@ -177,18 +188,18 @@ void setFrameRate(float fps);
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
- * Function: createBox()
- * Parameters:
- *   width   Lådans bredd.
- *   height  Lådans höjd.
- *   depth   Lådans längd.
- *
- * Returns:
- *   En pekare till lådans geometri.
- *
- * Description:
- *   Skapar geometrin för en lådform.
- *------------------------------------*/
+* Function: createBox()
+* Parameters:
+*   width   Lådans bredd (x).
+*   height  Lådans höjd (y).
+*   length  Lådans längd (z).
+*
+* Returns:
+*   En pekare till lådans geometri.
+*
+* Description:
+*   Skapar geometrin för en lådform.
+*------------------------------------*/
 geometryT *createBox(float width, float height, float length);
 
 /*--------------------------------------

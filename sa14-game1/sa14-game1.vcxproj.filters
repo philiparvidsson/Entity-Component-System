@@ -30,10 +30,10 @@
     <ClCompile Include="source\core\io.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics.c">
+    <ClCompile Include="source\sa14-game1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\sa14-game1.c">
+    <ClCompile Include="source\graphics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,13 +56,13 @@
     <ClInclude Include="source\core\io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\GL\glew.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\math.h">
+    <ClInclude Include="source\graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\linmath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

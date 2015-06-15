@@ -85,9 +85,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\core\array.c" />
-    <ClCompile Include="source\graphics.c" />
     <ClCompile Include="source\core\debug.c" />
     <ClCompile Include="source\core\io.c" />
+    <ClCompile Include="source\graphics.c" />
     <ClCompile Include="source\sa14-game1.c" />
   </ItemGroup>
   <ItemGroup>
@@ -99,9 +99,9 @@
     <ClInclude Include="source\core\array.h" />
     <ClInclude Include="source\core\common.h" />
     <ClInclude Include="source\core\debug.h" />
-    <ClInclude Include="source\core\math.h" />
-    <ClInclude Include="source\graphics.h" />
+    <ClInclude Include="source\core\linmath.h" />
     <ClInclude Include="source\core\io.h" />
+    <ClInclude Include="source\graphics.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\glew32.dll" />

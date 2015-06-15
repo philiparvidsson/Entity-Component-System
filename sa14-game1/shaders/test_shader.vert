@@ -7,6 +7,7 @@ layout(location = 1) in vec4 Normal;
 layout(location = 1) out float light_mult;
 
 uniform float SomeVal;
+uniform mat4 ViewMatrix;
 
 mat4 lookAt(vec3 eye, vec3 target) {
     vec3 up = vec3(0, 1, 0);
@@ -22,38 +23,47 @@ mat4 lookAt(vec3 eye, vec3 target) {
     ));
 }
 
-vec4 rotAndStuff(vec4 pos) {
+vec4 rotera(vec4 pos) {
     float a = SomeVal * 2.0;
-    float b = SomeVal * 1.2;
-    mat4 rotZ = mat4(
+    float b = SomeVal * 1.2*0.0+0.9;
+    mat4 rotZ = transpose(mat4(
         cos(a), -sin(a), 0.0, 0.0,
         sin(a),  cos(a), 0.0, 0.0,
            0.0,     0.0, 1.0, 0.0,
            0.0,     0.0, 0.0, 1.0
-    );
+    ));
 
-    mat4 rotX = mat4(
+    mat4 rotX = transpose(mat4(
         1.0,    0.0,     0.0, 0.0,
         0.0, cos(b), -sin(b), 0.0,
         0.0, sin(b),  cos(b), 0.0,
         0.0,    0.0,     0.0, 1.0
-    );
+    ));
 
-    mat4 rot = transpose(rotX) * rotZ;
-    vec3 target = vec3(0, 0, 0);
-    vec3 eye = vec3(0, 0, -1);
+    mat4 rot = rotX * rotZ;
 
-    return transpose(lookAt(eye, target)) * rot * pos;
+    return rot * pos;
+}
+
+vec4 rotAndStuff(vec4 pos) {
+    mat4 transl = transpose(mat4(
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, -2.0,
+        0.0, 0.0, 0.0, 1.0
+    ));
+
+    return transl * rotera(pos);
 }
 
 void main() {
-    vec3 light = normalize(vec3(-1, 1, -1));
-    vec4 lol = rotAndStuff(Normal);
-    float dp = dot(normalize(lol.xyz), light);
+    vec3 l = normalize(-vec3(0, -0.5, -1));
+    vec3 n = normalize(rotera(Normal).xyz);
 
+    float dp = dot(n, l);
     if (dp < 0.0) dp = 0.0;
 
     light_mult = dp;
 
-    gl_Position =rotAndStuff(Position);
+    gl_Position = ViewMatrix * rotAndStuff(Position);
 }
