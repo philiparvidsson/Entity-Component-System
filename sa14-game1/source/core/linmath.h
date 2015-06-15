@@ -650,7 +650,8 @@ static inline vec4 vec4_normalize(vec4 v) {
 }
 
 static inline mat4x4 mat4x4_lookAt(vec3 pos, vec3 at, vec3 up) {
-    vec3 z_axis = { at.x - pos.x, at.y - pos.y, at.z - pos.z };
+    vec3 z_axis = vec3_sub(pos, at);
+
     z_axis = vec3_normalize(z_axis);
 
     vec3 x_axis = vec3_normalize(vec3_cross(up, z_axis));
@@ -667,7 +668,7 @@ static inline mat4x4 mat4x4_lookAt(vec3 pos, vec3 at, vec3 up) {
         -x_dot,    -y_dot,    -z_dot,    1.0f
     };
 
-    return (m);
+    return (mat4x4_transpose(m));
 }
 
 static inline mat4x4 mat4x4_ortho(float left, float right, float bottom,
@@ -691,9 +692,9 @@ static inline mat4x4 mat4x4_perspective(float left, float right, float bottom,
     float l=left, r=right, b=bottom, t=top, n=near, f=far;
 
     mat4x4 m = {
-        (2.0f*f)/(r-l),  0.0f,           (r+l)/(r-l),  0.0f,
-         0.0f,          (2.0f*f)/(t-b),  (t+b)/(t-b),  0.0f,
-         0.0f,           0.0f,           (n+f)/(n-f), (2.0f*n*f)/(n-f),
+        (-2.0f*f)/(r-l),  0.0f,           (r+l)/(r-l),  0.0f,
+         0.0f,          -(2.0f*f)/(t-b),  (t+b)/(t-b),  0.0f,
+         0.0f,           0.0f,           (n+f)/(n-f), (-2.0f*n*f)/(n-f),
          0.0f,           0.0f,          -1.0f,         0.0f
     };
 

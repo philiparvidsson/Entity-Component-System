@@ -57,28 +57,31 @@ int main(void) {
     compileVertexShader(shader_program, readFile("shaders/test_shader.vert"));
     compileFragmentShader(shader_program, readFile("shaders/test_shader.frag"));
 
-    geometryT *box = createBox(0.1f, 0.2f, 0.4f);
+    geometryT *box = createBox(0.1f, 0.1f*1.6f, 0.1f*1.6f*1.6f);
 
-    mat4x4 la = mat4x4_lookAt(
-        (vec3) { 0.0f, 0.5f, -1.0f },
-        (vec3) { 0.0f, 0.0f, 0.0f },
-        (vec3) { 0.0f, 1.0f, 0.0f }
-    );
-
-    mat4x4 o = mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, -3.0f);
-    //o = mat4x4_identity();
-    //cm = identityMatrix4();
-
-    mat4x4 view_matrix = o;// mat4x4_mul(o, la);
 
     float ff = 0.0f;
     while (windowIsOpen()) {
+
+
+    mat4x4 la = mat4x4_lookAt(
+        (vec3) { 0.0f, 0.5f,  0.0f },
+        (vec3) { 0.0f, 0.0f, -1.0f },
+        (vec3) { 0.0f, 1.0f, 0.0f }
+    );
+
+    mat4x4 o = mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -0.1f, -3.0f);
+
+    mat4x4 proj_matrix = o;
+    mat4x4 view_matrix = la;
+
         clearDisplay(0.0f, 0.0f, 0.4f);
-        ff += 0.25 / 60.0f;
+        ff += 0.75 / 60.0f;
 
         useShaderProgram(shader_program);
         setShaderUniform("SomeVal", FloatUniform, &ff);
-        setShaderUniform("ViewMatrix", Matrix4Uniform, &view_matrix);
+        setShaderUniform("View", Matrix4Uniform, &view_matrix);
+        setShaderUniform("Proj", Matrix4Uniform, &proj_matrix);
 
         drawGeometry(box);
         
