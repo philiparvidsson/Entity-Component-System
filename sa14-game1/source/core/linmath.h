@@ -321,6 +321,79 @@
 
 #endif /* VectorSwizzle */
 
+#define vec_float_padding int:sizeof(float) * CHAR_BIT
+
+/*------------------------------------------------
+ * TYPES
+ *----------------------------------------------*/
+
+/*--------------------------------------
+ * Type: vec2
+ *
+ * Description:
+ *   Vector type with two components (x and y).
+ *------------------------------------*/
+typedef union {
+    float coord[2];
+    struct { float x, y; };
+} vec2;
+
+/*--------------------------------------
+ * Type: vec3
+ *
+ * Description:
+ *   Vector type with three components (x, y and z or r, g and b).
+ *------------------------------------*/
+typedef union {
+    float coord[3];
+    struct { float x, y, z; };
+
+    vec2 xy;
+    struct { vec_float_padding; vec2 yz; };
+} vec3;
+
+/*--------------------------------------
+ * Type: vec4
+ *
+ * Description:
+ *   Vector type with four components (x, y, z and w or r, g, b and a).
+ *------------------------------------*/
+typedef union {
+    float coord[4];
+    struct { float x, y, z, w; };
+
+    vec2 xy;
+    struct { vec_float_padding; vec2 yz; };
+    struct { vec_float_padding; vec_float_padding; vec2 zw; };
+
+    vec3 xyz;
+    struct { vec_float_padding; vec3 yzw; };
+} vec4;
+
+#undef vec_float_padding
+
+typedef union {
+    float value[4];
+    vec2 row[2];
+    struct { vec2 x; vec2 y; };
+} mat2x2;
+
+typedef union {
+    float value[9];
+    vec3 row[3];
+    struct { vec3 x; vec3 y; vec3 z; };
+} mat3x3;
+
+typedef union {
+    float value[16];
+    vec4 row[4];
+    struct { vec4 x; vec4 y; vec4 z; vec4 w; };
+} mat4x4;
+
+/*------------------------------------------------
+ * FUNCTIONS
+ *----------------------------------------------*/
+
 /*------------------------------------------------------------------------------
  * Unit vector macros.
  *----------------------------------------------------------------------------*/
@@ -429,29 +502,44 @@
                                       0.0f,    0.0f,   1.0f, 0.0f,   \
                                       0.0f,    0.0f,   0.0f, 1.0f })
 
-#define mat2x2_to_mat3x3(m) ((mat3x3) { m.x.x, m.x.y, 0.0f,   \
-                                        m.y.x, m.y.y, 0.0f,   \
-                                        0.0f,  0.0f,  0.0f })
+#define mat4x4_translateX(d) ((mat4x4) { 1.0f, 0.0f, 0.0f, d,      \
+                                         0.0f, 1.0f, 0.0f, 0.0f,   \
+                                         0.0f, 0.0f, 1.0f, 0.0f,   \
+                                         0.0f, 0.0f, 0.0f, 1.0f })
 
-#define mat2x2_to_mat4x4(m) ((mat4x4) { m.x.x, m.x.y, 0.0f, 0.0f,   \
-                                        m.y.x, m.y.y, 0.0f, 0.0f,   \
-                                        0.0f,  0.0f,  0.0f, 0.0f,   \
-                                        0.0f,  0.0f,  0.0f, 0.0f })
+#define mat4x4_translateY(d) ((mat4x4) { 1.0f, 0.0f, 0.0f, 0.0f,   \
+                                         0.0f, 1.0f, 0.0f, d,      \
+                                         0.0f, 0.0f, 1.0f, 0.0f,   \
+                                         0.0f, 0.0f, 0.0f, 1.0f })
 
-#define mat3x3_to_mat2x2(m) ((mat2x2) { m.x.x, m.x.y,   \
-                                        m.y.x, m.y.y })
+#define mat4x4_translateZ(d) ((mat4x4) { 1.0f, 0.0f, 0.0f, 0.0f,   \
+                                         0.0f, 1.0f, 0.0f, 0.0f,   \
+                                         0.0f, 0.0f, 1.0f, d,      \
+                                         0.0f, 0.0f, 0.0f, 1.0f })
 
-#define mat3x3_to_mat4x4(m) ((mat4x4) { m.x.x, m.x.y, m.x.z, 0.0f,   \
-                                        m.y.x, m.y.y, m.y.z, 0.0f,   \
-                                        m.z.x, m.z.y, m.z.z, 0.0f,   \
-                                        0.0f,  0.0f,  0.0f,  0.0f })
+#define mat2x2_toMat3x3(m) ((mat3x3) { m.x.x, m.x.y, 0.0f,   \
+                                       m.y.x, m.y.y, 0.0f,   \
+                                       0.0f,  0.0f,  0.0f })
 
-#define mat4x4_to_mat2x2(m) ((mat2x2) { m.x.x, m.x.y,   \
-                                        m.y.x, m.y.y })
+#define mat2x2_toMat4x4(m) ((mat4x4) { m.x.x, m.x.y, 0.0f, 0.0f,   \
+                                       m.y.x, m.y.y, 0.0f, 0.0f,   \
+                                       0.0f,  0.0f,  0.0f, 0.0f,   \
+                                       0.0f,  0.0f,  0.0f, 0.0f })
 
-#define mat4x4_to_mat3x3(m) ((mat3x3) { m.x.x, m.x.y, m.x.z,   \
-                                        m.y.x, m.y.y, m.y.z,   \
-                                        m.z.x, m.z.y, m.z.z })
+#define mat3x3_toMat2x2(m) ((mat2x2) { m.x.x, m.x.y,   \
+                                       m.y.x, m.y.y })
+
+#define mat3x3_toMat4x4(m) ((mat4x4) { m.x.x, m.x.y, m.x.z, 0.0f,   \
+                                       m.y.x, m.y.y, m.y.z, 0.0f,   \
+                                       m.z.x, m.z.y, m.z.z, 0.0f,   \
+                                       0.0f,  0.0f,  0.0f,  0.0f })
+
+#define mat4x4_toMat2x2(m) ((mat2x2) { m.x.x, m.x.y,   \
+                                       m.y.x, m.y.y })
+
+#define mat4x4_toMat3x3(m) ((mat3x3) { m.x.x, m.x.y, m.x.z,   \
+                                       m.y.x, m.y.y, m.y.z,   \
+                                       m.z.x, m.z.y, m.z.z })
 
 #define mat2x2_transpose(m) ((mat2x2) { m.x.x, m.y.x,   \
                                         m.x.y, m.y.y })
@@ -469,152 +557,97 @@
  * Matrix-matrix operations.
  *----------------------------------------------------------------------------*/
 
-#define mat2x2_add(a, b) ((mat2x2) {  \
-            a.x.x+b.x.x, a.x.y+b.x.y, \
-            a.y.x+b.y.x, a.y.y+b.y.y  \
-        })
+static inline mat2x2 mat2x2_add(mat2x2 a, mat2x2 b) {
+    return ((mat2x2) {
+        a.x.x + b.x.x, a.x.y + b.x.y,
+        a.y.x + b.y.x, a.y.y + b.y.y
+    });
+}
 
-#define mat2x2_mul(a, b) ((mat2x2) { \
-            a.x.x*b.x.x+a.x.y*b.y.x, \
-            a.x.x*b.x.y+a.x.y*b.y.y, \
-            a.y.x*b.x.x+a.y.y*b.y.x, \
-            a.y.x*b.x.y+a.y.y*b.y.y  \
-        })
+static inline mat2x2 mat2x2_mul(mat2x2 a, mat2x2 b) {
+    return ((mat2x2) {
+        a.x.x*b.x.x + a.x.y*b.y.x,
+        a.x.x*b.x.y + a.x.y*b.y.y,
+        a.y.x*b.x.x + a.y.y*b.y.x,
+        a.y.x*b.x.y + a.y.y*b.y.y
+    });
+}
 
-#define mat2x2_sub(a, b) ((mat2x2) {  \
-            a.x.x-b.x.x, a.x.y-b.x.y, \
-            a.y.x-b.y.x, a.y.y-b.y.y  \
-        })
+static inline mat2x2 mat2x2_sub(mat2x2 a, mat2x2 b) {
+    return ((mat2x2) {
+        a.x.x - b.x.x, a.x.y - b.x.y,
+        a.y.x - b.y.x, a.y.y - b.y.y
+    });
+}
 
-#define mat3x3_add(a, b) ((mat3x3) {               \
-            a.x.x+b.x.x, a.x.y+b.x.y, a.x.z+b.x.z, \
-            a.y.x+b.y.x, a.y.y+b.y.y, a.y.z+b.y.z, \
-            a.z.x+b.z.x, a.z.y+b.z.y, a.z.z+b.z.z  \
-        })
+static inline mat3x3 mat3x3_add(mat3x3 a, mat3x3 b) {
+    return ((mat3x3) {
+        a.x.x + b.x.x, a.x.y + b.x.y, a.x.z + b.x.z,
+        a.y.x + b.y.x, a.y.y + b.y.y, a.y.z + b.y.z,
+        a.z.x + b.z.x, a.z.y + b.z.y, a.z.z + b.z.z
+    });
+}
 
-#define mat3x3_mul(a, b) ((mat3x3) {             \
-            a.x.x*b.x.x+a.x.y*b.y.x+a.x.z*b.z.x, \
-            a.x.x*b.x.y+a.x.y*b.y.y+a.x.z*b.z.y, \
-            a.x.x*b.x.z+a.x.y*b.y.z+a.x.z*b.z.z, \
-            a.y.x*b.x.x+a.y.y*b.y.x+a.y.z*b.z.x, \
-            a.y.x*b.x.y+a.y.y*b.y.y+a.y.z*b.z.y, \
-            a.y.x*b.x.z+a.y.y*b.y.z+a.y.z*b.z.z, \
-            a.z.x*b.x.x+a.z.y*b.y.x+a.z.z*b.z.x, \
-            a.z.x*b.x.y+a.z.y*b.y.y+a.z.z*b.z.y, \
-            a.z.x*b.x.z+a.z.y*b.y.z+a.z.z*b.z.z  \
-        })
+static inline mat3x3 mat3x3_mul(mat3x3 a, mat3x3 b) {
+    return ((mat3x3) {
+        a.x.x*b.x.x + a.x.y*b.y.x + a.x.z*b.z.x,
+        a.x.x*b.x.y + a.x.y*b.y.y + a.x.z*b.z.y,
+        a.x.x*b.x.z + a.x.y*b.y.z + a.x.z*b.z.z,
+        a.y.x*b.x.x + a.y.y*b.y.x + a.y.z*b.z.x,
+        a.y.x*b.x.y + a.y.y*b.y.y + a.y.z*b.z.y,
+        a.y.x*b.x.z + a.y.y*b.y.z + a.y.z*b.z.z,
+        a.z.x*b.x.x + a.z.y*b.y.x + a.z.z*b.z.x,
+        a.z.x*b.x.y + a.z.y*b.y.y + a.z.z*b.z.y,
+        a.z.x*b.x.z + a.z.y*b.y.z + a.z.z*b.z.z
+    });
+}
 
-#define mat3x3_sub(a, b) ((mat3x3) {               \
-            a.x.x-b.x.x, a.x.y-b.x.y, a.x.z-b.x.z, \
-            a.y.x-b.y.x, a.y.y-b.y.y, a.y.z-b.y.z, \
-            a.z.x-b.z.x, a.z.y-b.z.y, a.z.z-b.z.z  \
-        })
+static inline mat3x3 mat3x3_sub(mat3x3 a, mat3x3 b) {
+    return ((mat3x3) {
+        a.x.x - b.x.x, a.x.y - b.x.y, a.x.z - b.x.z,
+        a.y.x - b.y.x, a.y.y - b.y.y, a.y.z - b.y.z,
+        a.z.x - b.z.x, a.z.y - b.z.y, a.z.z - b.z.z
+    });
+}
 
-#define mat4x4_add(a, b) ((mat4x4) {                            \
-            a.x.x+b.x.x, a.x.y+b.x.y, a.x.z+b.x.z, a.x.w+b.x.w, \
-            a.y.x+b.y.x, a.y.y+b.y.y, a.y.z+b.y.z, a.y.w+b.y.w, \
-            a.z.x+b.z.x, a.z.y+b.z.y, a.z.z+b.z.z, a.z.w+b.z.w, \
-            a.w.x+b.w.x, a.w.y+b.w.y, a.w.z+b.w.z, a.w.w+b.w.w  \
-        })
+static inline mat4x4 mat4x4_add(mat4x4 a, mat4x4 b) {
+    return ((mat4x4) {
+        a.x.x + b.x.x, a.x.y + b.x.y, a.x.z + b.x.z, a.x.w + b.x.w,
+        a.y.x + b.y.x, a.y.y + b.y.y, a.y.z + b.y.z, a.y.w + b.y.w,
+        a.z.x + b.z.x, a.z.y + b.z.y, a.z.z + b.z.z, a.z.w + b.z.w,
+        a.w.x + b.w.x, a.w.y + b.w.y, a.w.z + b.w.z, a.w.w + b.w.w
+    });
+}
 
-#define mat4x4_mul(a, b) ((mat4x4) {                         \
-            a.x.x*b.x.x+a.x.y*b.y.x+a.x.z*b.z.x+a.x.w*b.w.x, \
-            a.x.x*b.x.y+a.x.y*b.y.y+a.x.z*b.z.y+a.x.w*b.w.y, \
-            a.x.x*b.x.z+a.x.y*b.y.z+a.x.z*b.z.z+a.x.w*b.w.z, \
-            a.x.x*b.x.w+a.x.y*b.y.w+a.x.z*b.z.w+a.x.w*b.w.w, \
-            a.y.x*b.x.x+a.y.y*b.y.x+a.y.z*b.z.x+a.y.w*b.w.x, \
-            a.y.x*b.x.y+a.y.y*b.y.y+a.y.z*b.z.y+a.y.w*b.w.y, \
-            a.y.x*b.x.z+a.y.y*b.y.z+a.y.z*b.z.z+a.y.w*b.w.z, \
-            a.y.x*b.x.w+a.y.y*b.y.w+a.y.z*b.z.w+a.y.w*b.w.w, \
-            a.z.x*b.x.x+a.z.y*b.y.x+a.z.z*b.z.x+a.z.w*b.w.x, \
-            a.z.x*b.x.y+a.z.y*b.y.y+a.z.z*b.z.y+a.z.w*b.w.y, \
-            a.z.x*b.x.z+a.z.y*b.y.z+a.z.z*b.z.z+a.z.w*b.w.z, \
-            a.z.x*b.x.w+a.z.y*b.y.w+a.z.z*b.z.w+a.z.w*b.w.w, \
-            a.w.x*b.x.x+a.w.y*b.y.x+a.w.z*b.z.x+a.w.w*b.w.x, \
-            a.w.x*b.x.y+a.w.y*b.y.y+a.w.z*b.z.y+a.w.w*b.w.y, \
-            a.w.x*b.x.z+a.w.y*b.y.z+a.w.z*b.z.z+a.w.w*b.w.z, \
-            a.w.x*b.x.w+a.w.y*b.y.w+a.w.z*b.z.w+a.w.w*b.w.w, \
-        })
+static inline mat4x4 mat4x4_mul(mat4x4 a, mat4x4 b) {
+    return ((mat4x4) {
+        a.x.x*b.x.x + a.x.y*b.y.x + a.x.z*b.z.x + a.x.w*b.w.x,
+        a.x.x*b.x.y + a.x.y*b.y.y + a.x.z*b.z.y + a.x.w*b.w.y,
+        a.x.x*b.x.z + a.x.y*b.y.z + a.x.z*b.z.z + a.x.w*b.w.z,
+        a.x.x*b.x.w + a.x.y*b.y.w + a.x.z*b.z.w + a.x.w*b.w.w,
+        a.y.x*b.x.x + a.y.y*b.y.x + a.y.z*b.z.x + a.y.w*b.w.x,
+        a.y.x*b.x.y + a.y.y*b.y.y + a.y.z*b.z.y + a.y.w*b.w.y,
+        a.y.x*b.x.z + a.y.y*b.y.z + a.y.z*b.z.z + a.y.w*b.w.z,
+        a.y.x*b.x.w + a.y.y*b.y.w + a.y.z*b.z.w + a.y.w*b.w.w,
+        a.z.x*b.x.x + a.z.y*b.y.x + a.z.z*b.z.x + a.z.w*b.w.x,
+        a.z.x*b.x.y + a.z.y*b.y.y + a.z.z*b.z.y + a.z.w*b.w.y,
+        a.z.x*b.x.z + a.z.y*b.y.z + a.z.z*b.z.z + a.z.w*b.w.z,
+        a.z.x*b.x.w + a.z.y*b.y.w + a.z.z*b.z.w + a.z.w*b.w.w,
+        a.w.x*b.x.x + a.w.y*b.y.x + a.w.z*b.z.x + a.w.w*b.w.x,
+        a.w.x*b.x.y + a.w.y*b.y.y + a.w.z*b.z.y + a.w.w*b.w.y,
+        a.w.x*b.x.z + a.w.y*b.y.z + a.w.z*b.z.z + a.w.w*b.w.z,
+        a.w.x*b.x.w + a.w.y*b.y.w + a.w.z*b.z.w + a.w.w*b.w.w
+    });
+}
 
-#define mat4x4_sub(a, b) ((mat4x4) {                            \
-            a.x.x-b.x.x, a.x.y-b.x.y, a.x.z-b.x.z, a.x.w-b.x.w, \
-            a.y.x-b.y.x, a.y.y-b.y.y, a.y.z-b.y.z, a.y.w-b.y.w, \
-            a.z.x-b.z.x, a.z.y-b.z.y, a.z.z-b.z.z, a.z.w-b.z.w, \
-            a.w.x-b.w.x, a.w.y-b.w.y, a.w.z-b.w.z, a.w.w-b.w.w  \
-        })
-
-#define vec_float_padding int:sizeof(float) * CHAR_BIT
-
-/*------------------------------------------------
- * TYPES
- *----------------------------------------------*/
-
-/*--------------------------------------
- * Type: vec2
- *
- * Description:
- *   Vector type with two components (x and y).
- *------------------------------------*/
-typedef union {
-    float coord[2];
-    struct { float x, y; };
-} vec2;
-
-/*--------------------------------------
- * Type: vec3
- *
- * Description:
- *   Vector type with three components (x, y and z or r, g and b).
- *------------------------------------*/
-typedef union {
-    float coord[3];
-    struct { float x, y, z; };
-
-    vec2 xy;
-    struct { vec_float_padding; vec2 yz; };
-} vec3;
-
-/*--------------------------------------
- * Type: vec4
- *
- * Description:
- *   Vector type with four components (x, y, z and w or r, g, b and a).
- *------------------------------------*/
-typedef union {
-    float coord[4];
-    struct { float x, y, z, w; };
-
-    vec2 xy;
-    struct { vec_float_padding; vec2 yz; };
-    struct { vec_float_padding; vec_float_padding; vec2 zw; };
-
-    vec3 xyz;
-    struct { vec_float_padding; vec3 yzw; };
-} vec4;
-
-#undef SkipBits
-
-typedef union {
-    float value[4];
-    vec2 row[2];
-    struct { vec2 x; vec2 y; };
-} mat2x2;
-
-typedef union {
-    float value[9];
-    vec3 row[3];
-    struct { vec3 x; vec3 y; vec3 z; };
-} mat3x3;
-
-typedef union {
-    float value[16];
-    vec4 row[4];
-    struct { vec4 x; vec4 y; vec4 z; vec4 w; };
-} mat4x4;
-
-/*------------------------------------------------
- * FUNCTIONS
- *----------------------------------------------*/
+static inline mat4x4 mat4x4_sub(mat4x4 a, mat4x4 b) {
+    return ((mat4x4) {
+        a.x.x - b.x.x, a.x.y - b.x.y, a.x.z - b.x.z, a.x.w - b.x.w,
+        a.y.x - b.y.x, a.y.y - b.y.y, a.y.z - b.y.z, a.y.w - b.y.w,
+        a.z.x - b.z.x, a.z.y - b.z.y, a.z.z - b.z.z, a.z.w - b.z.w,
+        a.w.x - b.w.x, a.w.y - b.w.y, a.w.z - b.w.z, a.w.w - b.w.w
+    });
+}
 
 static inline vec2 vec2_normalize(vec2 v) {
     float d = v.x*v.x + v.y*v.y;
@@ -692,10 +725,10 @@ static inline mat4x4 mat4x4_perspective(float left, float right, float bottom,
     float l=left, r=right, b=bottom, t=top, n=near, f=far;
 
     mat4x4 m = {
-        (-2.0f*f)/(r-l),  0.0f,           (r+l)/(r-l),  0.0f,
-         0.0f,          -(2.0f*f)/(t-b),  (t+b)/(t-b),  0.0f,
-         0.0f,           0.0f,           (n+f)/(n-f), (-2.0f*n*f)/(n-f),
-         0.0f,           0.0f,          -1.0f,         0.0f
+        (-2.0f*f)/(r-l),  0.0f,            (r+l)/(r-l), 0.0f,
+         0.0f,           -(2.0f*f)/(t-b),  (t+b)/(t-b), 0.0f,
+         0.0f,            0.0f,           -(n+f)/(n-f), (2.0f*n*f)/(n-f),
+         0.0f,            0.0f,           -1.0f,        0.0f
     };
 
     return (m);

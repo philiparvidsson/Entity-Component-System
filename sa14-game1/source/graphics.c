@@ -60,20 +60,30 @@
  * TYPES
  *----------------------------------------------*/
 
+/*--------------------------------------
+ * Type: geometryT_
+ *
+ * Description:
+ *   Represents a piece of geometry with a vertex mesh etc. This type also
+ *   contains the private section of the type, which is inaccessible outside
+ *   this module. The order of the fields must not be changed to preserve
+ *   compatibility with the public part of this type.
+ *------------------------------------*/
 typedef struct {
     /* --- Public --- */
 
-    vec3 *verts;     /* Geometrins "hörnpunkter."   */
-    vec3 *normals;   /* Varje punkts normal-vektor. */
-    int   num_verts; /* Antal punkter i geometrin.  */
-    triT *tris;      /* Geometrins trianglar.       */
-    int   num_tris;  /* Antal trianglar i geometrin.*/
+    vec3 *verts;      /* The vertices.           */
+    vec3 *normals;    /* The vertex normals.     */
+    int   num_verts;  /* Number of vertices.     */
+    triT *tris;       /* The triangles (faces).  */
+    int   num_tris;   /* Number of triangles.    */
+    mat4x4 transform; /* Model transform matrix. */
 
     /* --- Private --- */
 
-    GLuint vbo, /* Vertex-bufferten i GPU:n. */
-           nbo, /* Normal-bufferten i GPU:n. */
-           ibo; /* Index-bufferten i GPU:n.  */
+    GLuint vbo, /* Vertex buffer. */
+           nbo, /* Normal buffer. */
+           ibo; /* Index buffer.  */
 } geometryT_;
 
 /*--------------------------------------

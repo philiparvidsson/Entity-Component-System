@@ -57,38 +57,48 @@ int main(void) {
     compileVertexShader(shader_program, readFile("shaders/test_shader.vert"));
     compileFragmentShader(shader_program, readFile("shaders/test_shader.frag"));
 
-    geometryT *box = createBox(0.1f, 0.1f*1.6f, 0.1f*1.6f*1.6f);
+    geometryT *box1 = createBox(0.1f, 0.1f*1.6f, 0.1f*1.6f*1.6f);
+    geometryT *box2 = createBox(0.2f, 0.2f, 0.2f);
 
-
-    float ff = 0.0f;
-    while (windowIsOpen()) {
-
-
-    mat4x4 la = mat4x4_lookAt(
-        (vec3) { 0.0f, 0.5f,  0.0f },
+    mat4x4 proj = mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -0.1f, -3.0f);
+    mat4x4 view = mat4x4_lookAt(
+        (vec3) { 0.0f, 0.5f, 0.0f },
         (vec3) { 0.0f, 0.0f, -1.0f },
         (vec3) { 0.0f, 1.0f, 0.0f }
     );
 
-    mat4x4 o = mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -0.1f, -3.0f);
 
-    mat4x4 proj_matrix = o;
-    mat4x4 view_matrix = la;
+    float ff = 0.0f;
+    while (windowIsOpen()) {
+        box1->transform = mat4x4_mul(mat4x4_translateZ(-1.0f), mat4x4_rotateY(ff));
+        box2->transform =
+            mat4x4_mul(
+       
+                    mat4x4_translateZ(-1.0f),
+                mat4x4_mul(
+                    mat4x4_rotateX(ff*0.5),
+                    mat4x4_rotateY(ff*0.3f)
+                )
+            );
 
         clearDisplay(0.0f, 0.0f, 0.4f);
         ff += 0.75 / 60.0f;
 
         useShaderProgram(shader_program);
-        setShaderUniform("SomeVal", FloatUniform, &ff);
-        setShaderUniform("View", Matrix4Uniform, &view_matrix);
-        setShaderUniform("Proj", Matrix4Uniform, &proj_matrix);
+        setShaderUniform("View", Matrix4Uniform, &view);
+        setShaderUniform("Proj", Matrix4Uniform, &proj);
 
-        drawGeometry(box);
+        setShaderUniform("Model", Matrix4Uniform, &box1->transform);
+        drawGeometry(box1);
+
+        //setShaderUniform("Model", Matrix4Uniform, &box2->transform);
+        //drawGeometry(box2);
         
         updateDisplay();
     }
 
-    deleteGeometry(box);
+    deleteGeometry(box1);
+    deleteGeometry(box2);
     deleteShaderProgram(shader_program);
 
     exitGraphics();

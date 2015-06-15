@@ -25,12 +25,6 @@
  * TYPES
  *----------------------------------------------*/
 
-typedef struct {
-    vec3 position;
-    vec3 target;
-    vec3 up;
-} cameraT;
-
 /*--------------------------------------
  * Type: triT
  *
@@ -45,14 +39,15 @@ typedef struct {
  * Type: geometryT
  *
  * Description:
- *   Representerar en bit geometri.
+ *   Represents a piece of geometry with a vertex mesh etc.
  *------------------------------------*/
 typedef struct {
-          vec3 *const verts;     /* Geometrins "hörnpunkter."   */
-          vec3 *const normals;   /* Varje punkts normal-vektor. */
-    const int         num_verts; /* Antal punkter i geometrin.  */
-          triT *const tris;      /* Geometrins trianglar.       */
-    const int         num_tris;  /* Antal trianglar i geometrin.*/
+          vec3   *const verts;      /* The vertices.           */
+          vec3   *const normals;    /* The vertex normals.     */
+    const int           num_verts;  /* Number of vertices.     */
+          triT   *const tris;       /* The triangles (faces).  */
+    const int           num_tris;   /* Number of triangles.    */
+          mat4x4        transform; /* Model transform matrix. */
 } geometryT;
 
 /*--------------------------------------
