@@ -6,9 +6,8 @@
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Erbjuder ett enkelt grafikbibliotek för att rita och visa grafik. Biblio-
- *   teket använder OpenGL och renderar således med hårdvara om möjlighet finns.
- *
+ *   This file implements a graphics library using modern OpenGL, supporting
+ *   shaders and much more, using a right-handed coordinate system.
  *----------------------------------------------------------------------------*/
 
 #ifndef graphics_h_
@@ -63,7 +62,7 @@ typedef struct {
  * Type: shaderProgramADT
  *
  * Description:
- *   Abstrakt pekartyp för ett shader-program.
+ *   Abstract pointer type for referencing shader programs.
  *------------------------------------*/
 typedef struct shaderProgramCDT *shaderProgramADT;
 
@@ -84,14 +83,17 @@ typedef enum {
 /*--------------------------------------
  * Function: initGraphics()
  * Parameters:
- *   title   Fönstrets titel.
- *   width   Fönstrets bredd, i antal pixlar.
- *   height  Fönstrets höjd, i antal pixlar.
+ *   title   The window title.
+ *   width   Window width, in pixels.
+ *   height  Window height, in pixels.
  *
  * Description:
- *   Skapar ett grafikfönster med de specificerade dimensionerna. Den angivna
- *   bredden och höjden inkluderar inte fönsterdekorationer, utan endast storleken
- *   storleken på klientytan.
+ *   Creates a graphics window with the specified dimensions. The dimensions do
+ *   not include window decorations such as title bar, border etc, but rather
+ *   specifies the size of the client area.
+ *
+ * Usage:
+ *   initGraphics("Main Window", 640, 480);
  *------------------------------------*/
 void initGraphics(string title, int width, int height);
 
@@ -100,7 +102,10 @@ void initGraphics(string title, int width, int height);
  * Parameters:
  *
  * Description:
- *   Stänger grafikfönstret.
+ *   Closes the window and exits graphics mode.
+ *
+ * Usage:
+ *   exitGraphics();
  *------------------------------------*/
 void exitGraphics(void);
 
@@ -196,23 +201,21 @@ void setFrameRate(float fps);
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
- * Function: createBox()
+ * Function: createMesh()
  * Parameters:
- *   width   The width of the box (along the x-axis).
- *   height  The height of the box (y-axis).
- *   length  The length of the box (z-axis).
+ *   num_verts  Number of vertices.
+ *   num_tris   Number of triangles (faces).
  *
  * Returns:
- *   A pointer to the generated mesh.
+ *   A pointer to the mesh.
  *
  * Description:
- *   Creates a box mesh by laying out the vertices and attaching the triangles.
- *   The six sides of the box do not share vertices.
+ *   Creates a new mesh with the specified number of vertices and triangles.
  *
  * Usage:
- *   triMeshT *cube = createBox(1.0f, 1.0f, 1.0f);
+ *   triMeshT mesh = createMesh(8, 6);
  *------------------------------------*/
-triMeshT *createBox(float width, float height, float length);
+triMeshT *createMesh(int num_verts, int num_tris);
 
 /*--------------------------------------
  * Function: updateMesh()
@@ -286,7 +289,7 @@ void drawMesh(const triMeshT *mesh);
 void updateDisplay(void);
 
 /*------------------------------------------------------------------------------
- * Funktioner för att läsa ut inställningar och information om grafikläget m.m.
+ * Functions for querying the graphics mode, settings etc.
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
@@ -304,4 +307,4 @@ void updateDisplay(void);
  *------------------------------------*/
 bool windowIsOpen(void);
 
-#endif /* graphics_h_ */
+#endif // graphics_h_

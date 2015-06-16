@@ -6,9 +6,8 @@
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Erbjuder ett enkelt grafikbibliotek för att rita och visa grafik. Biblio-
- *   teket använder OpenGL och renderar således med hårdvara om möjlighet finns.
- *
+ *   This file implements a graphics library using modern OpenGL, supporting
+ *   shaders and much more, using a right-handed coordinate system.
  *----------------------------------------------------------------------------*/
 
 /*------------------------------------------------
@@ -72,47 +71,49 @@
 typedef struct {
     /* --- Public --- */
 
-    vertexT *verts;     /* The vertices.           */
-    int      num_verts; /* Number of vertices.     */
-    triT    *tris;      /* The triangles (faces).  */
-    int      num_tris;  /* Number of triangles.    */
+    vertexT *verts;     // The vertices.
+    int      num_verts; // Number of vertices.
+
+    triT    *tris;      // The triangles (faces).
+    int      num_tris;  // Number of triangles.
 
     /* --- Private --- */
 
-    GLuint vbo, /* Vertex buffer. */
-           ibo; /* Index buffer.  */
+    GLuint vbo, // Vertex buffer object.
+           ibo; // Index buffer object.
 } triMeshT_;
 
 /*--------------------------------------
  * Type: shaderProgramCDT
  *
  * Description:
- *   Abstrakt pekartyp för ett shader-program.
+ *   Concrete implementation for the shader program data type. The fields are
+ *   mainly related to deep system stuff and so should not be exposed publicly.
  *------------------------------------*/
 struct shaderProgramCDT {
-    GLuint  id;      /* Shader-programmets interna ID-nummer. */
-    arrayT *shaders; /* Pekare till array med programmets shaders. */
+    GLuint  id;      // The shader program identifier, given by OpenGL.
+    arrayT *shaders; // The attached shaders. Used to detach and delete them.
 };
 
 /*--------------------------------------
- * Type: windowT
+ * Type: graphicsWindowT
  *
  * Description:
- *   Datatyp som representerar ett fönster.
+ *   Represents a graphics window.
  *------------------------------------*/
 typedef struct {
-    const char* title;      /* Fönstrets titel.                      */
-    int         width,      /* Fönstrets bredd i antal pixlar.       */
-                height;     /* Fönstrets höjd i antal pixlar.        */
-    int         frame_time; /* Den tid som varje bildruta ska visas. */
+    const char* title;      // Window title.
+    int         width,      // Window width, in pixels.
+                height;     // Window height, in pixels.
+    int         frame_time; // The time to display each frame.
 
-    /* Nedan är plattformsspecifika, systemrelaterade variabler. */
+    // Below are platform specific system fields.
 
-    HWND          hwnd;        /* Systemets egna "handtag" till fönstret.    */
-    HDC           hdc;         /* Den DC (device context) som används.       */
-    HGLRC         hglrc;       /* Den renderingskontext som används.         */
-    LARGE_INTEGER last_update; /* Tidsstämpel för senaste bilduppdateringen. */
-} windowT;
+    HWND          hwnd;        // Systemets egna "handtag" till fönstret.
+    HDC           hdc;         // Den DC (device context) som används.
+    HGLRC         hglrc;       // Den renderingskontext som används.
+    LARGE_INTEGER last_update; // Tidsstämpel för senaste bilduppdateringen.
+} graphicsWindowT;
 
 /*------------------------------------------------
  * GLOBALS
@@ -122,17 +123,16 @@ typedef struct {
  * Variable: window
  *
  * Description:
- *   Pekare till grafikfönstret.
+ *   Pointer to the graphics window.
  *------------------------------------*/
-static windowT *window = NULL;
+static graphicsWindowT *window = NULL;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
 /*------------------------------------------------------------------------------
- * Nedan är de privata funktionerna som inte är tänkta att användas utanför
- * denna modul.
+ * Below are private functions not meant to be used outside this module.
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
@@ -149,7 +149,7 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
     switch (uMsg) {
 
     case WM_CLOSE: {
-        /* The user has closed the window, so we exit graphics mode. */
+        // The user has closed the window, so we exit graphics mode.
         exitGraphics();
         break;
     }
@@ -164,7 +164,12 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
  * Parameters:
  *
  * Description:
- *   Invokes the error() macro if graphics mode has not been initialized.
+ *   Invokes the error() macro if no graphics window exists. Call this function
+ *   before doing graphical operations to make sure the graphics mode has been
+ *   properly initialized.
+ *
+ * Usage:
+ *   checkGraphicsInited();
  *------------------------------------*/
 static void checkGraphicsInited(void) {
     if (!window)
@@ -247,7 +252,7 @@ static void createWindow(string title, int width, int height) {
     assert(AdjustWindowRectEx(&rect, style, FALSE, WS_EX_LEFT));
 
     /* Dags att allokera fönsterdatatypen. */
-    window = malloc(sizeof(windowT));
+    window = malloc(sizeof(graphicsWindowT));
 
     /*
      * Eftersom CreateWindowExW()-funktionen vill ha Unicode-strängar, så måste
@@ -374,14 +379,17 @@ static void unregisterWindowClass(void) {
 /*--------------------------------------
  * Function: initGraphics()
  * Parameters:
- *   title   Fönstrets titel.
- *   width   Fönstrets bredd, i antal pixlar.
- *   height  Fönstrets höjd, i antal pixlar.
+ *   title   The window title.
+ *   width   Window width, in pixels.
+ *   height  Window height, in pixels.
  *
  * Description:
- *   Skapar ett grafikfönster med de specificerade dimensionerna. Den angivna
- *   bredden och höjden inkluderar inte fönsterdekorationer, utan endast
- *   storleken på klientytan.
+ *   Creates a graphics window with the specified dimensions. The dimensions do
+ *   not include window decorations such as title bar, border etc, but rather
+ *   specifies the size of the client area.
+ *
+ * Usage:
+ *   initGraphics("Main Window", 640, 480);
  *------------------------------------*/
 void initGraphics(string title, int width, int height) {
     if (window)
@@ -397,17 +405,15 @@ void initGraphics(string title, int width, int height) {
     assert(wglMakeCurrent(window->hdc, window->hglrc));
     assert(glewInit() == GLEW_OK);
 
-    /* Enabling GL_BLEND makes transparency possible. */
+    // We need to enable GL_BLEND for transparency.
     glEnable   (GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    /* Ignore triangles that are "looking away" from the camera. */
+    // Ignore triangles that are "looking away" from the camera.
     glEnable(GL_CULL_FACE);
 
-    /*
-     * Enable z-buffering and make sure it's right-handed (i.e. -z is into the
-     * screen).
-     */
+    // Enable z-buffering and make sure it's right-handed (i.e. -z is into the
+    // screen).
     glEnable(GL_DEPTH_TEST);
     glClearDepth(0.0f);
     glDepthFunc(GL_GREATER);
@@ -420,7 +426,10 @@ void initGraphics(string title, int width, int height) {
  * Parameters:
  *
  * Description:
- *   Stänger grafikfönstret.
+ *   Closes the window and exits graphics mode.
+ *
+ * Usage:
+ *   exitGraphics();
  *------------------------------------*/
 void exitGraphics(void) {
     /* Om window redan är NULL så är vi inte i grafikläge. */
@@ -585,7 +594,7 @@ void setFrameRate(float fps) {
     LARGE_INTEGER freq;
     assert(QueryPerformanceFrequency(&freq));
 
-    window->frame_time = (int)(freq.QuadPart / fps);
+    window->frame_time = (int)(freq.QuadPart/fps);
 
     assert(QueryPerformanceCounter(&window->last_update));
 }
@@ -596,130 +605,41 @@ void setFrameRate(float fps) {
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
- * Function: createBox()
+ * Function: createMesh()
  * Parameters:
- *   width   The width of the box (along the x-axis).
- *   height  The height of the box (y-axis).
- *   length  The length of the box (z-axis).
+ *   num_verts  Number of vertices.
+ *   num_tris   Number of triangles (faces).
  *
  * Returns:
- *   A pointer to the generated mesh. The pointer actually points to a triMeshT_
- *   structure which contains private fields, but we hide them to the client by
- *   casting to the public type triMeshT instead. 
+ *   A pointer to the mesh.
  *
  * Description:
- *   Creates a box mesh by laying out the vertices and attaching the triangles.
- *   The six sides of the box do not share vertices, because if they are shared,
- *   OpenGL interpolates the normals, effectively resulting in a six sided
- *   sphere, which is not what we want.
+ *   Creates a new mesh with the specified number of vertices and triangles. The
+ *   returned pointer is actually a pointer to the internal type triMeshT_.
  *
  * Usage:
- *   triMeshT *cube = createBox(1.0f, 1.0f, 1.0f);
+ *   triMeshT mesh = createMesh(8, 6);
  *------------------------------------*/
-triMeshT *createBox(float width, float height, float length) {
-    // Divide the measurements in half since we span the box in both ways per
-    // dimension.
-    width  /= 2.0f;
-    height /= 2.0f;
-    length /= 2.0f;
+triMeshT *createMesh(int num_verts, int num_tris) {
+    triMeshT_ *mesh = malloc(sizeof(triMeshT_));
 
-    triMeshT_ *box = malloc(sizeof(triMeshT_));
+    mesh->num_verts = num_verts;
+    mesh->verts     = malloc(sizeof(vertexT) * mesh->num_verts);
+    mesh->num_tris  = num_tris;
+    mesh->tris      = malloc(sizeof(triT)    * mesh->num_tris);
 
-    // A box has eight corners, but every side needs their own normals for flat-
-    // shading to work properly (we don't want interpolated normals). Since each
-    // vertex has its own normal, we need six sides times four vertices.
-    box->num_verts = 6 * 4;
-    box->verts     = malloc(sizeof(vertexT) * box->num_verts);
+    size_t vb_size = sizeof(vertexT) * mesh->num_verts;
+    size_t ib_size = sizeof(triT)    * mesh->num_tris;
 
-    // A box has six sides, and every side is made up of two triangles.
-    box->num_tris = 6 * 2;
-    box->tris     = malloc(sizeof(triT) * box->num_tris);
+    glGenBuffers(1, &mesh->vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
+    glBufferData(GL_ARRAY_BUFFER, vb_size, mesh->verts, GL_STATIC_DRAW);
 
-    // Alias pointers for less code clutter.
-    vertexT *v = box->verts;
-    triT    *t = box->tris;
+    glGenBuffers(1, &mesh->ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ib_size, mesh->tris, GL_STATIC_DRAW);
 
-    // Front.
-    v[0].p = (vec3) {  width,  height, length };
-    v[1].p = (vec3) { -width,  height, length };
-    v[2].p = (vec3) { -width, -height, length };
-    v[3].p = (vec3) {  width, -height, length };
-
-    v[0].n = v[1].n = v[2].n = v[3].n = (vec3) { 0.0f, 0.0f, 1.0f };
-
-    t[0] = (triT) { 0, 1, 2 };
-    t[1] = (triT) { 2, 3, 0 };
-
-    // Right.
-    v[4].p = (vec3) { width,  height, -length };
-    v[5].p = (vec3) { width,  height,  length };
-    v[6].p = (vec3) { width, -height,  length };
-    v[7].p = (vec3) { width, -height, -length };
-
-    v[4].n = v[5].n = v[6].n = v[7].n = (vec3) { 1.0f, 0.0f, 0.0f };
-
-    t[2] = (triT) { 4, 5, 6 };
-    t[3] = (triT) { 6, 7, 4 };
-
-    // Back.
-    v[ 8].p = (vec3) { -width,  height, -length };
-    v[ 9].p = (vec3) {  width,  height, -length };
-    v[10].p = (vec3) {  width, -height, -length };
-    v[11].p = (vec3) { -width, -height, -length };
-
-    v[8].n = v[9].n = v[10].n = v[11].n = (vec3) { 0.0f, 0.0f, -1.0f };
-
-    t[4] = (triT) { 8,  9, 10 };
-    t[5] = (triT) { 10, 11, 8 };
-
-    // Left.
-    v[12].p = (vec3) { -width,  height,  length };
-    v[13].p = (vec3) { -width,  height, -length };
-    v[14].p = (vec3) { -width, -height, -length };
-    v[15].p = (vec3) { -width, -height,  length };
-
-    v[12].n = v[13].n = v[14].n = v[15].n = (vec3) { -1.0f, 0.0f, 0.0f };
-
-    t[6] = (triT) { 12, 13, 14 };
-    t[7] = (triT) { 14, 15, 12 };
-
-    // Top.
-    v[16].p = (vec3) {  width, height, -length };
-    v[17].p = (vec3) { -width, height, -length };
-    v[18].p = (vec3) { -width, height,  length };
-    v[19].p = (vec3) {  width, height,  length };
-
-    v[16].n = v[17].n = v[18].n = v[19].n = (vec3) { 0.0f, 1.0f, 0.0f };
-
-    t[8] = (triT) { 16, 17, 18 };
-    t[9] = (triT) { 18, 19, 16 };
-
-    // Bottom
-    v[20].p = (vec3) {  width, -height,  length };
-    v[21].p = (vec3) { -width, -height,  length };
-    v[22].p = (vec3) { -width, -height, -length };
-    v[23].p = (vec3) {  width, -height, -length };
-
-    v[20].n = v[21].n = v[22].n = v[23].n = (vec3) { 0.0f, -1.0f, 0.0f };
-
-    t[10] = (triT) { 20, 21, 22 };
-    t[11] = (triT) { 22, 23, 20 };
-
-    // Time to upload the box to the GPU via OpenGL.
-
-    size_t vb_size = sizeof(vertexT) * box->num_verts;
-    size_t ib_size = sizeof(triT)    * box->num_tris;
-
-    glGenBuffers(1, &box->vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, box->vbo);
-    glBufferData(GL_ARRAY_BUFFER, vb_size, box->verts, GL_STATIC_DRAW);
-
-
-    glGenBuffers(1, &box->ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box->ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ib_size, box->tris, GL_STATIC_DRAW);
-
-    return ((triMeshT *)box);
+    return (mesh);
 }
 
 /*--------------------------------------
@@ -862,7 +782,7 @@ void updateDisplay(void) {
 }
 
 /*------------------------------------------------------------------------------
- * Funktioner för att läsa ut inställningar och information om grafikläget m.m.
+ * Functions for querying the graphics mode, settings etc.
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------

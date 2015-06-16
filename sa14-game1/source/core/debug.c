@@ -30,7 +30,7 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Function: exitWithErrorMsg()
+ * Function: errorExit()
  * Parameters:
  *   msg        The error message to display.
  *   func_name  The name of the function that generated the error.
@@ -42,10 +42,10 @@
  *   not call it directly.
  *
  * Usage:
- *   exitWithErrorMsg("An error has occurred");
+ *   errorExit("An error has occurred", "main.c", 42);
  *
  *------------------------------------*/
-void exitWithErrorMsg(string msg, string func_name, int line) {
+void errorExit(string msg, string func_name, int line) {
     printf("\n----------------------------------------\n"
            "ERROR: %s in %s() on line %d.\n\n"
            "This program will now exit.\n", msg, func_name, line);

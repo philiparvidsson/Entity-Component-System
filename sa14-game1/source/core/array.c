@@ -6,7 +6,7 @@
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Provides a dynamic array.
+ *   Provides a dynamic array type.
  *----------------------------------------------------------------------------*/
 
 /*------------------------------------------------
@@ -28,9 +28,9 @@
  * Constant: InitialCapacity
  *
  * Description:
- *   Det initiala maximala antalet element i en array.
+ *   The initial array capacity, in number of elements.
  *------------------------------------*/
-#define InitialCapacity (8) /* Åtta är nog lagom. */
+#define InitialCapacity (8) /* Eight is probably enough. */
 
 /*------------------------------------------------
  * TYPES
@@ -40,19 +40,20 @@
  * Type: arrayT_
  *
  * Description:
- *   Representerar en array. Denna datatyp används internt, men exponrerar även
- *   en publik del.
+ *   Represents an array of elements. This type is used internally but also
+ *   exposes a public interface to clients (see the typ arrayT in the header
+ *   file).
  *------------------------------------*/
 typedef struct {
     /* --- Public --- */
 
-    size_t elem_size; /* Storleken på elementen i arrayen, i bytes. */
-    int    num_elems; /* Antal element i arrayen. */
+    size_t elem_size; // The size of each array element, in bytes.
+    int    num_elems; // Number of elements in the array.
 
     /* --- Private --- */
 
-    int    max_elems; /* Arrayens nuvarande kapacitet. */
-    void  *data;      /* Datablock där elementen lagras. */
+    int    max_elems; // The current array capacity.
+    void  *data;      // The element data block.
 } arrayT_;
 
 /*------------------------------------------------
@@ -60,23 +61,25 @@ typedef struct {
  *----------------------------------------------*/
 
 /*------------------------------------------------------------------------------
- * Privata funktioner.
+ * Private functions.
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
  * Function: doubleArrayCapacity()
  * Parameters:
- *   a  Den array vars kapacitet ska fördubblas.
+ *   a  The array whose capacity should be doubled.
  *
  *
  * Description:
- *   Dubblar kapaciteten för den specificerade arrayen.
+ *   Doubles the capacity for the specified array by reallocating its data
+ *   block twice as big as it currently is.
+ *
+ * Usage:
+ *   doubleArrayCapacity(my_array);
  *------------------------------------*/
 static void doubleArrayCapacity(arrayT_ *a) {
-    /*
-     * Vi dubblar kapaciteten och kopierar över de gamla elementen till den nya
-     * minnesplatsen, sen släpper vi den gamla arrayen ur minnet.
-     */
+    // We double the array capacity and copy the old elements into the new
+    // data block, the release the old data block.
 
     void *old_data      = a->data;
     int   old_max_elems = a->max_elems;
@@ -90,19 +93,22 @@ static void doubleArrayCapacity(arrayT_ *a) {
 }
 
 /*------------------------------------------------------------------------------
- * Publika funktioner.
+ * Public functions.
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
  * Function: newArray()
  * Parameters:
- *   elem_size  Storleken på elementen i arrayen.
+ *   elem_size  The array element size, in bytes.
  *
  * Returns:
- *   En pekare till arrayen.
+ *   A pointer to the array.
  *
  * Description:
- *   Skapar en ny, dynamisk array.
+ *   Creates a new, dynamic array.
+ *
+ * Usage:
+ *   arrayT *int_array = newArray(sizeof(int));
  *------------------------------------*/
 arrayT *newArray(size_t elem_size) {
     arrayT_ *a = malloc(sizeof(arrayT_));
@@ -118,10 +124,13 @@ arrayT *newArray(size_t elem_size) {
 /*--------------------------------------
  * Function: freeArray()
  * Parameters:
- *   a  Arrayen som ska deallokeras.
+ *   a  The array to free from memory.
  *
  * Description:
- *   Deallokerar en array.
+ *   Frees the specified array from memory.
+ *
+ * Usage:
+ *   freeArray(my_array);
  *------------------------------------*/
 void freeArray(arrayT *a) {
     free(((arrayT_ *)a)->data);
@@ -131,17 +140,17 @@ void freeArray(arrayT *a) {
 /*--------------------------------------
  * Function: arrayAdd()
  * Parameters:
- *   a     Arrayen till vilken ett element ska läggas.
- *   elem  En pekare till elementdatan.
- *
- * Returns:
- *   En pekare till minnesplatsen dit elementet kopierades.
+ *   a     The array to add an element to.
+ *   elem  Pointer to the element.
  *
  * Description:
- *   Lägger till ett element i den specificerade arrayen.
+ *   Adds an element to the end of the specified array.
+ *
+ * Usage:
+ *   arrayAdd(my_array, &elem);
  *------------------------------------*/
-void *arrayAdd(arrayT *a, const void *elem) {
-    /* Om det är fullt så gör vi helt enkelt utrymme för fler element. */
+void arrayAdd(arrayT *a, const void *elem) {
+    // If the array is full, we double its capacity.
     if (a->num_elems >= ((arrayT_ *)a)->max_elems)
         doubleArrayCapacity((arrayT_ *)a);
 
@@ -149,23 +158,25 @@ void *arrayAdd(arrayT *a, const void *elem) {
     
     memcpy(dest, elem, a->elem_size);
     ((arrayT_ *)a)->num_elems++;
-
-    return (dest);
 }
+
 /*--------------------------------------
  * Function: arrayGet()
  * Parameters:
- *   a     Arrayen från vilket ett element ska läsas ut.
- *   i     Index till det element som ska läsas ut.
- *   elem  Pekare till datablock där elementat ska lagras.
+ *   a     The array to retrieve an element from.
+ *   i     The index of the element to retrieve.
+ *   elem  Pointer to a buffer which the element data will be copied to.
  *
  * Description:
- *   Läser ut ett element från arrayen.
+ *   Retrieves an element from the array.
+ *
+ * Usage:
+ *   void *buf = malloc(my_array->elem_size);
+ *   arrayGet(my_array, 1, &buf);
  *------------------------------------*/
 void arrayGet(const arrayT *a, int i, void *dest) {
     assert(0 <= i && i < a->num_elems);
 
     void *src = ((char *)((arrayT_ *)a)->data + (i * a->elem_size));
-
     memcpy(dest, src, a->elem_size);
 }

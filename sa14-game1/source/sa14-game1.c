@@ -17,6 +17,7 @@
 #include "core/linmath.h"
 
 #include "graphics.h"
+#include "graphics/meshgen.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,7 +57,7 @@ int main(void) {
     compileVertexShader(shader_program, readFile("shaders/test_shader.vert"));
     compileFragmentShader(shader_program, readFile("shaders/test_shader.frag"));
 
-    triMeshT *box1 = createBox(0.1f, 0.1f, 0.3f);
+    triMeshT *box1 = createCone(0.1f, 0.2f, 10);
 
     mat4x4 proj = mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -0.1f, -3.0f);
     mat4x4 view = mat4x4_lookAt(
@@ -77,7 +78,7 @@ int main(void) {
         );
 
         clearDisplay(0.0f, 0.0f, 0.4f);
-        ff += 0.75 / 60.0f;
+        ff += 0.75f / 60.0f;
 
         useShaderProgram(shader_program);
         setShaderUniform("View", Matrix4Uniform, &view);

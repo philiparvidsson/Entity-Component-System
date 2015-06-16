@@ -25,27 +25,35 @@
 /*--------------------------------------
  * Function: fileSize()
  * Parameters:
- *   file_name  Namnet på den fil vars storlek ska läsas ut.
+ *   file_name  The name of the file to retrieve the file size for.
  *
  * Returns:
- *   Storleken på filen med det specificerade namnet, i antal bytes.
+ *   The size of the file with the specified name, in bytes.
  *
  * Description:
- *   Returnerar storleken på den specificerade filen, i antal bytes.
+ *   Returns the size, in bytes, of the file with the specified name.
+ *
+ * Usage:
+ *   long num_bytes = fileSize("foo.bin");
  *------------------------------------*/
 long fileSize(string file_name);
 
 /*--------------------------------------
  * Function: readFile()
  * Parameters:
- *   file_name  Namnet på den fil som ska läsas in till en sträng.
+ *   file_name  The name of the file to read into a buffer.
  *
  * Returns:
- *   En pekare till det minnesblock dit filens innehåll lästs in.
+ *   A pointer to the newly allocated buffer, containing the file data.
  *
  * Description:
- *   Läser in en fil till en sträng. Glöm inte att anropa free() på pekaren.
- *   Funktionen lägger till en null-char i slutet.
+ *   Allocates a buffer and reads all data from the specified file into it. A
+ *   null-char is always appended at the end of the buffer, making the buffer
+ *   safe to use as a string when reading text files. Do not forget to call the
+ *   free() function on the returned pointer.
+ *
+ * Usage:
+ *   string data = readFile("foo.bin");
  *------------------------------------*/
 string readFile(string file_name);
 

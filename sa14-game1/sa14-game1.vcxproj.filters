@@ -36,6 +36,9 @@
     <ClCompile Include="source\core\file_io.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\graphics\meshgen.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -65,6 +68,9 @@
     <ClInclude Include="source\core\file_io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\graphics\meshgen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\glew32.dll" />
@@ -73,6 +79,9 @@
     </None>
     <None Include="shaders\test_shader.vert">
       <Filter>Shader Files</Filter>
+    </None>
+    <None Include="build\postbuild.bat">
+      <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

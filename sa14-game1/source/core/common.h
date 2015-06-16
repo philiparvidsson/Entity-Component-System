@@ -28,11 +28,16 @@
 // This warning is not quite relevant since anonymous structs and unions are
 // allowed in the C11 standard, but some compilers are not quite there yet and
 // consider it nonstandard.
-//   warning C4201: 'nonstandard extension used : nameless struct/union'
+//   warning: 'nonstandard extension used : nameless struct/union'
 #pragma warning(disable:4201)
 
+// This warning is not relevant. Non-constant initializers were introduced in
+// the C99 standard.
+//   warning: nonstandard extension used: non-constant aggregate initializer
+#pragma warning(disable:4204)
+
 // We don't need to see warnings about functions being inlined.
-//   warning C4711: 'function selected for automatic inline expansion'
+//   warning: 'function selected for automatic inline expansion'
 #pragma warning(disable:4711)
 
 #define inline __inline

@@ -6,7 +6,7 @@
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Provides a dynamic array.
+ *   Provides a dynamic array type.
  *----------------------------------------------------------------------------*/
 
 #ifndef array_h_
@@ -18,7 +18,7 @@
 
 #include "core/common.h"
 
-#include <stdlib.h>
+#include <stddef.h> // size_t
 
 /*------------------------------------------------
  * TYPES
@@ -28,10 +28,10 @@
  * Type: arrayT
  *
  * Description:
- *   Represents an array.
+ *   Represents an array of elements.
  *------------------------------------*/
 typedef struct {
-    const size_t elem_size; // The size of each array elemen, in bytes. */
+    const size_t elem_size; // The size of each array element, in bytes.
     const int    num_elems; // Number of elements in the array.
 } arrayT;
 
@@ -45,47 +45,57 @@ typedef struct {
  *   elem_size  The array element size, in bytes.
  *
  * Returns:
- *   En pekare till arrayen.
+ *   A pointer to the array.
  *
  * Description:
- *   Skapar en ny, dynamisk array.
+ *   Creates a new, dynamic array.
+ *
+ * Usage:
+ *   arrayT *int_array = newArray(sizeof(int));
  *------------------------------------*/
 arrayT *newArray(size_t elem_size);
 
 /*--------------------------------------
  * Function: freeArray()
  * Parameters:
- *   a  Arrayen som ska deallokeras.
+ *   a  The array to free from memory.
  *
  * Description:
- *   Deallokerar en array.
+ *   Frees the specified array from memory.
+ *
+ * Usage:
+ *   freeArray(my_array);
  *------------------------------------*/
 void freeArray(arrayT *a);
 
 /*--------------------------------------
  * Function: arrayAdd()
  * Parameters:
- *   a     Arrayen till vilken ett element ska läggas.
- *   elem  En pekare till elementdatan.
- *
- * Returns:
- *   En pekare till minnesplatsen dit elementet kopierades.
+ *   a     The array to add an element to.
+ *   elem  Pointer to the element.
  *
  * Description:
- *   Lägger till ett element i den specificerade arrayen.
+ *   Adds an element to the end of the specified array.
+ *
+ * Usage:
+ *   arrayAdd(my_array, &elem);
  *------------------------------------*/
-void *arrayAdd(arrayT *a, const void *elem);
+void arrayAdd(arrayT *a, const void *elem);
 
 /*--------------------------------------
  * Function: arrayGet()
  * Parameters:
- *   a     Arrayen från vilket ett element ska läsas ut.
- *   i     Index till det element som ska läsas ut.
- *   elem  Pekare till datablock där elementat ska lagras.
+ *   a     The array to retrieve an element from.
+ *   i     The index of the element to retrieve.
+ *   elem  Pointer to a buffer which the element data will be copied to.
  *
  * Description:
- *   Läser ut ett element från arrayen.
+ *   Retrieves an element from the array.
+ *
+ * Usage:
+ *   void *buf = malloc(my_array->elem_size);
+ *   arrayGet(my_array, 1, &buf);
  *------------------------------------*/
-void arrayGet(const arrayT *a, int i, void *elem);
+void arrayGet(const arrayT *a, int i, void *dest);
 
 #endif // array_h_
