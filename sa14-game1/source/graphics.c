@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: graphics.c
  * Created: June 8, 2015
- * Last changed: June 14, 2015
+ * Last changed: June 16, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -35,7 +35,7 @@
  * Constant: ClassName
  *
  * Description:
- *   Namnet på klassen som används för att skapa grafikfönstret.
+ *   The name of the class used to create the graphics window.
  *------------------------------------*/
 #define ClassName (L"sa14-game1")
 
@@ -43,8 +43,8 @@
  * Constant: DefaultFPS
  *
  * Description:
- *   Antal bildrutor som ska visas per sekund. Detta går att ändra med
- *   setFrameRate()-funktionen.
+ *   The number of frames to display each second, by defaukt. This can be
+ *   configured with the setFrameRate() function.
  *------------------------------------*/
 #define DefaultFPS (30.0f)
 
@@ -52,7 +52,7 @@
  * Constant: UnlimitedFPS
  *
  * Description:
- *   Obegränsat antal bildrutor per sekund.
+ *   Unlimited number of frames per second.
  *------------------------------------*/
 #define UnlimitedFPS (-1)
 
@@ -61,7 +61,7 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Type: geometryT_
+ * Type: triMeshT_
  *
  * Description:
  *   Represents a piece of geometry with a vertex mesh etc. This type also
@@ -72,19 +72,16 @@
 typedef struct {
     /* --- Public --- */
 
-    vec3 *verts;      /* The vertices.           */
-    vec3 *normals;    /* The vertex normals.     */
-    int   num_verts;  /* Number of vertices.     */
-    triT *tris;       /* The triangles (faces).  */
-    int   num_tris;   /* Number of triangles.    */
-    mat4x4 transform; /* Model transform matrix. */
+    vertexT *verts;     /* The vertices.           */
+    int      num_verts; /* Number of vertices.     */
+    triT    *tris;      /* The triangles (faces).  */
+    int      num_tris;  /* Number of triangles.    */
 
     /* --- Private --- */
 
     GLuint vbo, /* Vertex buffer. */
-           nbo, /* Normal buffer. */
            ibo; /* Index buffer.  */
-} geometryT_;
+} triMeshT_;
 
 /*--------------------------------------
  * Type: shaderProgramCDT
@@ -152,7 +149,7 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
     switch (uMsg) {
 
     case WM_CLOSE: {
-        /* Användaren har stängt fönstret, så vi avslutar grafikläget. */
+        /* The user has closed the window, so we exit graphics mode. */
         exitGraphics();
         break;
     }
@@ -167,7 +164,7 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
  * Parameters:
  *
  * Description:
- *   Avslutar programmet med ett felmeddelande om grafikläget inte är initierat.
+ *   Invokes the error() macro if graphics mode has not been initialized.
  *------------------------------------*/
 static void checkGraphicsInited(void) {
     if (!window)
@@ -565,21 +562,21 @@ void deleteShaderProgram(shaderProgramADT program) {
 }
 
 /*--------------------------------------
-* Function: setFrameRate()
-* Parameters:
-*   fps  Antal bildrutor som ska visas per sekund.
-*
-* Description:
-*   Ställer in hur många bildrutor som ska visas per sekund. Ange noll för
-*   obegränsat antal.
-*------------------------------------*/
+ * Function: setFrameRate()
+ * Parameters:
+ *   fps  The number of frames to display each second.
+ *
+ * Description:
+ *   Sets the number of frames to display each second. Specify a framerate of
+ *   zero to disable fps synchronization.
+ *
+ * Usage:
+ *   setFrameRate(60.0f);
+ *------------------------------------*/
 void setFrameRate(float fps) {
     checkGraphicsInited();
 
-    /*
-     * Om man anger noll fps så stänger vi av synkroniseringen genom att sätta
-     * den tid som varje bildruta ska visas till noll.
-     */
+    // Zero fps means we disable fps synchronization.
     if (fps == 0.0f) {
         window->frame_time = UnlimitedFPS;
         return;
@@ -601,179 +598,184 @@ void setFrameRate(float fps) {
 /*--------------------------------------
  * Function: createBox()
  * Parameters:
- *   width   Lådans bredd (x).
- *   height  Lådans höjd (y).
- *   length  Lådans längd (z).
+ *   width   The width of the box (along the x-axis).
+ *   height  The height of the box (y-axis).
+ *   length  The length of the box (z-axis).
  *
  * Returns:
- *   En pekare till lådans geometri.
+ *   A pointer to the generated mesh. The pointer actually points to a triMeshT_
+ *   structure which contains private fields, but we hide them to the client by
+ *   casting to the public type triMeshT instead. 
  *
  * Description:
- *   Skapar geometrin för en lådform.
+ *   Creates a box mesh by laying out the vertices and attaching the triangles.
+ *   The six sides of the box do not share vertices, because if they are shared,
+ *   OpenGL interpolates the normals, effectively resulting in a six sided
+ *   sphere, which is not what we want.
+ *
+ * Usage:
+ *   triMeshT *cube = createBox(1.0f, 1.0f, 1.0f);
  *------------------------------------*/
-geometryT *createBox(float width, float height, float length) {
-    /*
-     * Divide the measurements in half sinve we span the box in both ways per
-     * dimension.
-     */
+triMeshT *createBox(float width, float height, float length) {
+    // Divide the measurements in half since we span the box in both ways per
+    // dimension.
     width  /= 2.0f;
     height /= 2.0f;
     length /= 2.0f;
 
-    geometryT_ *box = malloc(sizeof(geometryT_));
+    triMeshT_ *box = malloc(sizeof(triMeshT_));
 
-    /* En låda har sex sidor, och varje sida består av två trianglar. */
-    box->num_tris = 12;
+    // A box has eight corners, but every side needs their own normals for flat-
+    // shading to work properly (we don't want interpolated normals). Since each
+    // vertex has its own normal, we need six sides times four vertices.
+    box->num_verts = 6 * 4;
+    box->verts     = malloc(sizeof(vertexT) * box->num_verts);
+
+    // A box has six sides, and every side is made up of two triangles.
+    box->num_tris = 6 * 2;
     box->tris     = malloc(sizeof(triT) * box->num_tris);
 
-    /*
-     * A box has eight corners, but every side needs their own normals for flat-
-     * shading to work properly (we don't want interpolated normals), so we get
-     * 4 corners per side times six sides. That's 24 vertices.
-     */
-    box->num_verts = 24;
-    box->normals   = malloc(sizeof(vec3) * box->num_verts);
-    box->verts     = malloc(sizeof(vec3) * box->num_verts);
+    // Alias pointers for less code clutter.
+    vertexT *v = box->verts;
+    triT    *t = box->tris;
 
-    /* Alias pointers for less code clutter. */
-    vec3 *v = box->verts, *n = box->normals;
-    triT *t = box->tris;
+    // Front.
+    v[0].p = (vec3) {  width,  height, length };
+    v[1].p = (vec3) { -width,  height, length };
+    v[2].p = (vec3) { -width, -height, length };
+    v[3].p = (vec3) {  width, -height, length };
 
-    /* Front. */
-    v[0] = (vec3) {  width,  height, length };
-    v[1] = (vec3) { -width,  height, length };
-    v[2] = (vec3) { -width, -height, length };
-    v[3] = (vec3) {  width, -height, length };
-
-    n[0] = n[1] = n[2] = n[3] = (vec3) { 0.0f, 0.0f, 1.0f };
+    v[0].n = v[1].n = v[2].n = v[3].n = (vec3) { 0.0f, 0.0f, 1.0f };
 
     t[0] = (triT) { 0, 1, 2 };
     t[1] = (triT) { 2, 3, 0 };
 
-    /* Right. */
-    v[4] = (vec3) { width,  height, -length };
-    v[5] = (vec3) { width,  height,  length };
-    v[6] = (vec3) { width, -height,  length };
-    v[7] = (vec3) { width, -height, -length };
+    // Right.
+    v[4].p = (vec3) { width,  height, -length };
+    v[5].p = (vec3) { width,  height,  length };
+    v[6].p = (vec3) { width, -height,  length };
+    v[7].p = (vec3) { width, -height, -length };
 
-    n[4] = n[5] = n[6] = n[7] = (vec3) { 1.0f, 0.0f, 0.0f };
+    v[4].n = v[5].n = v[6].n = v[7].n = (vec3) { 1.0f, 0.0f, 0.0f };
 
     t[2] = (triT) { 4, 5, 6 };
     t[3] = (triT) { 6, 7, 4 };
 
-    /* Back. */
-    v[ 8] = (vec3) { -width,  height, -length };
-    v[ 9] = (vec3) {  width,  height, -length };
-    v[10] = (vec3) {  width, -height, -length };
-    v[11] = (vec3) { -width, -height, -length };
+    // Back.
+    v[ 8].p = (vec3) { -width,  height, -length };
+    v[ 9].p = (vec3) {  width,  height, -length };
+    v[10].p = (vec3) {  width, -height, -length };
+    v[11].p = (vec3) { -width, -height, -length };
 
-    n[8] = n[9] = n[10] = n[11] = (vec3) { 0.0f, 0.0f, -1.0f };
+    v[8].n = v[9].n = v[10].n = v[11].n = (vec3) { 0.0f, 0.0f, -1.0f };
 
     t[4] = (triT) { 8,  9, 10 };
     t[5] = (triT) { 10, 11, 8 };
 
-    /* Left. */
-    v[12] = (vec3) { -width,  height,  length };
-    v[13] = (vec3) { -width,  height, -length };
-    v[14] = (vec3) { -width, -height, -length };
-    v[15] = (vec3) { -width, -height,  length };
+    // Left.
+    v[12].p = (vec3) { -width,  height,  length };
+    v[13].p = (vec3) { -width,  height, -length };
+    v[14].p = (vec3) { -width, -height, -length };
+    v[15].p = (vec3) { -width, -height,  length };
 
-    n[12] = n[13] = n[14] = n[15] = (vec3) { -1.0f, 0.0f, 0.0f };
+    v[12].n = v[13].n = v[14].n = v[15].n = (vec3) { -1.0f, 0.0f, 0.0f };
 
     t[6] = (triT) { 12, 13, 14 };
     t[7] = (triT) { 14, 15, 12 };
 
-    /* Top. */
-    v[16] = (vec3) {  width, height, -length };
-    v[17] = (vec3) { -width, height, -length };
-    v[18] = (vec3) { -width, height,  length };
-    v[19] = (vec3) {  width, height,  length };
+    // Top.
+    v[16].p = (vec3) {  width, height, -length };
+    v[17].p = (vec3) { -width, height, -length };
+    v[18].p = (vec3) { -width, height,  length };
+    v[19].p = (vec3) {  width, height,  length };
 
-    n[16] = n[17] = n[18] = n[19] = (vec3) { 0.0f, 1.0f, 0.0f };
+    v[16].n = v[17].n = v[18].n = v[19].n = (vec3) { 0.0f, 1.0f, 0.0f };
 
     t[8] = (triT) { 16, 17, 18 };
     t[9] = (triT) { 18, 19, 16 };
 
-    /* Bottom. */
-    v[20] = (vec3) {  width, -height,  length };
-    v[21] = (vec3) { -width, -height,  length };
-    v[22] = (vec3) { -width, -height, -length };
-    v[23] = (vec3) {  width, -height, -length };
+    // Bottom
+    v[20].p = (vec3) {  width, -height,  length };
+    v[21].p = (vec3) { -width, -height,  length };
+    v[22].p = (vec3) { -width, -height, -length };
+    v[23].p = (vec3) {  width, -height, -length };
 
-    n[20] = n[21] = n[22] = n[23] = (vec3) { 0.0f, -1.0f, 0.0f };
+    v[20].n = v[21].n = v[22].n = v[23].n = (vec3) { 0.0f, -1.0f, 0.0f };
 
     t[10] = (triT) { 20, 21, 22 };
     t[11] = (triT) { 22, 23, 20 };
 
-    /* Time to upload the box to the GPU via OpenGL. */
+    // Time to upload the box to the GPU via OpenGL.
 
-    size_t vb_size = sizeof(vec3) * box->num_verts;
-    size_t ib_size = sizeof(triT) * box->num_tris;
+    size_t vb_size = sizeof(vertexT) * box->num_verts;
+    size_t ib_size = sizeof(triT)    * box->num_tris;
 
     glGenBuffers(1, &box->vbo);
     glBindBuffer(GL_ARRAY_BUFFER, box->vbo);
     glBufferData(GL_ARRAY_BUFFER, vb_size, box->verts, GL_STATIC_DRAW);
 
-    glGenBuffers(1, &box->nbo);
-    glBindBuffer(GL_ARRAY_BUFFER, box->nbo);
-    glBufferData(GL_ARRAY_BUFFER, vb_size, box->normals, GL_STATIC_DRAW);
 
     glGenBuffers(1, &box->ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box->ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, ib_size, box->tris, GL_STATIC_DRAW);
 
-    return ((geometryT *)box);
+    return ((triMeshT *)box);
 }
 
 /*--------------------------------------
- * Function: updateGeometry()
+ * Function: updateMesh()
  * Parameters:
- *   geom Den geometri som ska uppdateras.
+ *   mesh  The mesh to update.
  *
  * Description:
- *   Uppdaterar geometridatan i GPU:n genom att ladda upp den på nytt.
+ *   Updates the specified mesh in VRAM by reuploading it.
+ *
+ * Usage:
+ *   updateMesh(my_mesh);
  *------------------------------------*/
-void updateGeometry(const geometryT *geom) {
-    size_t vb_size = sizeof(vec3) * geom->num_verts;
-    size_t ib_size = sizeof(triT) * geom->num_tris;
+void updateMesh(const triMeshT *mesh) {
+    size_t vb_size = sizeof(vertexT) * mesh->num_verts;
+    size_t ib_size = sizeof(triT)    * mesh->num_tris;
 
-    glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->vbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, vb_size, geom->verts);
+    glBindBuffer(GL_ARRAY_BUFFER, ((triMeshT_ *)mesh)->vbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vb_size, mesh->verts);
 
-    glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->nbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, vb_size, geom->normals);
-
-    glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->ibo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, ib_size, geom->tris);
+    glBindBuffer(GL_ARRAY_BUFFER, ((triMeshT_ *)mesh)->ibo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, ib_size, mesh->tris);
 }
 
 /*--------------------------------------
- * Function: deleteGeometry()
+ * Function: deleteMesh()
  * Parameters:
- *   geom Den geometri som ska tas bort.
+ *   mesh  The mesh to delete.
  *
  * Description:
- *   Tar bort den specificerade geometrin.
+ *   Deletes the specified mesh from RAM and VRAM.
+ *
+ * Usage:
+ *   deleteMesh(my_mesh);
  *------------------------------------*/
-void deleteGeometry(geometryT *geom) {
-    glDeleteBuffers(1, &((geometryT_ *)geom)->vbo);
-    glDeleteBuffers(1, &((geometryT_ *)geom)->nbo);
-    glDeleteBuffers(1, &((geometryT_ *)geom)->ibo);
+void deleteMesh(triMeshT *mesh) {
+    glDeleteBuffers(1, ((triMeshT_ *)mesh)->vbo);
+    glDeleteBuffers(1, ((triMeshT_ *)mesh)->ibo);
 
-    free(geom->tris);
-    free(geom->verts);
-    free(geom);
+    free(mesh->verts);
+    free(mesh->tris);
+    free(mesh);
 }
 
 /*--------------------------------------
  * Function: clearDisplay()
  * Parameters:
- *   r  Röd färgkomponent.
- *   g  Grön färgkomponent.
- *   b  Blå färgkomponent.
+ *   r  Red color component.
+ *   g  Green color component.
+ *   b  Blue color component..
  *
  * Description:
- *   Rensar ritytan til den specificerade färgen.
+ *   Clears the display to the specified color.
+ *
+ * Usage:
+ *   clearDisplay(1.0f, 1.0f, 1.0f);
  *------------------------------------*/
 void clearDisplay(float r, float g, float b) {
     checkGraphicsInited();
@@ -783,25 +785,27 @@ void clearDisplay(float r, float g, float b) {
 }
 
 /*--------------------------------------
- * Function: drawGeometry()
+ * Function: drawMesh()
  * Parameters:
- *   geom  Geometrin som ska ritas upp.
+ *   mesh  The mesh to draw.
  *
  * Description:
- *   Ritar den specificerade geometrin.
+ *   Draws the specified mesh. Remember to assign a shader program with the
+ *   useShaderProgram() function.
+ *
+ * Usage:
+ *   drawMesh(my_mesh);
  *------------------------------------*/
-void drawGeometry(const geometryT *geom) {
+void drawMesh(const triMeshT *mesh) {
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void *)0);
-
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, ((geometryT_ *)geom)->nbo);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void *)0);
 
+    glBindBuffer(GL_ARRAY_BUFFER, ((triMeshT_ *)mesh)->vbo);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertexT), (void *)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertexT), &((vertexT *)NULL)->n);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((geometryT_ *)geom)->ibo);
-    glDrawElements(GL_TRIANGLES, geom->num_tris*3, GL_UNSIGNED_INT, (void *)0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((triMeshT_ *)mesh)->ibo);
+    glDrawElements(GL_TRIANGLES, mesh->num_tris*3, GL_UNSIGNED_INT, (void *)0);
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
@@ -812,46 +816,44 @@ void drawGeometry(const geometryT *geom) {
  * Parameters:
  *
  * Description:
- *   Uppdaterar grafikfönstret.
+ *   Updates the display by processing pending window events and swapping the
+ *   graphics buffer into the graphics window. The function also waits a certain
+ *   amount of time before returning, to maintain the FPS specified with the
+ *   setFrameRate() function.
+ *
+ * Usage:
+ *   updateDisplay();
  *------------------------------------*/
 void updateDisplay(void) {
     checkGraphicsInited();
 
-    /* Här presenterar vi ritytan i fönstret genom att "swappa" in bufferten. */
+    // Swap the buffer into the window if there's a device context handle.
     if (window->hdc)
         assert(SwapBuffers(window->hdc));
 
-    /*
-     * Nedan snurrar vi i en loop tills vi pausat så länge som behövs för att
-     * upprätthålla rätt intervall för antal bildrutor per sekund.
-     */
+    // We enter a loop and stay in it just long enough to time and synchronize
+    // the FPS, so we get a set amount of frames displayed each second.
     LARGE_INTEGER perf_count;
     do {
-        /*
-         * Här ser vi till att fönstret inte hänger sig genom att ta emot och
-         * hantera fönstermeddelanden. Funktionen DispatchMessageW() skickar dem
-         * vidare, varpå de blir hanterade i WindowProc()-funktionen.
-         */
+        // The window will hang if we don't process pending messages. The
+        // DispatchMessageW() function sends the messages to the WindowProc()
+        // function, where they will be processed.
         MSG msg;
         while (window && PeekMessageW(&msg, window->hwnd, 0, 0, PM_REMOVE)) {
             TranslateMessage(&msg);
             DispatchMessageW(&msg);
         }
 
-        /*
-         * Om window är NULL här så har användaren stängt fönstret, varpå
-         * exitGraphics()-funktionen anropats av WindowProc()-funktionen, som i
-         * sin tur anropats av DispatchMessageW()-funktionen.
-         */
+        // If window is NULL here, the user has closed the window and the
+        // exitGraphics() function has been called by the WindowProc() function,
+        // which, in turn, has been invoekd by the DispatchMessageW() function.
         if (!window)
             return;
 
-        /*
-         * Vi räknar ut den tid som gått sedan den senate bilduppdateringen, och
-         * om tillräckligt mycket tid passerat så går vi ur loopen då vi visat
-         * denna bildruta precis så länge som behövs för att synkronisera
-         * antalet bildrutor per sekund till rätt antal.
-         */
+        // We calculate how much time has passed since our latest display
+        // update. If enough time has passed, we've displayed this frame exactly
+        // the amount of time needed to maintain a set frame interval, so we can
+        // exit the loop.
         assert(QueryPerformanceCounter(&perf_count));
         perf_count.QuadPart -= window->last_update.QuadPart;
     } while (perf_count.QuadPart < window->frame_time);
@@ -868,10 +870,13 @@ void updateDisplay(void) {
  * Parameters:
  *
  * Returns:
- *   Sant om grafikfönstret är öppet, annars falskt.
+ *   True if the graphics window is still open.
  *
  * Description:
- *   Returnerar sant om grafikfönstret är öppet.
+ *   Returns true if the graphics window is open.
+ *
+ * Usage:
+ *   bool is_open = windowIsOpen();
  *------------------------------------*/
 bool windowIsOpen(void) {
     return (window != NULL);

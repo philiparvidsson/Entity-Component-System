@@ -1,12 +1,12 @@
 /*------------------------------------------------------------------------------
  * File: debug.h
  * Created: June 8, 2015
- * Last changed: June 13, 2015
+ * Last changed: June 16, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Makron och funktioner för debugging.
+ *   Macros and functions to make debugging easier.
  *
  *----------------------------------------------------------------------------*/
 
@@ -26,21 +26,27 @@
 /*--------------------------------------
  * Macro: error()
  * Parameters:
- *   msg  Meddelandet som ska visas.
+ *   msg  The error message to display.
  *
  * Description:
- *   Avslutar programmet med ett meddelande.
+ *   Displays the specified message and exits the program.
+ *
+ * Usage:
+ *   error("An error has occurred");
  *------------------------------------*/
-#define error(msg) exitWithMessage(msg, __FUNCTION__, __LINE__)
+#define error(msg) exitWithErrorMsg(msg, __FUNCTION__, __LINE__)
 
 /*--------------------------------------
  * Macro: assert()
  * Parameters:
- *   expr  Uttrycket som måste evaluera till sant.
+ *   expr  The expression that will generate an error if it evaluates to false.
  *
  * Description:
- *   Avslutar programmet med ett meddelande om det givna uttrycket inte
- *   evaluerar till sant.
+ *   Exits the program with a message if the specified expression does not
+ *   evaluate to true.
+ *
+ * Usage:
+ *   assert(some_ptr != NULL);
  *------------------------------------*/
 #define assert(expr) if (!(expr)) { error("The assertion '" #expr "' failed"); }
 
@@ -49,15 +55,21 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Function: exitWithMessage()
+ * Function: exitWithErrorMsg()
  * Parameters:
- *   msg        Meddelandet som ska visas.
- *   func_name  Namnet på den funktion som programmet kraschade i.
- *   line       Den rad i koden som programmet kraschade på.
+ *   msg        The error message to display.
+ *   func_name  The name of the function that generated the error.
+ *   line       The number of the line that generated the error.
  *
  * Description:
- *   Avslutar programmet med ett meddelande.
+ *   Displays the specified error message and exits the program. This function
+ *   is intended to be called by the debugging macros and you should generally
+ *   not call it directly.
+ *
+ * Usage:
+ *   exitWithErrorMsg("An error has occurred");
+ *
  *------------------------------------*/
-void exitWithMessage(string msg, string func_name, int line);
+void exitWithErrorMsg(string msg, string func_name, int line);
 
 #endif /* debug_h_ */

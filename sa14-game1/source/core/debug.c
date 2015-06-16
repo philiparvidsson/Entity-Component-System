@@ -1,12 +1,12 @@
 /*------------------------------------------------------------------------------
  * File: debug.c
  * Created: June 8, 2015
- * Last changed: June 13, 2015
+ * Last changed: June 16, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Makron och funktioner för debugging.
+ *   Macros and functions to make debugging easier.
  *
  *----------------------------------------------------------------------------*/
 
@@ -28,16 +28,22 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Function: exitWithMessage()
+ * Function: exitWithErrorMsg()
  * Parameters:
- *   msg        Meddelandet som ska visas.
- *   func_name  Namnet på den funktion som programmet kraschade i.
- *   line       Den rad i koden som programmet kraschade på.
+ *   msg        The error message to display.
+ *   func_name  The name of the function that generated the error.
+ *   line       The number of the line that generated the error.
  *
  * Description:
- *   Avslutar programmet med ett meddelande.
+ *   Displays the specified error message and exits the program. This function
+ *   is intended to be called by the debugging macros and you should generally
+ *   not call it directly.
+ *
+ * Usage:
+ *   exitWithErrorMsg("An error has occurred");
+ *
  *------------------------------------*/
-void exitWithMessage(string msg, string func_name, int line) {
+void exitWithErrorMsg(string msg, string func_name, int line) {
     printf("\n----------------------------------------\n"
            "ERROR: %s in %s() on line %d.\n\n"
            "This program will now exit.\n", msg, func_name, line);

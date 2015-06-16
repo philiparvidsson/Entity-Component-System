@@ -49,7 +49,7 @@ static void printIntroMessage(void) {
 int main(void) {
     printIntroMessage();
 
-    initGraphics("Main Window", 640, 640);
+    initGraphics("Lol Window", 640, 640);
     setFrameRate(60.0f);
 
     shaderProgramADT shader_program = createShaderProgram();
@@ -57,8 +57,7 @@ int main(void) {
     compileVertexShader(shader_program, readFile("shaders/test_shader.vert"));
     compileFragmentShader(shader_program, readFile("shaders/test_shader.frag"));
 
-    geometryT *box1 = createBox(0.1f, 0.1f*1.6f, 0.1f*1.6f*1.6f);
-    geometryT *box2 = createBox(0.2f, 0.2f, 0.2f);
+    triMeshT *box1 = createBox(0.1f, 0.1f, 0.3f);
 
     mat4x4 proj = mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -0.1f, -3.0f);
     mat4x4 view = mat4x4_lookAt(
@@ -68,18 +67,15 @@ int main(void) {
     );
 
 
+    mat4x4 transform;
+
     float ff = 0.0f;
     while (windowIsOpen()) {
-        box1->transform = mat4x4_mul(mat4x4_translateZ(-0.0f), mat4x4_rotateY(ff));
-        box2->transform =
-            mat4x4_mul(
-       
-                    mat4x4_translateZ(-0.0f),
-                mat4x4_mul(
-                    mat4x4_rotateX(ff*0.5),
-                    mat4x4_rotateY(ff*0.3f)
-                )
-            );
+        mat4x4_mul(
+            &mat4x4_rotateX(ff*0.5),
+            &mat4x4_rotateY(ff*0.3f),
+            &transform
+        );
 
         clearDisplay(0.0f, 0.0f, 0.4f);
         ff += 0.75 / 60.0f;
@@ -88,17 +84,14 @@ int main(void) {
         setShaderUniform("View", Matrix4Uniform, &view);
         setShaderUniform("Proj", Matrix4Uniform, &proj);
 
-        setShaderUniform("Model", Matrix4Uniform, &box1->transform);
-        drawGeometry(box1);
+        setShaderUniform("Model", Matrix4Uniform, &transform);
+        drawMesh(box1);
 
-        //setShaderUniform("Model", Matrix4Uniform, &box2->transform);
-        //drawGeometry(box2);
         
         updateDisplay();
     }
 
-    deleteGeometry(box1);
-    deleteGeometry(box2);
+    deleteMesh(box1);
     deleteShaderProgram(shader_program);
 
     exitGraphics();

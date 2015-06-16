@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: common.h
  * Created: June 7, 2015
- * Last changed: June 15, 2015
+ * Last changed: June 16, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -45,13 +45,13 @@
  */
 #pragma warning(disable:4711)
 
-#endif /* _MSC_VER */
+#define inline __inline
+
+#endif // _MSC_VER
 
 /*------------------------------------------------
  * MACROS
  *----------------------------------------------*/
-
-#define inline __inline
 
 /*--------------------------------------
  * Macro: string
@@ -97,13 +97,11 @@ typedef char *stringT;
  * INCLUDES
  *----------------------------------------------*/
 
-/*
- * Some includes might depend on definitions in this file, so we put them at the
- * end of this file instead of the beginning.
- */
+// Some includes might depend on definitions in this file, so we put them at the
+// end of this file instead of the beginning.
 
 #include "core/debug.h"
 
 #include <stdbool.h>
 
-#endif /* common_h_ */
+#endif // common_h_

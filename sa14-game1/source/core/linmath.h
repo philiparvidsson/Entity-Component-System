@@ -619,25 +619,23 @@ static inline mat4x4 mat4x4_add(mat4x4 a, mat4x4 b) {
     });
 }
 
-static inline mat4x4 mat4x4_mul(mat4x4 a, mat4x4 b) {
-    return ((mat4x4) {
-        a.x.x*b.x.x + a.x.y*b.y.x + a.x.z*b.z.x + a.x.w*b.w.x,
-        a.x.x*b.x.y + a.x.y*b.y.y + a.x.z*b.z.y + a.x.w*b.w.y,
-        a.x.x*b.x.z + a.x.y*b.y.z + a.x.z*b.z.z + a.x.w*b.w.z,
-        a.x.x*b.x.w + a.x.y*b.y.w + a.x.z*b.z.w + a.x.w*b.w.w,
-        a.y.x*b.x.x + a.y.y*b.y.x + a.y.z*b.z.x + a.y.w*b.w.x,
-        a.y.x*b.x.y + a.y.y*b.y.y + a.y.z*b.z.y + a.y.w*b.w.y,
-        a.y.x*b.x.z + a.y.y*b.y.z + a.y.z*b.z.z + a.y.w*b.w.z,
-        a.y.x*b.x.w + a.y.y*b.y.w + a.y.z*b.z.w + a.y.w*b.w.w,
-        a.z.x*b.x.x + a.z.y*b.y.x + a.z.z*b.z.x + a.z.w*b.w.x,
-        a.z.x*b.x.y + a.z.y*b.y.y + a.z.z*b.z.y + a.z.w*b.w.y,
-        a.z.x*b.x.z + a.z.y*b.y.z + a.z.z*b.z.z + a.z.w*b.w.z,
-        a.z.x*b.x.w + a.z.y*b.y.w + a.z.z*b.z.w + a.z.w*b.w.w,
-        a.w.x*b.x.x + a.w.y*b.y.x + a.w.z*b.z.x + a.w.w*b.w.x,
-        a.w.x*b.x.y + a.w.y*b.y.y + a.w.z*b.z.y + a.w.w*b.w.y,
-        a.w.x*b.x.z + a.w.y*b.y.z + a.w.z*b.z.z + a.w.w*b.w.z,
-        a.w.x*b.x.w + a.w.y*b.y.w + a.w.z*b.z.w + a.w.w*b.w.w
-    });
+static inline void mat4x4_mul(const mat4x4 *a, const mat4x4 *b, mat4x4 *r) {
+        r->x.x = a->x.x*b->x.x+a->x.y*b->y.x+a->x.z*b->z.x+a->x.w*b->w.x;
+        r->x.y = a->x.x*b->x.y+a->x.y*b->y.y+a->x.z*b->z.y+a->x.w*b->w.y;
+        r->x.z = a->x.x*b->x.z+a->x.y*b->y.z+a->x.z*b->z.z+a->x.w*b->w.z;
+        r->x.w = a->x.x*b->x.w+a->x.y*b->y.w+a->x.z*b->z.w+a->x.w*b->w.w;
+        r->y.x = a->y.x*b->x.x+a->y.y*b->y.x+a->y.z*b->z.x+a->y.w*b->w.x;
+        r->y.y = a->y.x*b->x.y+a->y.y*b->y.y+a->y.z*b->z.y+a->y.w*b->w.y;
+        r->y.z = a->y.x*b->x.z+a->y.y*b->y.z+a->y.z*b->z.z+a->y.w*b->w.z;
+        r->y.w = a->y.x*b->x.w+a->y.y*b->y.w+a->y.z*b->z.w+a->y.w*b->w.w;
+        r->z.x = a->z.x*b->x.x+a->z.y*b->y.x+a->z.z*b->z.x+a->z.w*b->w.x;
+        r->z.y = a->z.x*b->x.y+a->z.y*b->y.y+a->z.z*b->z.y+a->z.w*b->w.y;
+        r->z.z = a->z.x*b->x.z+a->z.y*b->y.z+a->z.z*b->z.z+a->z.w*b->w.z;
+        r->z.w = a->z.x*b->x.w+a->z.y*b->y.w+a->z.z*b->z.w+a->z.w*b->w.w;
+        r->w.x = a->w.x*b->x.x+a->w.y*b->y.x+a->w.z*b->z.x+a->w.w*b->w.x;
+        r->w.y = a->w.x*b->x.y+a->w.y*b->y.y+a->w.z*b->z.y+a->w.w*b->w.y;
+        r->w.z = a->w.x*b->x.z+a->w.y*b->y.z+a->w.z*b->z.z+a->w.w*b->w.z;
+        r->w.w = a->w.x*b->x.w+a->w.y*b->y.w+a->w.z*b->z.w+a->w.w*b->w.w;
 }
 
 static inline mat4x4 mat4x4_sub(mat4x4 a, mat4x4 b) {

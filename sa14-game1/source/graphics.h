@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: graphics.h
  * Created: June 8, 2015
- * Last changed: June 14, 2015
+ * Last changed: June 16, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -26,29 +26,38 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
+ * Type: vertexT
+ *
+ * Description:
+ *   Represents a single vertex in a triangle mesh.
+ *------------------------------------*/
+typedef struct {
+    vec3 p; // The vertex position.
+    vec3 n; // The vertex normal.
+} vertexT;
+
+/*--------------------------------------
  * Type: triT
  *
  * Description:
- *   Representerar en triangel i en geometri.
+ *   Represents a single triangle (face) with vertex indices in a triangle mesh.
  *------------------------------------*/
 typedef struct {
     int v0, v1, v2;
 } triT;
 
 /*--------------------------------------
- * Type: geometryT
+ * Type: triMeshT
  *
  * Description:
- *   Represents a piece of geometry with a vertex mesh etc.
+ *   Represents a triangle mesh with vertices, normals, faces etc.
  *------------------------------------*/
 typedef struct {
-          vec3   *const verts;      /* The vertices.           */
-          vec3   *const normals;    /* The vertex normals.     */
-    const int           num_verts;  /* Number of vertices.     */
-          triT   *const tris;       /* The triangles (faces).  */
-    const int           num_tris;   /* Number of triangles.    */
-          mat4x4        transform; /* Model transform matrix. */
-} geometryT;
+          vertexT *const verts;     // The vertices.
+    const int            num_verts; // Number of vertices.
+          triT    *const tris;      // The triangles (faces).
+    const int            num_tris;  // Number of triangles.
+} triMeshT;
 
 /*--------------------------------------
  * Type: shaderProgramADT
@@ -170,10 +179,14 @@ void deleteShaderProgram(shaderProgramADT program);
 /*--------------------------------------
  * Function: setFrameRate()
  * Parameters:
+ *   fps  The number of frames to display each second.
  *
  * Description:
- *   Ställer in hur många bildrutor som ska visas per sekund. Ange noll för
- *   obegränsat antal.
+ *   Sets the number of frames to display each second. Specify a framerate of
+ *   zero to disable FPS synchronization.
+ *
+ * Usage:
+ *   setFrameRate(60.0f);
  *------------------------------------*/
 void setFrameRate(float fps);
 
@@ -183,68 +196,92 @@ void setFrameRate(float fps);
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
-* Function: createBox()
-* Parameters:
-*   width   Lådans bredd (x).
-*   height  Lådans höjd (y).
-*   length  Lådans längd (z).
-*
-* Returns:
-*   En pekare till lådans geometri.
-*
-* Description:
-*   Skapar geometrin för en lådform.
-*------------------------------------*/
-geometryT *createBox(float width, float height, float length);
-
-/*--------------------------------------
- * Function: updateGeometry()
+ * Function: createBox()
  * Parameters:
- *   geom Den geometri som ska uppdateras.
+ *   width   The width of the box (along the x-axis).
+ *   height  The height of the box (y-axis).
+ *   length  The length of the box (z-axis).
+ *
+ * Returns:
+ *   A pointer to the generated mesh.
  *
  * Description:
- *   Uppdaterar geometridatan i GPU:n genom att ladda upp den på nytt.
+ *   Creates a box mesh by laying out the vertices and attaching the triangles.
+ *   The six sides of the box do not share vertices.
+ *
+ * Usage:
+ *   triMeshT *cube = createBox(1.0f, 1.0f, 1.0f);
  *------------------------------------*/
-void updateGeometry(const geometryT *geom);
+triMeshT *createBox(float width, float height, float length);
 
 /*--------------------------------------
- * Function: deleteGeometry()
+ * Function: updateMesh()
  * Parameters:
- *   geom Den geometri som ska tas bort.
+ *   mesh  The mesh to update.
  *
  * Description:
- *   Tar bort den specificerade geometrin.
+ *   Updates the specified mesh. You should call this function after making any
+ *   changes to the mesh data.
+ *
+ * Usage:
+ *   updateMesh(my_mesh);
  *------------------------------------*/
-void deleteGeometry(geometryT *geom);
+void updateMesh(const triMeshT *mesh);
+
+/*--------------------------------------
+ * Function: deleteMesh()
+ * Parameters:
+ *   mesh  The mesh to delete.
+ *
+ * Description:
+ *   Deletes the specified mesh.
+ *
+ * Usage:
+ *   deleteMesh(my_mesh);
+ *------------------------------------*/
+void deleteMesh(triMeshT *mesh);
 
 /*--------------------------------------
  * Function: clearDisplay()
  * Parameters:
- *   r  Röd färgkomponent.
- *   g  Grön färgkomponent.
- *   b  Blå färgkomponent.
+ *   r  Red color component.
+ *   g  Green color component.
+ *   b  Blue color component..
  *
  * Description:
- *   Rensar ritytan til den specificerade färgen.
+ *   Clears the display to the specified color.
+ *
+ * Usage:
+ *   clearDisplay(1.0f, 1.0f, 1.0f);
  *------------------------------------*/
 void clearDisplay(float r, float g, float b);
 
 /*--------------------------------------
- * Function: drawGeometry()
+ * Function: drawMesh()
  * Parameters:
- *   geom  Geometrin som ska ritas upp.
+ *   mesh  The mesh to draw.
  *
  * Description:
- *   Ritar den specificerade geometrin.
+ *   Draws the specified mesh. Remember to assign a shader program with the
+ *   useShaderProgram() function.
+ *
+ * Usage:
+ *   drawMesh(my_mesh);
  *------------------------------------*/
-void drawGeometry(const geometryT *geom);
+void drawMesh(const triMeshT *mesh);
 
 /*--------------------------------------
  * Function: updateDisplay()
  * Parameters:
  *
  * Description:
- *   Uppdaterar det grafikfönstret.
+ *   Updates the display by processing pending window events and swapping the
+ *   graphics buffer into the graphics window. The function also waits a certain
+ *   amount of time before returning, to maintain the FPS specified with the
+ *   setFrameRate() function.
+ *
+ * Usage:
+ *   updateDisplay();
  *------------------------------------*/
 void updateDisplay(void);
 
@@ -257,10 +294,13 @@ void updateDisplay(void);
  * Parameters:
  *
  * Returns:
- *   Sant om grafikfönstret är öppet, annars falskt.
+ *   True if the graphics window is still open.
  *
  * Description:
- *   Returnerar sant om grafikfönstret är öppet.
+ *   Returns true if the graphics window is open.
+ *
+ * Usage:
+ *   bool is_open = windowIsOpen();
  *------------------------------------*/
 bool windowIsOpen(void);
 
