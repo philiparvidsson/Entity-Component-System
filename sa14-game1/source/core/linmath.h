@@ -7,7 +7,6 @@
  *
  * Description:
  *   Math related types and functions, specifically for linear algebra.
- *
  *----------------------------------------------------------------------------*/
 
 #ifndef linmath_h_
@@ -732,4 +731,4 @@ static inline mat4x4 mat4x4_perspective(float left, float right, float bottom,
     return (m);
 }
 
-#endif /* linalg_h_ */
+#endif // linalg_h_

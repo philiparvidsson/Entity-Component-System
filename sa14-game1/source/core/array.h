@@ -1,13 +1,12 @@
 /*------------------------------------------------------------------------------
  * File: array.h
  * Created: June 8, 2015
- * Last changed: June 13, 2015
+ * Last changed: June 16, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Erbjuder en dynamisk array-typ.
- *
+ *   Provides a dynamic array.
  *----------------------------------------------------------------------------*/
 
 #ifndef array_h_
@@ -29,11 +28,11 @@
  * Type: arrayT
  *
  * Description:
- *   Representerar en array.
+ *   Represents an array.
  *------------------------------------*/
 typedef struct {
-    const size_t elem_size; /* Storleken på elementen i arrayen, i bytes. */
-    const int    num_elems; /* Antal element i arrayen. */
+    const size_t elem_size; // The size of each array elemen, in bytes. */
+    const int    num_elems; // Number of elements in the array.
 } arrayT;
 
 /*------------------------------------------------
@@ -43,7 +42,7 @@ typedef struct {
 /*--------------------------------------
  * Function: newArray()
  * Parameters:
- *   elem_size  Storleken på elementen i arrayen.
+ *   elem_size  The array element size, in bytes.
  *
  * Returns:
  *   En pekare till arrayen.
@@ -89,4 +88,4 @@ void *arrayAdd(arrayT *a, const void *elem);
  *------------------------------------*/
 void arrayGet(const arrayT *a, int i, void *elem);
 
-#endif /* array_h_ */
+#endif // array_h_

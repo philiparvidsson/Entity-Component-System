@@ -21,7 +21,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -48,6 +50,7 @@ void exitWithErrorMsg(string msg, string func_name, int line) {
            "ERROR: %s in %s() on line %d.\n\n"
            "This program will now exit.\n", msg, func_name, line);
 
+#ifdef _WIN32
     int last_error = GetLastError();
     if (last_error != NO_ERROR) {
         LPWSTR error_text = NULL;
@@ -64,6 +67,7 @@ void exitWithErrorMsg(string msg, string func_name, int line) {
 
         if (error_text)
             LocalFree(error_text);
+#endif // _WIN32
     }
 
     printf("Press ENTER to continue...");

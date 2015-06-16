@@ -7,7 +7,6 @@
  *
  * Description:
  *   Macros and functions to make debugging easier.
- *
  *----------------------------------------------------------------------------*/
 
 #ifndef debug_h_
@@ -72,4 +71,4 @@
  *------------------------------------*/
 void exitWithErrorMsg(string msg, string func_name, int line);
 
-#endif /* debug_h_ */
+#endif // debug_h_

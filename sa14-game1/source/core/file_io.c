@@ -1,20 +1,19 @@
 /*------------------------------------------------------------------------------
- * File: io.c
+ * File: file_io.c
  * Created: June 11, 2015
- * Last changed: June 13, 2015
+ * Last changed: June 16, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Erbjuder funktioner för att läsa från och skriva till filer m.m.
- *
+ *   Functions for doing file I/O operations.
  *----------------------------------------------------------------------------*/
 
 /*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
 
-#include "io.h"
+#include "file_io.h"
 
 #include "core/common.h"
 
@@ -28,13 +27,16 @@
 /*--------------------------------------
  * Function: fileSize()
  * Parameters:
- *   file_name  Namnet på den fil vars storlek ska läsas ut.
+ *   file_name  The name of the file to retrieve the file size for.
  *
  * Returns:
- *   Storleken på filen med det specificerade namnet, i antal bytes.
+ *   The size of the file with the specified name, in bytes.
  *
  * Description:
- *   Returnerar storleken på den specificerade filen, i antal bytes.
+ *   Returns the size, in bytes, of the file with the specified name.
+ *
+ * Usage:
+ *   long num_bytes = fileSize("foo.bin");
  *------------------------------------*/
 long fileSize(string file_name) {
     FILE* fp = fopen(file_name, "rb");
@@ -52,14 +54,19 @@ long fileSize(string file_name) {
 /*--------------------------------------
  * Function: readFile()
  * Parameters:
- *   file_name  Namnet på den fil som ska läsas in till en sträng.
+ *   file_name  The name of the file to read into a buffer.
  *
  * Returns:
- *   En pekare till det minnesblock dit filens innehåll lästs in.
+ *   A pointer to the newly allocated buffer, containing the file data.
  *
  * Description:
- *   Läser in en fil till en sträng. Glöm inte att anropa free() på pekaren.
- *   Funktionen lägger till en null-char i slutet.
+ *   Allocates a buffer and reads all data from the specified file into it. A
+ *   null-char is always appended at the end of the buffer, making the buffer
+ *   safe to use as a string when reading text files. Do not forget to call the
+ *   free() function on the returned pointer.
+ *
+ * Usage:
+ *   string data = readFile("foo.bin");
  *------------------------------------*/
 string readFile(string file_name) {
     FILE* fp = fopen(file_name, "rb");

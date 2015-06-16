@@ -1,17 +1,16 @@
 /*------------------------------------------------------------------------------
- * File: io.h
+ * File: file_io.h
  * Created: June 11, 2015
- * Last changed: June 13, 2015
+ * Last changed: June 16, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Erbjuder funktioner för att läsa från och skriva till filer m.m.
- *
+ *   Functions for doing file I/O operations.
  *----------------------------------------------------------------------------*/
 
-#ifndef io_h_
-#define io_h_
+#ifndef file_io_h_
+#define file_io_h_
 
 /*------------------------------------------------
  * INCLUDES
@@ -50,4 +49,4 @@ long fileSize(string file_name);
  *------------------------------------*/
 string readFile(string file_name);
 
-#endif
+#endif // file_io_h_

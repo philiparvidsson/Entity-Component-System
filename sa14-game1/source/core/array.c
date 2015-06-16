@@ -1,13 +1,12 @@
 /*------------------------------------------------------------------------------
  * File: array.c
  * Created: June 8, 2015
- * Last changed: June 13, 2015
+ * Last changed: June 16, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Erbjuder en dynamisk array-typ.
- *
+ *   Provides a dynamic array.
  *----------------------------------------------------------------------------*/
 
 /*------------------------------------------------
