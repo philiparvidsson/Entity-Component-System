@@ -60,11 +60,19 @@ int main(void) {
     triMeshT *box1 = createCone(0.1f, 0.2f, 8);
 
     mat4x4 proj = mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -0.1f, -3.0f);
-    mat4x4 view = mat4x4_lookAt(
+    mat4x4 view;
+    
+    mat4x4_look_at(
+        &(vec3) { 0.0f, 0.5f, 1.0f },
+        &(vec3) { 0.0f, 0.0f, 0.0f },
+        &(vec3) { 0.0f, 1.0f, 0.0f },
+        &view
+    );
+
+/*view = mat4x4_lookAt(
         (vec3) { 0.0f, 0.5f, 1.0f },
         (vec3) { 0.0f, 0.0f, 0.0f },
-        (vec3) { 0.0f, 1.0f, 0.0f }
-    );
+        (vec3) { 0.0f, 1.0f, 0.0f });*/
 
     float ff = 0.0f;
     while (windowIsOpen()) {

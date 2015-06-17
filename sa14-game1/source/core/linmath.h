@@ -263,22 +263,37 @@ static inline mat4x4 mat4x4_sub(const mat4x4 *a, const mat4x4 *b, mat4x4 *r) {
 static inline mat4x4 mat4x4_lookAt(vec3 pos, vec3 at, vec3 up) {
     vec3 x_axis, y_axis, z_axis;
 
-    vec_sub      (&pos,    &at,     &z_axis);
-    vec_normalize(&z_axis, &z_axis         );
-    vec3_cross   (&up,     &z_axis, &x_axis);
-    vec_normalize(&x_axis, &x_axis          );
-    vec3_cross   (&z_axis, &x_axis, &y_axis);
+    // First, we create a z-axis from the target to the camera position.
+    vec_sub(&pos, &at, &z_axis);
+    vec_normalize(&z_axis, &z_axis);
 
-    float x_dot = vec_dot(&x_axis, &pos);
-    float y_dot = vec_dot(&y_axis, &pos);
-    float z_dot = vec_dot(&z_axis, &pos);
+    // The x-axis is the cross product of the up-axis and the z-axis.
+    vec3_cross(&up, &z_axis, &x_axis);
+    vec_normalize(&x_axis, &x_axis);
 
-    mat4x4 m = {
-         x_axis.x,  x_axis.y,  x_axis.z, -x_dot,
-         y_axis.x,  y_axis.y,  y_axis.z, -y_dot,
-         z_axis.x,  z_axis.y,  z_axis.z, -z_dot,
-         0.0f,     0.0f,      0.0f,    1.0f
+    // The y-axis is the cross product of the x- and z-axes.
+    vec3_cross(&z_axis, &x_axis, &y_axis);
+
+    // The orientation matrix.
+    mat4x4 o = {
+         x_axis.x, x_axis.y, x_axis.z, 0.0f,
+         y_axis.x, y_axis.y, y_axis.z, 0.0f,
+         z_axis.x, z_axis.y, z_axis.z, 0.0f,
+             0.0f,     0.0f,     0.0f, 1.0f
     };
+
+    // The translation matrix.
+    mat4x4 t;
+    mat_transl_xyz(-pos.x, -pos.y, -pos.z, &t);
+
+    // We multiply the two into the result matrix m and return it.
+    mat4x4 m;
+    mat_identity(&m);
+
+    // We want to rotate around the camera position, so we translate before
+    // rotating here.
+    mat_mul(&t, &m, &m);
+    mat_mul(&o, &m, &m);
 
     return (m);
 }

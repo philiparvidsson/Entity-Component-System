@@ -251,4 +251,39 @@ static inline void mat_div_(float const *a, float const *b, float *r, int a_n, i
     }
 }
 
+static inline void mat4x4_look_at(vec3 const *pos, vec3 const *at,
+                                  vec3 const *up, mat4x4 *r)
+{
+    vec3 x_axis, y_axis, z_axis;
+
+    // First, we create a z-axis from the target to the camera position.
+    vec_sub(pos, at, &z_axis);
+    vec_normalize(&z_axis, &z_axis);
+
+    // The x-axis is the cross product of the up-axis and the z-axis.
+    vec3_cross(up, &z_axis, &x_axis);
+    vec_normalize(&x_axis, &x_axis);
+
+    // The y-axis is the cross product of the x- and z-axes.
+    vec3_cross(&z_axis, &x_axis, &y_axis);
+
+    // The orientation matrix.
+    mat4x4 o = {
+         x_axis.x, x_axis.y, x_axis.z, 0.0f,
+         y_axis.x, y_axis.y, y_axis.z, 0.0f,
+         z_axis.x, z_axis.y, z_axis.z, 0.0f,
+             0.0f,     0.0f,     0.0f, 1.0f
+    };
+
+    // The translation matrix.
+    mat4x4 t;
+    mat_transl_xyz(-pos->x, -pos->y, -pos->z, &t);
+
+    // We want to rotate around the camera position, so we translate before
+    // rotating here.
+    mat_identity(r);
+    mat_mul(&t, r, r);
+    mat_mul(&o, r, r);
+}
+
 #endif // matrix_h_
