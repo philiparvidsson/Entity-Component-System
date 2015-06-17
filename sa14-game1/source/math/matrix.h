@@ -1,3 +1,14 @@
+/*------------------------------------------------------------------------------
+ * File: matrix.h
+ * Created: June 17, 2015
+ * Last changed: June 17, 2015
+ *
+ * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ *
+ * Description:
+ *   Matrix types, macros, functions etc.
+ *----------------------------------------------------------------------------*/
+
 #ifndef matrix_h_
 #define matrix_h_
 
@@ -20,7 +31,7 @@
 }
 
 #define matCheckArgs2() { \
-    if (a_n == (-1)) error("First argument is not a matrix");  \
+    if (m_n == (-1)) error("First argument is not a matrix");  \
     if (r_n == (-1)) error("Second argument is not a matrix"); \
 }
 
@@ -35,6 +46,8 @@
                : (((vec_n(v))== 9) ? ( 3) \
                : (((vec_n(v))== 4) ? ( 2) \
                :                     (-1))))
+
+#define mat_copy(m, r) mat_copy_((float *)m, (float *)r, min(mat_n(m), mat_n(r))
 
 #define mat_identity(r) mat_identity_((float *)r, mat_n(*r))
 
@@ -57,8 +70,7 @@
 #define mat_div(a, b, r) \
     mat_div_((float *)a, (float *)b, (float *)r, mat_n(*a), mat_n(*b), mat_n(*r))
 
-#define mat_transpose(a, r) \
-    mat_transpose_((float *)a, (float *)r, mat_n(*a), mat_n(*r))
+#define mat_transpose(m) mat_transpose_((float *)m, mat_n(*m))
 
 
 /*------------------------------------------------
@@ -100,12 +112,29 @@ static mat4x4 const mat_id2entity = { 1.0f, 0.0f, 0.0f, 0.0f,
  * FUNCTIONS
  *----------------------------------------------*/
 
+static inline void mat_copy_(float const *m, float *r, int m_n, int r_n) {
+    for (int i = 0; i < min(m_n, r_n); i++) {
+        for (int j = 0; j < min(m_n, r_n); j++)
+            r[i*r_n+j] = m[i*m_n+j];
+    }
+}
+
 static inline void mat_identity_(float *r, int n) {
     matCheckArgs1();
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++)
             r[i*n+j] = (i==j) ? (1.0f) : (0.0f);
+    }
+}
+
+static inline void mat_transpose_(float *m, int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = (i+1); j < n; j++) {
+            float tmp      = m[i*n+j];
+                  m[i*n+j] = m[i+j*n];
+                  m[i+j*n] = tmp;
+        }
     }
 }
 
@@ -205,7 +234,7 @@ static inline void mat_mul_(float const *a, float const *b, float *r, int a_n, i
         }
     }
 
-    if (m == &t) {
+    if (m == (float *)&t) {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++)
                 r[i*r_n+j] = m[i*r_n+j];
@@ -219,15 +248,6 @@ static inline void mat_div_(float const *a, float const *b, float *r, int a_n, i
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
         for (int j = 0; j < min(a_n, min(b_n, r_n)); j++)
             r[i*r_n+j] = a[i*a_n+j] / b[i*b_n+j];
-    }
-}
-
-static inline void mat_transpose_(float const *a, float *r, int a_n, int r_n) {
-    matCheckArgs2();
-
-    for (int i = 0; i < min(a_n, r_n); i++) {
-        for (int j = 0; j < min(a_n, r_n); j++)
-            r[i*r_n+j] = a[j*a_n+i];
     }
 }
 

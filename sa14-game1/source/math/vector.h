@@ -6,8 +6,8 @@
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Vector types and macros. Define VECTOR_RGB before including this file to
- *   enable the r, g, b and a coordinate aliases.
+ *   Vector types, macros, fucntions etc. Define VECTOR_RGB before including
+ *   this file to enable the r, g, b and a coordinate aliases.
  *----------------------------------------------------------------------------*/
 
 #ifndef vector_h_
@@ -19,7 +19,7 @@
 
 #include "core/common.h"
 
-#include <limits.h>
+#include <limits.h> // CHAR_BIT
 #include <math.h>
 
 /*------------------------------------------------

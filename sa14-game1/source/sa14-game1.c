@@ -68,7 +68,7 @@ int main(void) {
 
     float ff = 0.0f;
     while (windowIsOpen()) {
-        mat4x4 rot_x, rot_y, rot_z, transl;
+        mat4x4 rot_x, rot_y, rot_z;
 
         mat_rot_x(ff*0.5f, &rot_x);
         mat_rot_y(ff*1.3f, &rot_y);
@@ -105,12 +105,18 @@ int main(void) {
 #include "core/linmath.h"
 #if 0
 int main(void) {
-    mat4x4 m;
+    mat4x4 m, m2;
 
     mat_identity(&m);
 
-    mat_add(&m, &m, &m);
-    mat_rot_x(&m, 0.5f);
+    float *fitta = &m2.m[0];
+    for (int i = 0; i < 16; i++) {
+        *(fitta++) = i;
+    }
+
+    //mat_rot_x(45.0f*3.141592653f / 180.0f, &m);
+    mat_transpose(&m2);
+    //m = mat4x4_transpose(m);
 
     printf("%f\t%f\t%f\t%f\n", m.x.x, m.x.y, m.x.z, m.x.w);
     printf("%f\t%f\t%f\t%f\n", m.y.x, m.y.y, m.y.z, m.y.w);
