@@ -12,7 +12,7 @@
 /*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
-
+#if 1
 #include "core/common.h"
 #include "core/linmath.h"
 
@@ -57,7 +57,7 @@ int main(void) {
     compileVertexShader(shader_program, readFile("shaders/test_shader.vert"));
     compileFragmentShader(shader_program, readFile("shaders/test_shader.frag"));
 
-    triMeshT *box1 = createCone(0.1f, 0.2f, 10);
+    triMeshT *box1 = createCone(0.1f, 0.2f, 8);
 
     mat4x4 proj = mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -0.1f, -3.0f);
     mat4x4 view = mat4x4_lookAt(
@@ -66,16 +66,20 @@ int main(void) {
         (vec3) { 0.0f, 1.0f, 0.0f }
     );
 
-
-    mat4x4 transform;
-
     float ff = 0.0f;
     while (windowIsOpen()) {
-        mat4x4_mul(
-            &mat4x4_rotateX(ff*0.5),
-            &mat4x4_rotateY(ff*0.3f),
-            &transform
-        );
+        mat4x4 rot_x, rot_y, rot_z, transl;
+
+        mat_rot_x(ff*0.5f, &rot_x);
+        mat_rot_y(ff*1.3f, &rot_y);
+        mat_rot_z(ff*0.7f, &rot_z);
+
+        mat4x4 t;
+
+        mat_identity(&t);
+        mat_mul(&rot_y, &t, &t);
+        mat_mul(&rot_z, &t, &t);
+        mat_mul(&rot_x, &t, &t);
 
         clearDisplay(0.0f, 0.0f, 0.4f);
         ff += 0.75f / 60.0f;
@@ -84,7 +88,7 @@ int main(void) {
         setShaderUniform("View", Matrix4Uniform, &view);
         setShaderUniform("Proj", Matrix4Uniform, &proj);
 
-        setShaderUniform("Model", Matrix4Uniform, &transform);
+        setShaderUniform("Model", Matrix4Uniform, &t);
         drawMesh(box1);
 
         
@@ -96,3 +100,25 @@ int main(void) {
 
     exitGraphics();
 }
+
+#endif
+#include "core/linmath.h"
+#if 0
+int main(void) {
+    mat4x4 m;
+
+    mat_identity(&m);
+
+    mat_add(&m, &m, &m);
+    mat_rot_x(&m, 0.5f);
+
+    printf("%f\t%f\t%f\t%f\n", m.x.x, m.x.y, m.x.z, m.x.w);
+    printf("%f\t%f\t%f\t%f\n", m.y.x, m.y.y, m.y.z, m.y.w);
+    printf("%f\t%f\t%f\t%f\n", m.z.x, m.z.y, m.z.z, m.z.w);
+    printf("%f\t%f\t%f\t%f\n", m.w.x, m.w.y, m.w.z, m.w.w);
+
+
+    system("pause");
+    return 0;
+}
+#endif

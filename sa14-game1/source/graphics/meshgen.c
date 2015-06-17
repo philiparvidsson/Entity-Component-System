@@ -9,7 +9,12 @@
  *   Functions for generating meshes for geometric objects.
  *----------------------------------------------------------------------------*/
 
-#define VectorSwizzle
+/*------------------------------------------------
+ * DEFINES
+ *----------------------------------------------*/
+
+// We want the swizzle macros for vectors.
+#define VEC_SWIZZLE
 
 /*------------------------------------------------
  * INCLUDES
@@ -167,7 +172,7 @@ triMeshT *createCone(float radius, float height, int num_sides) {
     
     float pi = acosf(-1.0f);
     for (int i = 0; i < num_sides; i++) {
-        float theta = 360.0f*(i/(float)num_sides)*(2.0f*pi/360.0f);
+        float theta = (i/(float)num_sides)*(2.0f*pi);
 
         // Bottom.
         v[i].p = (vec3) { radius*cosf(theta),  0.0f, radius*sinf(theta) };
@@ -181,15 +186,21 @@ triMeshT *createCone(float radius, float height, int num_sides) {
 
         // First, we create a line from the top of the cone to the current
         // vertex...
-        vec3 diff = vec3_sub(v[i].p, v[num_sides*2+i].p);
+        vec3 diff;
+        vec_sub(&v[i].p, &v[num_sides*2+i].p, &diff);
 
         // ...then we figure out its perp-vector on the xz-plane.
-        vec3 perp = vec3_zyx(v[i].p);
-        perp.x = -perp.x;
+        vec3 perp = v[i].p;
+        float perp_x = perp.x;
+        perp.x = -perp.z;
+        perp.z = perp_x;
 
         // The normal is then the cross product of the perp-vector and the
         // line between the current vertex and the top of the cone.
-        vec3 normal = vec3_cross(perp, diff);
+        vec3 normal;
+        vec3_cross(&perp, &diff, &normal);
+
+        vec_normalize(&normal, &normal);
 
         v[num_sides  +i].n = normal;
         v[num_sides*2+i].n = normal;

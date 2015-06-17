@@ -71,6 +71,12 @@
     <ClInclude Include="source\graphics\meshgen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\math\vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\glew32.dll" />

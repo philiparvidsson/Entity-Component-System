@@ -118,6 +118,8 @@
     <ClInclude Include="source\core\file_io.h" />
     <ClInclude Include="source\graphics.h" />
     <ClInclude Include="source\graphics\meshgen.h" />
+    <ClInclude Include="source\math\matrix.h" />
+    <ClInclude Include="source\math\vector.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\glew32.dll" />

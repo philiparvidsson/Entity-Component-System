@@ -40,13 +40,22 @@
 //   warning: 'function selected for automatic inline expansion'
 #pragma warning(disable:4711)
 
-#define inline __inline
-
 #endif // _MSC_VER
 
 /*------------------------------------------------
  * MACROS
  *----------------------------------------------*/
+
+#ifndef min
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#endif // min
+
+#ifdef _MSC_VER
+// The inline keyword was introduced in C99 so MSVC++ doesn't support it.
+// However, it supports the __inline keyword which exactly the same, so we can
+// just alias it on MSVC++.
+#define inline __inline
+#endif // _MSC_VER
 
 /*--------------------------------------
  * Macro: string

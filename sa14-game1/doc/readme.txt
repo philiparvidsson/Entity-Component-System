@@ -7,11 +7,12 @@ RIKTLINJER.
      inställningar.
 
   3. Namngivning:
+       makroNamn
        KonstantNamn
-       typNamnT;
+       typNamnT
        variabel_namn
-       funktionsNamn();
-       fil_namn
+       funktionsNamn()
+       fil_namn.c
 
 ------------------------------------------------------------
 

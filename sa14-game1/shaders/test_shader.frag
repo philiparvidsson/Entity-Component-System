@@ -10,7 +10,7 @@ layout(location = 1) in vec3 Normal;
 layout(location = 0) out vec4 color;
 
 void main() {
-    vec3 light_pos = vec3(-1.0, 4.0, 2.0);
+    vec3 light_pos = vec3(-0.05f, 1.0, 1.85);
 
     vec3 n = (Model * vec4(Normal, 1.0)).xyz;
     vec3 d = (View * vec4(light_pos, 1.0)).xyz - (Model * vec4(Vertex, 1.0)).xyz;
