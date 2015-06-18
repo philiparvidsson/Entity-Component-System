@@ -101,8 +101,10 @@
     <ClCompile Include="source\core\array.c" />
     <ClCompile Include="source\core\debug.c" />
     <ClCompile Include="source\core\file_io.c" />
+    <ClCompile Include="source\game.c" />
     <ClCompile Include="source\graphics.c" />
     <ClCompile Include="source\graphics\meshgen.c" />
+    <ClCompile Include="source\math\physics.c" />
     <ClCompile Include="source\sa14-game1.c" />
   </ItemGroup>
   <ItemGroup>
@@ -115,9 +117,11 @@
     <ClInclude Include="source\core\common.h" />
     <ClInclude Include="source\core\debug.h" />
     <ClInclude Include="source\core\file_io.h" />
+    <ClInclude Include="source\game.h" />
     <ClInclude Include="source\graphics.h" />
     <ClInclude Include="source\graphics\meshgen.h" />
     <ClInclude Include="source\math\matrix.h" />
+    <ClInclude Include="source\math\physics.h" />
     <ClInclude Include="source\math\vector.h" />
   </ItemGroup>
   <ItemGroup>

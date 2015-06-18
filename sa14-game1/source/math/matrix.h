@@ -1,12 +1,14 @@
 /*------------------------------------------------------------------------------
  * File: matrix.h
  * Created: June 17, 2015
- * Last changed: June 17, 2015
+ * Last changed: June 18, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Matrix types, macros, functions etc.
+ *   Matrix types, macros, functions etc. The matrices are stored in row-major
+ *   order, i.e. ((mat4x4)mat).m[1][3] referes to the fourth element on the
+ *   second row.
  *----------------------------------------------------------------------------*/
 
 #ifndef matrix_h_
@@ -26,21 +28,15 @@
  * MACROS
  *----------------------------------------------*/
 
-#define matCheckArgs1() { \
+#define mat_check_args_1() { \
     if (n == (-1)) error("First argument is not a matrix"); \
 }
 
-#define matCheckArgs2() { \
-    if (m_n == (-1)) error("First argument is not a matrix");  \
-    if (r_n == (-1)) error("Second argument is not a matrix"); \
-}
-
-#define matCheckArgs3() { \
+#define mat_check_args_3() { \
     if (a_n == (-1)) error("First argument is not a matrix");  \
     if (b_n == (-1)) error("Second argument is not a matrix"); \
     if (r_n == (-1)) error("Third argument is not a matrix");  \
 }
-
 
 #define mat_n(v) (((vec_n(v))==16) ? ( 4) \
                : (((vec_n(v))== 9) ? ( 3) \
@@ -96,22 +92,12 @@ typedef union {
     struct { vec4 x; vec4 y; vec4 z; vec4 w; };
 } mat4x4;
 
-
-/*------------------------------------------------
- * GLOBALS
- *----------------------------------------------*/
-
-static mat4x4 const mat_id2entity = { 1.0f, 0.0f, 0.0f, 0.0f,
-                                     0.0f, 1.0f, 0.0f, 0.0f,
-                                     0.0f, 0.0f, 1.0f, 0.0f,
-                                     0.0f, 0.0f, 0.0f, 1.0f };
-
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
 static inline void mat_identity_(float *r, int n) {
-    matCheckArgs1();
+    mat_check_args_1();
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++)
@@ -130,7 +116,7 @@ static inline void mat_transpose_(float *m, int n) {
 }
 
 static inline void mat_transl_xy_(float x, float y, float *m, int n) {
-    matCheckArgs1();
+    mat_check_args_1();
 
     if (n < 3) error("Matrix is too small");
 
@@ -141,7 +127,7 @@ static inline void mat_transl_xy_(float x, float y, float *m, int n) {
 }
 
 static inline void mat_transl_xyz_(float x, float y, float z, float *m, int n) {
-    matCheckArgs1();
+    mat_check_args_1();
 
     if (n < 4) error("Matrix is too small");
 
@@ -153,7 +139,7 @@ static inline void mat_transl_xyz_(float x, float y, float z, float *m, int n) {
 }
 
 static inline void mat_rot_x_(float a, float *m, int n) {
-    matCheckArgs1();
+    mat_check_args_1();
 
     if (n < 3) error("Matrix is too small");
 
@@ -166,7 +152,7 @@ static inline void mat_rot_x_(float a, float *m, int n) {
 }
 
 static inline void mat_rot_y_(float a, float *m, int n) {
-    matCheckArgs1();
+    mat_check_args_1();
 
     if (n < 3) error("Matrix is too small");
 
@@ -179,7 +165,7 @@ static inline void mat_rot_y_(float a, float *m, int n) {
 }
 
 static inline void mat_rot_z_(float a, float *m, int n) {
-    matCheckArgs1();
+    mat_check_args_1();
 
     mat_identity_(m, n);
 
@@ -190,7 +176,7 @@ static inline void mat_rot_z_(float a, float *m, int n) {
 }
 
 static inline void mat_add_(float const *a, float const *b, float *r, int a_n, int b_n, int r_n) {
-    matCheckArgs3();
+    mat_check_args_3();
 
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
         for (int j = 0; j < min(a_n, min(b_n, r_n)); j++)
@@ -199,7 +185,7 @@ static inline void mat_add_(float const *a, float const *b, float *r, int a_n, i
 }
 
 static inline void mat_sub_(float const *a, float const *b, float *r, int a_n, int b_n, int r_n) {
-    matCheckArgs3();
+    mat_check_args_3();
 
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
         for (int j = 0; j < min(a_n, min(b_n, r_n)); j++)
@@ -208,7 +194,7 @@ static inline void mat_sub_(float const *a, float const *b, float *r, int a_n, i
 }
 
 static inline void mat_mul_(float const *a, float const *b, float *r, int a_n, int b_n, int r_n) {
-    matCheckArgs3();
+    mat_check_args_3();
 
     int const  n = min(a_n, min(b_n, r_n));
     mat4x4     t;
@@ -234,7 +220,7 @@ static inline void mat_mul_(float const *a, float const *b, float *r, int a_n, i
 }
 
 static inline void mat_div_(float const *a, float const *b, float *r, int a_n, int b_n, int r_n) {
-    matCheckArgs3();
+    mat_check_args_3();
 
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
         for (int j = 0; j < min(a_n, min(b_n, r_n)); j++)
@@ -290,19 +276,17 @@ static inline void mat4x4_ortho(float left, float right, float bottom,
     };
 }
 
-static inline mat4x4 mat4x4_perspective(float left, float right, float bottom,
-                                        float top, float near, float far)
+static inline void mat4x4_perspective(float left, float right, float bottom,
+                                        float top, float near, float far, mat4x4 *res)
 {
     float l=left, r=right, b=bottom, t=top, n=near, f=far;
 
-    mat4x4 m = {
+    *res = (mat4x4) {
         (-2.0f*f)/(r-l),  0.0f,            (r+l)/(r-l), 0.0f,
          0.0f,           -(2.0f*f)/(t-b),  (t+b)/(t-b), 0.0f,
          0.0f,            0.0f,           -(n+f)/(n-f), (2.0f*n*f)/(n-f),
          0.0f,            0.0f,           -1.0f,        0.0f
     };
-
-    return (m);
 }
 
 #endif // matrix_h_

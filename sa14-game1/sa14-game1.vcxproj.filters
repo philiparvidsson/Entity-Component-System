@@ -39,6 +39,12 @@
     <ClCompile Include="source\graphics\meshgen.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\math\physics.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -72,6 +78,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\math\matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\physics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

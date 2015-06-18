@@ -293,6 +293,9 @@ void updateDisplay(void);
  * Functions for querying the graphics mode, settings etc.
  *----------------------------------------------------------------------------*/
 
+int mouseX(void);
+int mouseY(void);
+
 /*--------------------------------------
  * Function: windowIsOpen()
  * Parameters:

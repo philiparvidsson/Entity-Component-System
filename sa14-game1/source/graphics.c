@@ -25,7 +25,8 @@
 
 #include <GL/glew.h>
 
-#include <Windows.h>
+#include <windows.h>
+#include <windowsx.h>
 
 /*------------------------------------------------
  * CONSTANTS
@@ -107,6 +108,8 @@ typedef struct {
     int         width,      // Window width, in pixels.
                 height;     // Window height, in pixels.
     int         frame_time; // The time to display each frame.
+    int         mouse_x,    // Mouse pointer x-coordinate, in pixels.
+                mouse_y;    // Mouse pointer y-coordinate, in pixels.
 
     // Below are platform specific system fields.
 
@@ -148,6 +151,12 @@ static LRESULT CALLBACK WindowProc(_In_ HWND   hwnd,
                                    _In_ LPARAM lParam)
 {
     switch (uMsg) {
+
+    case WM_MOUSEMOVE: {
+        window->mouse_x = GET_X_LPARAM(lParam);
+        window->mouse_y = GET_Y_LPARAM(lParam);
+        break;
+    }
 
     case WM_CLOSE: {
         // The user has closed the window, so we exit graphics mode.
@@ -294,6 +303,8 @@ static void createWindow(string title, int width, int height) {
     window->width  = width;
     window->height = height;
     window->title  = title;
+
+    window->mouse_x = window->mouse_y = 0;
 
     window->hdc = GetDC(window->hwnd);
     
@@ -785,6 +796,16 @@ void updateDisplay(void) {
 /*------------------------------------------------------------------------------
  * Functions for querying the graphics mode, settings etc.
  *----------------------------------------------------------------------------*/
+
+int mouseX() {
+    checkGraphicsInited();
+    return window->mouse_x;
+}
+
+int mouseY() {
+    checkGraphicsInited();
+    return window->mouse_y;
+}
 
 /*--------------------------------------
  * Function: windowIsOpen()
