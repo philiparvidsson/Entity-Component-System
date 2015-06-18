@@ -42,9 +42,6 @@
  *------------------------------------*/
 #define vec_n(v) (sizeof(v)/sizeof(float))
 
-#define vec_copy(v, r) \
-    vec_copy_((float *)v, (float *)r, min(vec_n(*v), vec_n(*r)))
-
 /*--------------------------------------
  * Macro: vec_add(a, b, r)
  * Parameters:
@@ -113,6 +110,20 @@
 #define vec_div(a, b, r) vec_div_((float *)a, (float *)b, (float *)r, \
                                   min(min(vec_n(*a), vec_n(*b)), vec_n(*r)))
 
+/*--------------------------------------
+ * Function: vec_scale(v, f, r)
+ * Parameters:
+ *   v  Pointer to first vector.
+ *   f  Scaling factor.
+ *   r  Pointer to result vector.
+ *
+ * Description:
+ *   Multiplies each coordinate in the specified vector with the scaling factor
+ *   and store the result in r: r_i=v_i*f
+ *
+ * Usage:
+ *   vec_scale_(&a, 2.0f, &r);
+ *------------------------------------*/
 #define vec_scale(v, f, r) vec_scale_((float *)v, f, (float *)r, \
                                       min(vec_n(*v), vec_n(*r)))
 
@@ -232,11 +243,6 @@ typedef union {
  * FUNCTIONS
  *----------------------------------------------*/
 
-static inline void vec_copy_(float const *v, float *r, int n) {
-    for (int i = 0; i < n; i++)
-        r[i] = v[i];
-}
-
 /*--------------------------------------
  * Function: vec_add_(a, b, r, n)
  * Parameters:
@@ -317,6 +323,21 @@ static inline void vec_div_(float const *a, float const *b, float *r, int n) {
         r[i] = a[i] / b[i];
 }
 
+/*--------------------------------------
+ * Function: vec_scale_(v, f, r, n)
+ * Parameters:
+ *   v  Pointer to first vector.
+ *   f  Scaling factor.
+ *   r  Pointer to result vector.
+ *   n  The minimum number of coordinates in any of the specified vectors.
+ *
+ * Description:
+ *   Multiplies each coordinate in the specified vector with the scaling factor
+ *   and store the result in r: r_i=v_i*f
+ *
+ * Usage:
+ *   vec_scale_(&a, 2.0f, &r, 3);
+ *------------------------------------*/
 static inline void vec_scale_(float const *v, float f, float *r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = v[i] * f;

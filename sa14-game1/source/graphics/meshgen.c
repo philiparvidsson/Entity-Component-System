@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: meshgen.c
  * Created: June 16, 2015
- * Last changed: June 16, 2015
+ * Last changed: June 17, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -23,7 +23,8 @@
 #include "graphics.h"
 
 #include "core/common.h"
-#include "core/linmath.h"
+
+#include "math/vector.h"
 
 /*------------------------------------------------
  * FUNCTIONS

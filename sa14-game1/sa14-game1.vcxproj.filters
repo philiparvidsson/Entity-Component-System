@@ -62,9 +62,6 @@
     <ClInclude Include="source\graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\linmath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\core\file_io.h">
       <Filter>Header Files</Filter>
     </ClInclude>

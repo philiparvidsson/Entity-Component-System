@@ -18,7 +18,8 @@
  *----------------------------------------------*/
 
 #include "core/common.h"
-#include "core/linmath.h"
+
+#include "math/vector.h"
 
 /*------------------------------------------------
  * TYPES

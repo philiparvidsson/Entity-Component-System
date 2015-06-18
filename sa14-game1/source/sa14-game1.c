@@ -14,10 +14,11 @@
  *----------------------------------------------*/
 #if 1
 #include "core/common.h"
-#include "core/linmath.h"
 
 #include "graphics.h"
 #include "graphics/meshgen.h"
+
+#include "math/matrix.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -110,26 +111,34 @@ int main(void) {
 }
 
 #endif
-#include "core/linmath.h"
 #if 0
+#include "math/matrix.h"
+#include "math/vector.h"
+#include <xmmintrin.h>
 int main(void) {
-    mat4x4 m, m2;
+    //mat4x4 m, m2;
 
-    mat_identity(&m);
 
-    float *fitta = &m2.m[0];
-    for (int i = 0; i < 16; i++) {
-        *(fitta++) = i;
-    }
+    //mat_identity(&m2);
 
-    //mat_rot_x(45.0f*3.141592653f / 180.0f, &m);
-    mat_transpose(&m2);
-    //m = mat4x4_transpose(m);
 
-    printf("%f\t%f\t%f\t%f\n", m.x.x, m.x.y, m.x.z, m.x.w);
+    //m = m2;
+
+    /*printf("%f\t%f\t%f\t%f\n", m.x.x, m.x.y, m.x.z, m.x.w);
     printf("%f\t%f\t%f\t%f\n", m.y.x, m.y.y, m.y.z, m.y.w);
     printf("%f\t%f\t%f\t%f\n", m.z.x, m.z.y, m.z.z, m.z.w);
-    printf("%f\t%f\t%f\t%f\n", m.w.x, m.w.y, m.w.z, m.w.w);
+    printf("%f\t%f\t%f\t%f\n", m.w.x, m.w.y, m.w.z, m.w.w);*/
+
+    vec4 m = { 1.0f, 2.0f, 4.0f, 8.0f };
+    vec4 m2 = { 4.0f, 8.0f, 16.0f, 32.0f };
+
+    vec_add(&m, &m2, &m);
+    vec_scale(&m, 0.5f, &m);
+    
+
+    printf("%f\t%f\t%f\t%f\n", m.x, m.y, m.z, m.w);
+    vec_normalize(&m, &m);
+    printf("%f\t%f\t%f\t%f\n", m.x, m.y, m.z, m.w);
 
 
     system("pause");

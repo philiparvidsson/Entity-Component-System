@@ -18,7 +18,8 @@
 
 #include "core/array.h"
 #include "core/common.h"
-#include "core/linmath.h"
+
+#include "math/vector.h"
 
 #include <stdlib.h>
 

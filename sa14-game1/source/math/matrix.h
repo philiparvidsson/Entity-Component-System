@@ -47,8 +47,6 @@
                : (((vec_n(v))== 4) ? ( 2) \
                :                     (-1))))
 
-#define mat_copy(m, r) mat_copy_((float *)m, (float *)r, min(mat_n(m), mat_n(r))
-
 #define mat_identity(r) mat_identity_((float *)r, mat_n(*r))
 
 #define mat_transl_xy(x, y, r) mat_transl_xy_(x, y, (float *)r, mat_n(*r))
@@ -111,13 +109,6 @@ static mat4x4 const mat_id2entity = { 1.0f, 0.0f, 0.0f, 0.0f,
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
-
-static inline void mat_copy_(float const *m, float *r, int m_n, int r_n) {
-    for (int i = 0; i < min(m_n, r_n); i++) {
-        for (int j = 0; j < min(m_n, r_n); j++)
-            r[i*r_n+j] = m[i*m_n+j];
-    }
-}
 
 static inline void mat_identity_(float *r, int n) {
     matCheckArgs1();
@@ -267,8 +258,8 @@ static inline void mat4x4_look_at(vec3 const *pos, vec3 const *at,
     // The y-axis is the cross product of the x- and z-axes.
     vec3_cross(&z_axis, &x_axis, &y_axis);
 
-    // The orientation matrix.
-    mat4x4 o = {
+    // The rotation matrix.
+    mat4x4 rot = {
          x_axis.x, x_axis.y, x_axis.z, 0.0f,
          y_axis.x, y_axis.y, y_axis.z, 0.0f,
          z_axis.x, z_axis.y, z_axis.z, 0.0f,
@@ -276,14 +267,42 @@ static inline void mat4x4_look_at(vec3 const *pos, vec3 const *at,
     };
 
     // The translation matrix.
-    mat4x4 t;
-    mat_transl_xyz(-pos->x, -pos->y, -pos->z, &t);
+    mat4x4 transl;
+    mat_transl_xyz(-pos->x, -pos->y, -pos->z, &transl);
 
     // We want to rotate around the camera position, so we translate before
     // rotating here.
     mat_identity(r);
-    mat_mul(&t, r, r);
-    mat_mul(&o, r, r);
+    mat_mul(&transl, r, r);
+    mat_mul(&rot,    r, r);
+}
+
+static inline void mat4x4_ortho(float left, float right, float bottom,
+                                float top, float near, float far, mat4x4 *res)
+{
+    float l=left, r=right, b=bottom, t=top, n=near, f=far;
+
+    *res = (mat4x4) {
+        2.0f/(r-l), 0.0f,       0.0f,       -(r+l)/(r-l),
+        0.0f,       2.0f/(t-b), 0.0f,       -(t+b)/(t-b),
+        0.0f,       0.0f,       2.0f/(n-f), -(n+f)/(n-f),
+        0.0f,       0.0f,       0.0f,        1.0f
+    };
+}
+
+static inline mat4x4 mat4x4_perspective(float left, float right, float bottom,
+                                        float top, float near, float far)
+{
+    float l=left, r=right, b=bottom, t=top, n=near, f=far;
+
+    mat4x4 m = {
+        (-2.0f*f)/(r-l),  0.0f,            (r+l)/(r-l), 0.0f,
+         0.0f,           -(2.0f*f)/(t-b),  (t+b)/(t-b), 0.0f,
+         0.0f,            0.0f,           -(n+f)/(n-f), (2.0f*n*f)/(n-f),
+         0.0f,            0.0f,           -1.0f,        0.0f
+    };
+
+    return (m);
 }
 
 #endif // matrix_h_
