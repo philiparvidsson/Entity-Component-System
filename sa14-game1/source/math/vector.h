@@ -111,7 +111,7 @@
                                   min(min(vec_n(*a), vec_n(*b)), vec_n(*r)))
 
 /*--------------------------------------
- * Function: vec_scale(v, f, r)
+ * Macro: vec_scale(v, f, r)
  * Parameters:
  *   v  Pointer to first vector.
  *   f  Scaling factor.
