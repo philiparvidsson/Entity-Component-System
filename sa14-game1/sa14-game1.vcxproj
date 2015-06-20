@@ -137,6 +137,8 @@
   <ItemGroup>
     <None Include="bin\glew32.dll" />
     <None Include="build\postbuild.bat" />
+    <None Include="resources\shaders\postfx.frag" />
+    <None Include="resources\shaders\postfx.vert" />
     <None Include="resources\shaders\test_shader.frag" />
     <None Include="resources\shaders\test_shader.vert" />
     <None Include="resources\shaders\text.frag" />

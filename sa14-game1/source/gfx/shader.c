@@ -8,6 +8,9 @@
 #include "core/common.h"
 #include "core/debug.h"
 
+#include "gfx/graphics.h"
+#include "gfx/trimesh.h"
+
 #include <stdlib.h>
 
 #include <GL/glew.h>
@@ -121,6 +124,9 @@ void compileVertexShader(shaderT *shader, string const *source) {
 }
 
 void setShaderParam(string const *name, void const *value) {
+    if (!active_shader)
+        error("No shader in use");
+
     GLuint index;
     glGetUniformIndices(active_shader->id, 1, &name, &index);
 
@@ -141,4 +147,30 @@ void setShaderParam(string const *name, void const *value) {
     default:
         error("Unknown uniform type specified");
     }
+}
+
+void shaderPostProcess(shaderT const *shader) {
+    GLuint fb_tex_id;
+    glGenTextures(1, &fb_tex_id);
+
+    glBindTexture(GL_TEXTURE_2D, fb_tex_id);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, 640, 640, 0);
+
+    triMeshT *quad = createQuad(2.0f, 2.0f);
+
+    clearDisplay(1.0f, 0.0f, 1.0f);
+
+    shaderT *old_shader = useShader(shader);
+    drawMesh(quad);
+    useShader(old_shader);
+
+    freeMesh(quad);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDeleteTextures(1, &fb_tex_id);
 }

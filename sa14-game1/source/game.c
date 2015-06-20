@@ -47,7 +47,11 @@ void gameMain(void) {
     compileVertexShader(test_shader, readFile("resources/shaders/test_shader.vert"));
     compileFragmentShader(test_shader, readFile("resources/shaders/test_shader.frag"));
 
-    useShader(test_shader);
+
+    shaderT *postfx_shader = createShader();
+    compileVertexShader(postfx_shader, readFile("resources/shaders/postfx.vert"));
+    compileFragmentShader(postfx_shader, readFile("resources/shaders/postfx.frag"));
+
 
     mat4x4 view;
     mat4x4_look_at(
@@ -72,9 +76,11 @@ void gameMain(void) {
 
         time = getTime();
 
-        clearDisplay(0.0f, 0.0f, 0.0f);
+        clearDisplay(0.0f, 0.0f, 0.5f);
 
-        mat_rot_x(dt, &cube.transform);
+        mat_rot_y(dt, &cube.transform);
+
+        useShader(test_shader);
 
         setShaderParam("Model", &cube.transform);
         setShaderParam("Proj",  &proj);
@@ -88,6 +94,9 @@ void gameMain(void) {
             sprintf(lol, "%d", secs);
             drawText(lol, 72);
         }
+
+        shaderPostProcess(postfx_shader);
+        shaderPostProcess(postfx_shader);
 
         updateDisplay();
     }

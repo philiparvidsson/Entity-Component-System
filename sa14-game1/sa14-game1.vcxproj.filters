@@ -128,6 +128,8 @@
     <None Include="bin\glew32.dll" />
     <None Include="resources\shaders\text.vert" />
     <None Include="resources\shaders\text.frag" />
+    <None Include="resources\shaders\postfx.vert" />
+    <None Include="resources\shaders\postfx.frag" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />

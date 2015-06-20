@@ -52,8 +52,8 @@ typedef struct triMeshT triMeshT;
  * FUNCTIONS
  *----------------------------------------------*/
 
-triMeshT *createMesh(int num_verts, int num_tris);
-void deleteMesh(triMeshT *mesh);
+triMeshT *newMesh(int num_verts, int num_tris);
+void freeMesh(triMeshT *mesh);
 void updateMesh(triMeshT const *mesh);
 void drawMesh(triMeshT const *mesh);
 

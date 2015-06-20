@@ -33,4 +33,6 @@ void compileVertexShader(shaderT *shader, string const *source);
 void setShaderParam(string const *name, void const *value);
 shaderT *useShader(shaderT const *shader);
 
+void shaderPostProcess(shaderT const *shader);
+
 #endif // shader_h_

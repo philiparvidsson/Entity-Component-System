@@ -93,16 +93,16 @@ void drawText(string const *text, int point_size) {
     SelectObject(hdc, hbitmap);
 
     DrawTextW(hdc, text, -1, &rect, DT_TOP | DT_LEFT);
+    DeleteObject(hfont);
+    free(text);
+
     GetBitmapBits(hbitmap, width*height*4, bitmap_data);
 
-    for (int i = 3; i < width*height * 4; i += 4)
-        *((uint8_t *)bitmap_data+i) ^= 0xff;
-
     DeleteObject(hbitmap);
-    DeleteObject(hfont);
     DeleteDC(hdc);
 
-    free(text);
+    for (int i = 3; i < width*height*4; i += 4)
+        *((uint8_t *)bitmap_data + i) ^= 0xff;
 
     GLuint text_tex_id;
     glGenTextures(1, &text_tex_id);
@@ -148,7 +148,7 @@ void drawText(string const *text, int point_size) {
     if (depth_test)
         glEnable(depth_test);
     
-    deleteMesh(text_quad);
+    freeMesh(text_quad);
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glDeleteTextures(1, &text_tex_id);

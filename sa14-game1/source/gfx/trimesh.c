@@ -36,7 +36,7 @@ struct triMeshT {
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Function: createMesh()
+ * Function: newMesh()
  * Parameters:
  *   num_verts  Number of vertices.
  *   num_tris   Number of triangles (faces).
@@ -49,9 +49,9 @@ struct triMeshT {
  *   returned pointer is actually a pointer to the internal type triMeshT_.
  *
  * Usage:
- *   triMeshT *mesh = createMesh(8, 6);
+ *   triMeshT *mesh = newMesh(8, 6);
  *------------------------------------*/
-triMeshT *createMesh(int num_verts, int num_tris) {
+triMeshT *newMesh(int num_verts, int num_tris) {
     triMeshT *mesh = malloc(sizeof(triMeshT));
 
     mesh->num_verts = num_verts;
@@ -74,17 +74,17 @@ triMeshT *createMesh(int num_verts, int num_tris) {
 }
 
 /*--------------------------------------
- * Function: deleteMesh()
+ * Function: freeMesh()
  * Parameters:
- *   mesh  The mesh to delete.
+ *   mesh  The mesh to free.
  *
  * Description:
  *   Deletes the specified mesh from RAM and VRAM.
  *
  * Usage:
- *   deleteMesh(my_mesh);
+ *   freeMesh(my_mesh);
  *------------------------------------*/
-void deleteMesh(triMeshT *mesh) {
+void freeMesh(triMeshT *mesh) {
     glDeleteBuffers(1, &mesh->vbo);
     glDeleteBuffers(1, &mesh->ibo);
 
@@ -191,7 +191,7 @@ triMeshT *createBox(float width, float height, float length) {
     // shading to work properly (we don't want interpolated normals). Since each
     // vertex has its own normal, we need six sides times four vertices. Also,
     // each of the six sides is made up of two triangles.
-    triMeshT *box = createMesh(6*4, 6*2);
+    triMeshT *box = newMesh(6*4, 6*2);
 
     // Alias pointers for less code clutter.
     vertexT *v = box->verts;
@@ -298,7 +298,7 @@ triMeshT *createCone(float radius, float height, int num_sides) {
     // (because they need separate normals for shading to work properly) and
     // one separate top point for each face (again, because they need separate
     // normals).
-    triMeshT *cone = createMesh(1+num_sides*3, num_sides*2);
+    triMeshT *cone = newMesh(1+num_sides*3, num_sides*2);
 
     // Alias pointers for less code clutter.
     vertexT *v = cone->verts;
@@ -357,7 +357,7 @@ triMeshT *createCone(float radius, float height, int num_sides) {
 triMeshT *createQuad(float width, float height) {
     float half_width = width * 0.5f, half_height = height * 0.5f;
 
-    triMeshT *quad = createMesh(4, 2);
+    triMeshT *quad = newMesh(4, 2);
 
     // Alias pointers for less code clutter.
     vertexT *v = quad->verts;
@@ -370,10 +370,10 @@ triMeshT *createQuad(float width, float height) {
 
     v[0].n = v[1].n = v[2].n = v[3].n = (vec3) { 0.0f, 0.0f, 1.0f };
 
-    v[0].uv = (vec2) { 1.0f, 0.0f };
-    v[1].uv = (vec2) { 0.0f, 0.0f };
-    v[2].uv = (vec2) { 0.0f, 1.0f };
-    v[3].uv = (vec2) { 1.0f, 1.0f };
+    v[0].uv = (vec2) { 1.0f, 1.0f };
+    v[1].uv = (vec2) { 0.0f, 1.0f };
+    v[2].uv = (vec2) { 0.0f, 0.0f };
+    v[3].uv = (vec2) { 1.0f, 0.0f };
 
     t[0] = (triT) { 0, 1, 2 };
     t[1] = (triT) { 2, 3, 0 };
