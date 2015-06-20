@@ -19,12 +19,6 @@
  *------------------------------------*/
 typedef struct shaderT shaderT;
 
-typedef enum {
-    IntUniform,
-    FloatUniform,
-    Matrix4Uniform
-} uniformTypeT;
-
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
