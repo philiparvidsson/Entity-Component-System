@@ -46,18 +46,6 @@
  * MACROS
  *----------------------------------------------*/
 
-#ifndef clamp
-#define clamp(x, a, b) max(min(x, b), a)
-#endif // clamp
-
-#ifndef min
-#define min(a, b) ((a) < (b) ? (a) : (b))
-#endif // min
-
-#ifndef max
-#define max(a, b) ((a) > (b) ? (a) : (b))
-#endif // max
-
 #ifdef _MSC_VER
 // The inline keyword was introduced in C99 so MSVC++ doesn't support it.
 // However, it supports the __inline keyword which exactly the same, so we can
@@ -72,6 +60,18 @@
  *   String type macro.
  *------------------------------------*/
 #define string stringT
+
+#ifndef clamp
+#define clamp(x, a, b) max(min(x, b), a)
+#endif // clamp
+
+#ifndef min
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#endif // min
+
+#ifndef max
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#endif // max
 
 /*------------------------------------------------
  * CONSTANTS
@@ -119,5 +119,7 @@ typedef char stringT;
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
+
+void sleep(int millisecs);
 
 #endif // common_h_

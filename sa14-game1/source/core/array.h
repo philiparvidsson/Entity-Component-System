@@ -80,13 +80,27 @@ void freeArray(arrayT *a);
  * Usage:
  *   arrayAdd(my_array, &elem);
  *------------------------------------*/
-void *arrayAdd(arrayT *a, const void *elem);
+void *arrayAdd(arrayT *a, void const *elem);
+
+/*--------------------------------------
+ * Function: arrayRemove(a, i)
+ * Parameters:
+ *   a  The array to remove an element from.
+ *   i  The index of the element to remove.
+ *
+ * Description:
+ *   Removes an element from an array.
+ *
+ * Usage:
+ *   arrayRemove(a, 0);
+ *------------------------------------*/
+void arrayRemove(arrayT *a, int i);
 
 /*--------------------------------------
  * Function: arrayGet()
  * Parameters:
- *   a     The array to retrieve an element from.
- *   i     The index of the element to retrieve.
+ *   a  The array to retrieve an element from.
+ *   i  The index of the element to retrieve.
  *
  * Returns:
  *   A pointer to the element inside the array.
@@ -97,12 +111,12 @@ void *arrayAdd(arrayT *a, const void *elem);
  * Usage:
  *   myTypeT *ptr = (myTypeT *)arrayGet(my_array, 1);
  *------------------------------------*/
-void *arrayGet(const arrayT *a, int i);
+void *arrayGet(arrayT const *a, int i);
 
 /*--------------------------------------
  * Function: arrayLength()
  * Parameters:
- *   a     The array to get the length of.
+ *   a  The array to get the length of.
  *
  * Returns:
  *   The number of elements in the specified array.
@@ -113,9 +127,6 @@ void *arrayGet(const arrayT *a, int i);
  * Usage:
  *   int num_elements = arrayLength(my_array);
  *------------------------------------*/
-int arrayLength(const arrayT *a);
-
-void arrayRemove(arrayT *a, int i);
-void arrayRemoveElem(arrayT *a, void *elem);
+int arrayLength(arrayT const *a);
 
 #endif // array_h_

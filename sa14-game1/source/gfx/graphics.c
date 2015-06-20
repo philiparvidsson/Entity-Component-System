@@ -353,6 +353,10 @@ void updateDisplay(void) {
     assert(QueryPerformanceCounter(&window->last_update));
 }
 
+bool windowIsFocused(void) {
+    return (window && (window->hwnd == GetFocus()));
+}
+
 bool windowIsOpen(void) {
     return (window && (window->hwnd != NULL));
 }

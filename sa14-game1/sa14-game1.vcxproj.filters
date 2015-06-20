@@ -51,6 +51,15 @@
     <ClCompile Include="source\gfx\trimesh.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\time.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\input\mouse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\common.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -97,6 +106,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\gfx\trimesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\input\mouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

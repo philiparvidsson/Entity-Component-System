@@ -1,33 +1,37 @@
 /*------------------------------------------------------------------------------
- * File: graphics.h
+ * File: time.h
  * Created: June 8, 2015
  * Last changed: June 20, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Functions for creating a single window, handling input etc.
+ *   Provides functions for measure time with very high resolution.
  *----------------------------------------------------------------------------*/
 
-#ifndef graphics_h_
-#define graphics_h_
+#ifndef time_h_
+#define time_h_
 
 /*------------------------------------------------
- * INCLUDE
+ * INCLUDES
  *----------------------------------------------*/
 
-#include "core/common.h"
+#include <stdint.h>
+
+/*------------------------------------------------
+ * TYPES
+ *----------------------------------------------*/
+
+typedef uint64_t timeT;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-void initGraphics(string const *title, int width, int height);
-void exitGraphics(void);
-void clearDisplay(float r, float g, float b);
-void updateDisplay(void);
+timeT getTime(void);
 
-bool windowIsFocused(void);
-bool windowIsOpen(void);
+int elapsedMicrosecsSince(timeT time);
 
-#endif // graphics_h_
+float elapsedSecsSince(timeT time);
+
+#endif // time_h_

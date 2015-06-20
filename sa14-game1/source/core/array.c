@@ -57,10 +57,9 @@ struct arrayT {
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
- * Function: doubleArrayCapacity()
+ * Function: doubleArrayCapacity(a)
  * Parameters:
  *   a  The array whose capacity should be doubled.
- *
  *
  * Description:
  *   Doubles the capacity for the specified array by reallocating its data
@@ -89,7 +88,7 @@ static void doubleArrayCapacity(arrayT *a) {
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
- * Function: newArray()
+ * Function: newArray(elem_size)
  * Parameters:
  *   elem_size  The array element size, in bytes.
  *
@@ -114,7 +113,7 @@ arrayT *newArray(size_t elem_size) {
 }
 
 /*--------------------------------------
- * Function: freeArray()
+ * Function: freeArray(a)
  * Parameters:
  *   a  The array to free from memory.
  *
@@ -130,7 +129,7 @@ void freeArray(arrayT *a) {
 }
 
 /*--------------------------------------
- * Function: arrayAdd()
+ * Function: arrayAdd(a, elem)
  * Parameters:
  *   a     The array to add an element to.
  *   elem  Pointer to the element.
@@ -144,7 +143,7 @@ void freeArray(arrayT *a) {
  * Usage:
  *   arrayAdd(my_array, &elem);
  *------------------------------------*/
-void *arrayAdd(arrayT *a, const void *elem) {
+void *arrayAdd(arrayT *a, void const *elem) {
     // If the array is full, we double its capacity.
     if (a->num_elems >= a->max_elems)
         doubleArrayCapacity(a);
@@ -157,6 +156,18 @@ void *arrayAdd(arrayT *a, const void *elem) {
     return (dest);
 }
 
+/*--------------------------------------
+ * Function: arrayRemove(a, i)
+ * Parameters:
+ *   a  The array to remove an element from.
+ *   i  The index of the element to remove.
+ *
+ * Description:
+ *   Removes an element from an array.
+ *
+ * Usage:
+ *   arrayRemove(a, 0);
+ *------------------------------------*/
 void arrayRemove(arrayT *a, int i) {
     assert(0 <= i && i < a->num_elems);
 
@@ -166,16 +177,11 @@ void arrayRemove(arrayT *a, int i) {
     a->num_elems--;
 }
 
-void arrayRemoveElem(arrayT *a, void *elem) {
-    int i = ((char *)elem - (char *)a->data) / a->elem_size;
-    arrayRemove(a, i);
-}
-
 /*--------------------------------------
- * Function: arrayGet()
+ * Function: arrayGet(a, i)
  * Parameters:
- *   a     The array to retrieve an element from.
- *   i     The index of the element to retrieve.
+ *   a  The array to retrieve an element from.
+ *   i  The index of the element to retrieve.
  *
  * Returns:
  *   A pointer to the element inside the array.
@@ -186,7 +192,7 @@ void arrayRemoveElem(arrayT *a, void *elem) {
  * Usage:
  *   myTypeT *ptr = (myTypeT *)arrayGet(my_array, 1);
  *------------------------------------*/
-void *arrayGet(const arrayT *a, int i) {
+void *arrayGet(arrayT const *a, int i) {
     assert(0 <= i && i < a->num_elems);
 
     void *ptr = (char *)a->data + (i * a->elem_size);
@@ -194,9 +200,9 @@ void *arrayGet(const arrayT *a, int i) {
 }
 
 /*--------------------------------------
- * Function: arrayLength()
+ * Function: arrayLength(a)
  * Parameters:
- *   a     The array to get the length of.
+ *   a  The array to get the length of.
  *
  * Returns:
  *   The number of elements in the specified array.
@@ -207,6 +213,6 @@ void *arrayGet(const arrayT *a, int i) {
  * Usage:
  *   int num_elements = arrayLength(my_array);
  *------------------------------------*/
-int arrayLength(const arrayT *a) {
+int arrayLength(arrayT const *a) {
     return a->num_elems;
 }

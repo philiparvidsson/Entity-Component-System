@@ -97,9 +97,13 @@ void deleteShader(shaderT *shader) {
     free(shader);
 }
 
-void useShader(shaderT const *shader) {
+shaderT *useShader(shaderT const *shader) {
+    shaderT *old_shader = active_shader;
+
     glUseProgram(shader ? shader->id : 0);
     active_shader = shader;
+
+    return (old_shader);
 }
 
 void compileFragmentShader(shaderT *shader, string const *source) {

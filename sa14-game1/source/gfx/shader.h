@@ -37,6 +37,6 @@ void compileGeometryShader(shaderT *shader, string const *source);
 void compileVertexShader(shaderT *shader, string const *source);
 
 void setShaderUniform(string const *name, uniformTypeT type, const void *value);
-void useShader(shaderT const *shader);
+shaderT *useShader(shaderT const *shader);
 
 #endif // shader_h_

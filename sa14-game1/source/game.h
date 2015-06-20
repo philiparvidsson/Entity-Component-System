@@ -31,19 +31,12 @@ typedef enum {
 } gameStateT;
 
 typedef struct {
-    mat4x4 view, proj;
-
-    shaderT *shader_prog;
-    shaderT *text_prog;
-
-    arrayT *objects;
-
     gameStateT state;
 } gameT;
 
 typedef struct {
     triMeshT *mesh;
-    mat4x4 transform;
+    mat4x4    transform;
 
     void(*update)(void);
 } gameObjectT;
