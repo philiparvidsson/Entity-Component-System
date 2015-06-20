@@ -102,14 +102,17 @@
     <ClCompile Include="source\core\debug.c" />
     <ClCompile Include="source\core\file_io.c" />
     <ClCompile Include="source\game.c" />
-    <ClCompile Include="source\graphics.c" />
-    <ClCompile Include="source\graphics\meshgen.c" />
-    <ClCompile Include="source\math\physics.c" />
+    <ClCompile Include="source\gfx\graphics.c" />
+    <ClCompile Include="source\gfx\trimesh.c" />
+    <ClCompile Include="source\gfx\shader.c" />
+    <ClCompile Include="source\gfx\text.c" />
+    <ClCompile Include="source\objects\lolcone.c" />
     <ClCompile Include="source\sa14-game1.c" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt" />
     <Text Include="license.txt" />
+    <Text Include="resources\fonts\license.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GL\glew.h" />
@@ -118,20 +121,27 @@
     <ClInclude Include="source\core\debug.h" />
     <ClInclude Include="source\core\file_io.h" />
     <ClInclude Include="source\game.h" />
-    <ClInclude Include="source\graphics.h" />
-    <ClInclude Include="source\graphics\meshgen.h" />
+    <ClInclude Include="source\gfx\graphics.h" />
+    <ClInclude Include="source\gfx\trimesh.h" />
+    <ClInclude Include="source\gfx\shader.h" />
+    <ClInclude Include="source\gfx\text.h" />
     <ClInclude Include="source\math\matrix.h" />
-    <ClInclude Include="source\math\physics.h" />
     <ClInclude Include="source\math\vector.h" />
+    <ClInclude Include="source\objects\lolcone.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\glew32.dll" />
     <None Include="build\postbuild.bat" />
-    <None Include="shaders\test_shader.frag" />
-    <None Include="shaders\test_shader.vert" />
+    <None Include="resources\shaders\test_shader.frag" />
+    <None Include="resources\shaders\test_shader.vert" />
+    <None Include="resources\shaders\text.frag" />
+    <None Include="resources\shaders\text.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\sector_034.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

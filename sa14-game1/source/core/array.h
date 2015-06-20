@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: array.h
  * Created: June 8, 2015
- * Last changed: June 16, 2015
+ * Last changed: June 20, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -30,10 +30,7 @@
  * Description:
  *   Represents an array of elements.
  *------------------------------------*/
-typedef struct {
-    const size_t elem_size; // The size of each array element, in bytes.
-    const int    num_elems; // Number of elements in the array.
-} arrayT;
+typedef struct arrayT arrayT;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -74,28 +71,51 @@ void freeArray(arrayT *a);
  *   a     The array to add an element to.
  *   elem  Pointer to the element.
  *
+ * Returns:
+ *   A pointer to the element inside the array.
+ *
  * Description:
  *   Adds an element to the end of the specified array.
  *
  * Usage:
  *   arrayAdd(my_array, &elem);
  *------------------------------------*/
-void arrayAdd(arrayT *a, const void *elem);
+void *arrayAdd(arrayT *a, const void *elem);
 
 /*--------------------------------------
  * Function: arrayGet()
  * Parameters:
  *   a     The array to retrieve an element from.
  *   i     The index of the element to retrieve.
- *   elem  Pointer to a buffer which the element data will be copied to.
+ *
+ * Returns:
+ *   A pointer to the element inside the array.
  *
  * Description:
- *   Retrieves an element from the array.
+ *   Retrieves a pointer to an element inside the array.
  *
  * Usage:
- *   void *buf = malloc(my_array->elem_size);
- *   arrayGet(my_array, 1, &buf);
+ *   myTypeT *ptr = (myTypeT *)arrayGet(my_array, 1);
  *------------------------------------*/
-void arrayGet(const arrayT *a, int i, void *dest);
+void *arrayGet(const arrayT *a, int i);
+
+/*--------------------------------------
+ * Function: arrayLength()
+ * Parameters:
+ *   a     The array to get the length of.
+ *
+ * Returns:
+ *   The number of elements in the specified array.
+ *
+ * Description:
+ *   Gets the number of elements in an array.
+ *
+ * Usage:
+ *   int num_elements = arrayLength(my_array);
+ *------------------------------------*/
+int arrayLength(const arrayT *a);
+
+void arrayRemove(arrayT *a, int i);
+void arrayRemoveElem(arrayT *a, void *elem);
 
 #endif // array_h_

@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: file_io.c
  * Created: June 11, 2015
- * Last changed: June 16, 2015
+ * Last changed: June 20, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -17,6 +17,7 @@
 
 #include "core/common.h"
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -38,7 +39,7 @@
  * Usage:
  *   long num_bytes = fileSize("foo.bin");
  *------------------------------------*/
-long fileSize(string file_name) {
+long fileSize(string const *file_name) {
     FILE* fp = fopen(file_name, "rb");
 
     if (!fp)
@@ -66,9 +67,9 @@ long fileSize(string file_name) {
  *   free() function on the returned pointer.
  *
  * Usage:
- *   string data = readFile("foo.bin");
+ *   uint8_t *data = readFile("foo.bin");
  *------------------------------------*/
-string readFile(string file_name) {
+uint8_t *readFile(string const *file_name) {
     FILE* fp = fopen(file_name, "rb");
 
     if (!fp)
@@ -78,7 +79,7 @@ string readFile(string file_name) {
     long num_bytes = ftell(fp);
     rewind(fp);
 
-    string s = malloc(num_bytes+1);
+    uint8_t *s = malloc(num_bytes+1);
 
     if (s) {
         fread(s, sizeof(char), num_bytes, fp);

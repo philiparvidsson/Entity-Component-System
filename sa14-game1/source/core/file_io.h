@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: file_io.h
  * Created: June 11, 2015
- * Last changed: June 16, 2015
+ * Last changed: June 20, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -17,6 +17,8 @@
  *----------------------------------------------*/
 
 #include "core/common.h"
+
+#include <stdint.h>
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -36,7 +38,7 @@
  * Usage:
  *   long num_bytes = fileSize("foo.bin");
  *------------------------------------*/
-long fileSize(string file_name);
+long fileSize(string const *file_name);
 
 /*--------------------------------------
  * Function: readFile()
@@ -55,6 +57,6 @@ long fileSize(string file_name);
  * Usage:
  *   string data = readFile("foo.bin");
  *------------------------------------*/
-string readFile(string file_name);
+uint8_t *readFile(string const *file_name);
 
 #endif // file_io_h_

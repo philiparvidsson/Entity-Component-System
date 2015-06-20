@@ -1,40 +1,25 @@
 #include "game.h"
 
-#include "core/common.h"
-#include "core/file_io.h"
-
-#include "graphics/meshgen.h"
-
-#include "math/matrix.h"
-#include "math/vector.h"
-
-#include "graphics.h"
-
+#include <stdio.h>
 #include <stdlib.h>
-
-typedef struct {
-    triMeshT *box1;
-
-    mat4x4 view, proj;
-
-    shaderProgramADT shader_prog;
-} gameT;
 
 gameT *game = NULL;
 
-
 void initGame(void) {
     initGraphics("Game Window", 640, 640);
-    setFrameRate(60.0f);
 
     game = malloc(sizeof(gameT));
 
-    game->shader_prog = createShaderProgram();
+    game->objects = newArray(sizeof(gameObjectT));
 
-    compileVertexShader(game->shader_prog, readFile("shaders/test_shader.vert"));
-    compileFragmentShader(game->shader_prog, readFile("shaders/test_shader.frag"));
+    game->shader_prog = createShader();
+    game->text_prog = createShader();
 
-    game->box1 = createCone(0.1f, 0.2f, 8);
+    compileVertexShader(game->shader_prog, readFile("resources/shaders/test_shader.vert"));
+    compileFragmentShader(game->shader_prog, readFile("resources/shaders/test_shader.frag"));
+
+    compileVertexShader(game->text_prog, readFile("resources/shaders/text.vert"));
+    compileFragmentShader(game->text_prog, readFile("resources/shaders/text.frag"));
 
     mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -0.1f, -3.0f, &game->proj);
     
@@ -53,31 +38,60 @@ void exitGame(void) {
     game = NULL;
 }
 
+void createObj() {
+    gameObjectT o;
+    createLolCone(&o);
+    arrayAdd(game->objects, &o);
+}
 
 void gameMain(void) {
     initGame();
+    createObj();
 
+    useShader(game->shader_prog);
+
+    int lol = 0;
+    float dt = 0.0f;
     while (windowIsOpen()) {
-        mat4x4 rot_x, rot_y;
+        while (dt >= TimeStep) {
+            // physics shit here
 
-        mat_rot_x((mouseY() - 240) / 200.0f, &rot_x);
-        mat_rot_y((mouseX() - 320) / 300.0f, &rot_y);
+            dt -= TimeStep;
+        }
 
-        mat4x4 t;
+        // We need to step all objects forwards in time by integrating their
+        // accelerations, velocities etc.
+        for (int i = 0; i < arrayLength(game->objects); i++) {
+            gameObjectT *o = (gameObjectT *)arrayGet(game->objects, i);
 
-        mat_identity(&t);
-        mat_mul(&rot_x, &t, &t);
-        mat_mul(&rot_y, &t, &t);
+            // Not all objects need to be updated.
+            if (o->update)
+                o->update(o);
+        }
 
-        clearDisplay(0.0f, 0.0f, 0.2f);
+        clearDisplay(1.0f, 1.0f, 0.5f);
 
-        useShaderProgram(game->shader_prog);
         setShaderUniform("View", Matrix4Uniform, &game->view);
         setShaderUniform("Proj", Matrix4Uniform, &game->proj);
 
-        setShaderUniform("Model", Matrix4Uniform, &t);
-        drawMesh(game->box1);
+        useShader(game->shader_prog);
 
+        // Time to render all objects.
+        for (int i = 0; i < arrayLength(game->objects); i++) {
+            gameObjectT *o = (gameObjectT *)arrayGet(game->objects, i);
+
+            // All objects might not have meshes.
+            if (!o->mesh)
+                continue;
+
+            setShaderUniform("Model", Matrix4Uniform, &o->transform);
+            drawMesh(o->mesh);
+        }
+
+        useShader(game->text_prog);
+        char buf[1024];
+        sprintf(buf, "hej %d", lol++);
+        drawText(buf, 24);
 
         updateDisplay();
     }

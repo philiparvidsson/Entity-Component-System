@@ -46,9 +46,17 @@
  * MACROS
  *----------------------------------------------*/
 
+#ifndef clamp
+#define clamp(x, a, b) max(min(x, b), a)
+#endif // clamp
+
 #ifndef min
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #endif // min
+
+#ifndef max
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#endif // max
 
 #ifdef _MSC_VER
 // The inline keyword was introduced in C99 so MSVC++ doesn't support it.
@@ -95,7 +103,7 @@
  * Description:
  *   String type definition.
  *------------------------------------*/
-typedef char *stringT;
+typedef char stringT;
 
 /*------------------------------------------------
  * INCLUDES
@@ -107,5 +115,9 @@ typedef char *stringT;
 #include "core/debug.h"
 
 #include <stdbool.h>
+
+/*------------------------------------------------
+ * FUNCTIONS
+ *----------------------------------------------*/
 
 #endif // common_h_

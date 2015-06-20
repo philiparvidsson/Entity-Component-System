@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: debug.c
  * Created: June 8, 2015
- * Last changed: June 16, 2015
+ * Last changed: June 20, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -22,12 +22,37 @@
 #include <stdlib.h>
 
 #ifdef _WIN32
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
+
+#ifdef _WIN32
+static void printLastErrorWin32(void) {
+    int last_error = GetLastError();
+
+    if (last_error == NO_ERROR)
+        return;
+
+    LPWSTR error_text = NULL;
+    FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER
+                   | FORMAT_MESSAGE_FROM_SYSTEM
+                   | FORMAT_MESSAGE_IGNORE_INSERTS,
+                   NULL,
+                   last_error,
+                   MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                   (LPWSTR)&error_text,
+                   0,
+                   NULL);
+
+    wprintf(L"GetLastError() reports %d: %ls\n", last_error, error_text);
+
+    if (error_text)
+        LocalFree(error_text);
+}
+#endif // _WIN32
 
 /*--------------------------------------
  * Function: errorExit()
@@ -45,30 +70,14 @@
  *   errorExit("An error has occurred", "main.c", 42);
  *
  *------------------------------------*/
-void errorExit(string msg, string func_name, int line) {
+void errorExit(string const *msg, string const *func_name, int line) {
     printf("\n----------------------------------------\n"
            "ERROR: %s in %s() on line %d.\n\n"
            "This program will now exit.\n", msg, func_name, line);
 
 #ifdef _WIN32
-    int last_error = GetLastError();
-    if (last_error != NO_ERROR) {
-        LPWSTR error_text = NULL;
-        FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER
-                       | FORMAT_MESSAGE_FROM_SYSTEM
-                       | FORMAT_MESSAGE_IGNORE_INSERTS,
-                       NULL,
-                       last_error,
-                       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                       (LPWSTR)&error_text,
-                       0,
-                       NULL);
-        wprintf(L"GetLastError() reports %d: %ls\n", last_error, error_text);
-
-        if (error_text)
-            LocalFree(error_text);
+    printLastErrorWin32();
 #endif // _WIN32
-    }
 
     printf("Press ENTER to continue...");
     getchar();

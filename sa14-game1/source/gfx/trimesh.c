@@ -1,34 +1,165 @@
-/*------------------------------------------------------------------------------
- * File: meshgen.c
- * Created: June 16, 2015
- * Last changed: June 17, 2015
- *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
- *
- * Description:
- *   Functions for generating meshes for geometric objects.
- *----------------------------------------------------------------------------*/
-
-/*------------------------------------------------
- * DEFINES
- *----------------------------------------------*/
-
-// We want the swizzle macros for vectors.
-#define VEC_SWIZZLE
-
 /*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
 
-#include "graphics.h"
+#include "trimesh.h"
 
 #include "core/common.h"
 
-#include "math/vector.h"
+#include <stddef.h>
+#include <stdlib.h>
+
+#include <GL/glew.h>
+
+/*------------------------------------------------
+ * TYPES
+ *----------------------------------------------*/
+
+/*--------------------------------------
+ * Type: triMeshT
+ *
+ * Description:
+ *   Represents a piece of geometry with a vertex mesh etc.
+ *------------------------------------*/
+struct triMeshT {
+    vertexT *verts;     // The vertices.
+    int      num_verts; // Number of vertices.
+    triT    *tris;      // The triangles (faces).
+    int      num_tris;  // Number of triangles.
+
+    GLuint vbo, // Vertex buffer object.
+           ibo; // Index buffer object.
+};
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
+
+/*--------------------------------------
+ * Function: createMesh()
+ * Parameters:
+ *   num_verts  Number of vertices.
+ *   num_tris   Number of triangles (faces).
+ *
+ * Returns:
+ *   A pointer to the mesh.
+ *
+ * Description:
+ *   Creates a new mesh with the specified number of vertices and triangles. The
+ *   returned pointer is actually a pointer to the internal type triMeshT_.
+ *
+ * Usage:
+ *   triMeshT *mesh = createMesh(8, 6);
+ *------------------------------------*/
+triMeshT *createMesh(int num_verts, int num_tris) {
+    triMeshT *mesh = malloc(sizeof(triMeshT));
+
+    mesh->num_verts = num_verts;
+    mesh->verts     = malloc(sizeof(vertexT) * mesh->num_verts);
+    mesh->num_tris  = num_tris;
+    mesh->tris      = malloc(sizeof(triT)    * mesh->num_tris);
+
+    size_t vb_size = sizeof(vertexT) * mesh->num_verts;
+    size_t ib_size = sizeof(triT)    * mesh->num_tris;
+
+    glGenBuffers(1, &mesh->vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
+    glBufferData(GL_ARRAY_BUFFER, vb_size, mesh->verts, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &mesh->ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ib_size, mesh->tris, GL_STATIC_DRAW);
+
+    return (mesh);
+}
+
+/*--------------------------------------
+ * Function: deleteMesh()
+ * Parameters:
+ *   mesh  The mesh to delete.
+ *
+ * Description:
+ *   Deletes the specified mesh from RAM and VRAM.
+ *
+ * Usage:
+ *   deleteMesh(my_mesh);
+ *------------------------------------*/
+void deleteMesh(triMeshT *mesh) {
+    glDeleteBuffers(1, &mesh->vbo);
+    glDeleteBuffers(1, &mesh->ibo);
+
+    free(mesh->verts);
+    free(mesh->tris);
+    free(mesh);
+}
+
+/*--------------------------------------
+ * Function: updateMesh()
+ * Parameters:
+ *   mesh  The mesh to update.
+ *
+ * Description:
+ *   Updates the specified mesh in VRAM by reuploading it.
+ *
+ * Usage:
+ *   updateMesh(my_mesh);
+ *------------------------------------*/
+void updateMesh(triMeshT const *mesh) {
+    size_t vb_size = sizeof(vertexT) * mesh->num_verts;
+    size_t ib_size = sizeof(triT)    * mesh->num_tris;
+
+    glBindBuffer   (GL_ARRAY_BUFFER, mesh->vbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vb_size, mesh->verts);
+
+    glBindBuffer   (GL_ARRAY_BUFFER, mesh->ibo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, ib_size, mesh->tris);
+}
+
+/*--------------------------------------
+ * Function: drawMesh()
+ * Parameters:
+ *   mesh  The mesh to draw.
+ *
+ * Description:
+ *   Draws the specified mesh. Remember to assign a shader program with the
+ *   useShaderProgram() function.
+ *
+ * Usage:
+ *   drawMesh(my_mesh);
+ *------------------------------------*/
+void drawMesh(triMeshT const *mesh) {
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertexT), (void *)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertexT), &((vertexT *)NULL)->n);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertexT), &((vertexT *)NULL)->uv);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ibo);
+    glDrawElements(GL_TRIANGLES, mesh->num_tris*3, GL_UNSIGNED_INT, (void *)0);
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+}
+
+int meshNumTris(triMeshT const *mesh) {
+    return (mesh->num_verts);
+}
+
+int meshNumVerts(triMeshT const *mesh) {
+    return (mesh->num_tris);
+}
+
+triT *meshGetTris(triMeshT *mesh) {
+    return (mesh->tris);
+}
+
+vertexT *meshGetVerts(triMeshT *mesh) {
+    return (mesh->verts);
+}
 
 /*--------------------------------------
  * Function: createBox()
@@ -132,6 +263,14 @@ triMeshT *createBox(float width, float height, float length) {
     t[10] = (triT) { 20, 21, 22 };
     t[11] = (triT) { 22, 23, 20 };
 
+
+    for (int i = 0; i < 24; i += 4) {
+        v[i+0].uv = (vec2) { 1.0f, 0.0f };
+        v[i+1].uv = (vec2) { 0.0f, 0.0f };
+        v[i+2].uv = (vec2) { 0.0f, 1.0f };
+        v[i+3].uv = (vec2) { 1.0f, 1.0f };
+    }
+
     updateMesh(box);
     return (box);
 }
@@ -213,4 +352,32 @@ triMeshT *createCone(float radius, float height, int num_sides) {
 
     updateMesh(cone);
     return (cone);
+}
+
+triMeshT *createQuad(float width, float height) {
+    float half_width = width * 0.5f, half_height = height * 0.5f;
+
+    triMeshT *quad = createMesh(4, 2);
+
+    // Alias pointers for less code clutter.
+    vertexT *v = quad->verts;
+    triT    *t = quad->tris;
+
+    v[0].p = (vec3) {  half_width,  half_height, 0.0f };
+    v[1].p = (vec3) { -half_width,  half_height, 0.0f };
+    v[2].p = (vec3) { -half_width, -half_height, 0.0f };
+    v[3].p = (vec3) {  half_width, -half_height, 0.0f };
+
+    v[0].n = v[1].n = v[2].n = v[3].n = (vec3) { 0.0f, 0.0f, 1.0f };
+
+    v[0].uv = (vec2) { 1.0f, 0.0f };
+    v[1].uv = (vec2) { 0.0f, 0.0f };
+    v[2].uv = (vec2) { 0.0f, 1.0f };
+    v[3].uv = (vec2) { 1.0f, 1.0f };
+
+    t[0] = (triT) { 0, 1, 2 };
+    t[1] = (triT) { 2, 3, 0 };
+
+    updateMesh(quad);
+    return (quad);
 }

@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: array.c
  * Created: June 8, 2015
- * Last changed: June 16, 2015
+ * Last changed: June 20, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -12,13 +12,12 @@
 /*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
-
 #include "array.h"
 
 #include "core/common.h"
 
 #include <stdlib.h>
-#include <string.h>
+#include <string.h> // memcpy(), memmove()
 
 /*------------------------------------------------
  * CONSTANTS
@@ -37,24 +36,17 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Type: arrayT_
+ * Type: arrayT
  *
  * Description:
- *   Represents an array of elements. This type is used internally but also
- *   exposes a public interface to clients (see the typ arrayT in the header
- *   file).
+ *   Represents an array of elements.
  *------------------------------------*/
-typedef struct {
-    /* --- Public --- */
-
-    size_t elem_size; // The size of each array element, in bytes.
-    int    num_elems; // Number of elements in the array.
-
-    /* --- Private --- */
-
-    int    max_elems; // The current array capacity.
-    void  *data;      // The element data block.
-} arrayT_;
+struct arrayT {
+    void   *data;      // The element data block.
+    int     num_elems; // Number of elements in the array.
+    int     max_elems; // The current array capacity.
+    size_t  elem_size; // The size of each array element, in bytes.
+};
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -77,7 +69,7 @@ typedef struct {
  * Usage:
  *   doubleArrayCapacity(my_array);
  *------------------------------------*/
-static void doubleArrayCapacity(arrayT_ *a) {
+static void doubleArrayCapacity(arrayT *a) {
     // We double the array capacity and copy the old elements into the new
     // data block, the release the old data block.
 
@@ -111,14 +103,14 @@ static void doubleArrayCapacity(arrayT_ *a) {
  *   arrayT *int_array = newArray(sizeof(int));
  *------------------------------------*/
 arrayT *newArray(size_t elem_size) {
-    arrayT_ *a = malloc(sizeof(arrayT_));
+    arrayT *a = malloc(sizeof(arrayT));
 
     a->data      = malloc(elem_size * InitialCapacity);
     a->num_elems = 0;
     a->max_elems = InitialCapacity;
     a->elem_size = elem_size;
 
-    return ((arrayT *)a);
+    return (a);
 }
 
 /*--------------------------------------
@@ -133,7 +125,7 @@ arrayT *newArray(size_t elem_size) {
  *   freeArray(my_array);
  *------------------------------------*/
 void freeArray(arrayT *a) {
-    free(((arrayT_ *)a)->data);
+    free(a->data);
     free(a);
 }
 
@@ -143,21 +135,40 @@ void freeArray(arrayT *a) {
  *   a     The array to add an element to.
  *   elem  Pointer to the element.
  *
+ * Returns:
+ *   A pointer to the element inside the array.
+ *
  * Description:
  *   Adds an element to the end of the specified array.
  *
  * Usage:
  *   arrayAdd(my_array, &elem);
  *------------------------------------*/
-void arrayAdd(arrayT *a, const void *elem) {
+void *arrayAdd(arrayT *a, const void *elem) {
     // If the array is full, we double its capacity.
-    if (a->num_elems >= ((arrayT_ *)a)->max_elems)
-        doubleArrayCapacity((arrayT_ *)a);
+    if (a->num_elems >= a->max_elems)
+        doubleArrayCapacity(a);
 
-    void *dest = (char *)((arrayT_ *)a)->data + (a->num_elems * a->elem_size);
+    void *dest = (char *)a->data + (a->num_elems * a->elem_size);
     
     memcpy(dest, elem, a->elem_size);
-    ((arrayT_ *)a)->num_elems++;
+    a->num_elems++;
+
+    return (dest);
+}
+
+void arrayRemove(arrayT *a, int i) {
+    assert(0 <= i && i < a->num_elems);
+
+    void *dest = (char *)a->data + (i * a->elem_size);
+    void *src  = (char *)dest + a->elem_size;
+    memmove(dest, src, (a->num_elems-i+1) * a->elem_size);
+    a->num_elems--;
+}
+
+void arrayRemoveElem(arrayT *a, void *elem) {
+    int i = ((char *)elem - (char *)a->data) / a->elem_size;
+    arrayRemove(a, i);
 }
 
 /*--------------------------------------
@@ -165,18 +176,37 @@ void arrayAdd(arrayT *a, const void *elem) {
  * Parameters:
  *   a     The array to retrieve an element from.
  *   i     The index of the element to retrieve.
- *   elem  Pointer to a buffer which the element data will be copied to.
+ *
+ * Returns:
+ *   A pointer to the element inside the array.
  *
  * Description:
- *   Retrieves an element from the array.
+ *   Retrieves a pointer to an element inside the array.
  *
  * Usage:
- *   void *buf = malloc(my_array->elem_size);
- *   arrayGet(my_array, 1, &buf);
+ *   myTypeT *ptr = (myTypeT *)arrayGet(my_array, 1);
  *------------------------------------*/
-void arrayGet(const arrayT *a, int i, void *dest) {
+void *arrayGet(const arrayT *a, int i) {
     assert(0 <= i && i < a->num_elems);
 
-    void *src = ((char *)((arrayT_ *)a)->data + (i * a->elem_size));
-    memcpy(dest, src, a->elem_size);
+    void *ptr = (char *)a->data + (i * a->elem_size);
+    return (ptr);
+}
+
+/*--------------------------------------
+ * Function: arrayLength()
+ * Parameters:
+ *   a     The array to get the length of.
+ *
+ * Returns:
+ *   The number of elements in the specified array.
+ *
+ * Description:
+ *   Gets the number of elements in an array.
+ *
+ * Usage:
+ *   int num_elements = arrayLength(my_array);
+ *------------------------------------*/
+int arrayLength(const arrayT *a) {
+    return a->num_elems;
 }

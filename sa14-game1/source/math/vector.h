@@ -205,7 +205,7 @@ typedef union {
     struct { float r, g, b; };
 
     vec2 rg;
-    struct { vecFloatPadding; vec2 gb; };
+    struct { vec_float_padding; vec2 gb; };
 #endif // VECTOR_RGB
 } vec3;
 
@@ -231,11 +231,11 @@ typedef union {
     struct { float r, g, b, a; };
 
     vec2 rg;
-    struct { vecFloatPadding; vec2 gb; };
-    struct { vecFloatPadding; vecFloatPadding; vec2 ba; };
+    struct { vec_float_padding; vec2 gb; };
+    struct { vec_float_padding; vec_float_padding; vec2 ba; };
 
     vec3 rgb;
-    struct { vecFloatPadding; vec3 gba; };
+    struct { vec_float_padding; vec3 gba; };
 #endif // VECTOR_RGB
 } vec4;
 

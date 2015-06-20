@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: debug.h
  * Created: June 8, 2015
- * Last changed: June 16, 2015
+ * Last changed: June 20, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -47,7 +47,7 @@
  * Usage:
  *   assert(some_ptr != NULL);
  *------------------------------------*/
-#define assert(expr) if (!(expr)) { error("The assertion '" #expr "' failed"); }
+#define assert(expr) if (!(expr)) { error("The assertion '"#expr"' failed"); }
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -69,6 +69,6 @@
  *   errorExit("An error has occurred", "main.c", 42);
  *
  *------------------------------------*/
-void errorExit(string msg, string func_name, int line);
+void errorExit(string const *msg, string const *func_name, int line);
 
 #endif // debug_h_

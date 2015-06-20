@@ -30,19 +30,25 @@
     <ClCompile Include="source\sa14-game1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\core\file_io.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\meshgen.c">
+    <ClCompile Include="source\gfx\graphics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\math\physics.c">
+    <ClCompile Include="source\gfx\shader.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gfx\text.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\game.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\objects\lolcone.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gfx\trimesh.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -51,6 +57,7 @@
       <Filter>Documentation Files</Filter>
     </Text>
     <Text Include="license.txt" />
+    <Text Include="resources\fonts\license.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\core\array.h">
@@ -65,41 +72,52 @@
     <ClInclude Include="include\GL\glew.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\core\file_io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\meshgen.h">
+    <ClInclude Include="source\gfx\graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\vector.h">
+    <ClInclude Include="source\gfx\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\math\matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\physics.h">
+    <ClInclude Include="source\math\vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gfx\text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\objects\lolcone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\gfx\trimesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\glew32.dll" />
-    <None Include="shaders\test_shader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="shaders\test_shader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
     <None Include="build\postbuild.bat">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="resources\shaders\test_shader.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="resources\shaders\test_shader.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="bin\glew32.dll" />
+    <None Include="resources\shaders\text.vert" />
+    <None Include="resources\shaders\text.frag" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\sector_034.ttf" />
   </ItemGroup>
 </Project>
