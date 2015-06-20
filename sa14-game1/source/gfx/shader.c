@@ -39,6 +39,8 @@ shaderT *active_shader = NULL;
  *----------------------------------------------*/
 
 static void compileShader(GLenum type, shaderT *prog, string const *source) {
+    assert(source != NULL);
+
     GLuint shader_id = glCreateShader(type);
 
     glShaderSource (shader_id, 1, &source, NULL);
@@ -118,18 +120,23 @@ void compileVertexShader(shaderT *shader, string const *source) {
     compileShader(GL_VERTEX_SHADER, shader, source);
 }
 
-void setShaderUniform(string const *name, uniformTypeT type, const void *value) {
-    GLint loc = glGetUniformLocation(active_shader->id, name);
+void setShaderParam(string const *name, void const *value) {
+    GLuint index;
+    glGetUniformIndices(active_shader->id, 1, &name, &index);
 
+    GLint type = 0;
+    glGetActiveUniformsiv(active_shader->id, 1, &index, GL_UNIFORM_TYPE, &type);
+
+    GLint loc = glGetUniformLocation(active_shader->id, name);
     switch (type) {
-    case IntUniform:
+    case GL_INT:
         glUniform1i(loc, *(GLint *)value);
         break;
-    case FloatUniform:
+    case GL_FLOAT:
         glUniform1f(loc, *(GLfloat *)value);
         break;
-    case Matrix4Uniform:
-        glUniformMatrix4fv(loc, 1, GL_TRUE, value);
+    case GL_FLOAT_MAT4:
+        glUniformMatrix4fv(loc, 1, GL_TRUE, (GLfloat *)value);
         break;
     default:
         error("Unknown uniform type specified");

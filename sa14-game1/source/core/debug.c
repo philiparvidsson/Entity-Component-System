@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <GL/glew.h>
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -28,6 +30,23 @@
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
+
+static void printLastErrorGL(void) {
+    GLenum error = glGetError();
+
+    if (error == GL_NO_ERROR)
+        return;
+
+    printf("\nglGetError() reports: %d", error);
+
+    error = glGetError();
+    while (error != GL_NO_ERROR) {
+        printf(", %d", error);
+        error = glGetError();
+    }
+
+    printf("\n\n");
+}
 
 #ifdef _WIN32
 static void printLastErrorWin32(void) {
@@ -74,6 +93,8 @@ void errorExit(string const *msg, string const *func_name, int line) {
     printf("\n----------------------------------------\n"
            "ERROR: %s in %s() on line %d.\n\n"
            "This program will now exit.\n", msg, func_name, line);
+
+    printLastErrorGL();
 
 #ifdef _WIN32
     printLastErrorWin32();
