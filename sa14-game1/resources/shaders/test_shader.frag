@@ -25,6 +25,14 @@ void main() {
 
 
     float l=clamp(dot(n, d), 0.0, 1.0);
-    float f = l+0.1;
-    color = vec4(vec3(1.0, 1.0, 1.0) * f, 1.0);
+    float fq = l+0.1;
+    //color = vec4(vec3(1.0, 1.0, 1.0) * f, 1.0);
+
+    vec2 uv = UV;
+    vec2 lol = uv;
+    lol.x *= (0.9+0.1*cos(uv.y*6.0));
+    lol.y *= (0.9+0.1*sin(uv.x*7.0));
+
+    float f = cos((lol.y*uv.x) * 80.0) * 0.3 + 0.7;
+    color = vec4(vec3(f, 1.0-f, 1.0) * fq, 1.0);
 }

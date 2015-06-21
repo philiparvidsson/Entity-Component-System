@@ -270,6 +270,7 @@ void initGraphics(string const *title, int width, int height) {
     glEnable    (GL_DEPTH_TEST);
     glClearDepth(0.0f);
     glDepthFunc (GL_GREATER);
+    glDepthRange(1.0f, 0.0f);
 
     setFrameRate(DefaultFPS);
 }

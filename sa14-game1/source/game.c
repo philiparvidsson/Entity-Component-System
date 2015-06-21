@@ -43,7 +43,7 @@ void gameMain(void) {
     float dt = 0.0f;
 
     gameObjectT cube = { 0 };
-    cube.mesh = createBox(0.3f, 0.3f, 0.3f);
+    cube.mesh = createBox(0.5f, 0.5f, 0.5f);
 
     shaderT *test_shader = createShader();
     compileVertexShader(test_shader, readFile("resources/shaders/test_shader.vert"));
@@ -56,14 +56,15 @@ void gameMain(void) {
 
     mat4x4 view;
     mat4x4_look_at(
-        &(vec3) { 0.0f, 0.5f, 0.5f },
+        &(vec3) { 0.0f, 0.0f, 1.0f },
         &(vec3) { 0.0f, 0.0f, 0.0f },
-        &(vec3) { 0.0f, 1.0f, 0.9f },
+        &(vec3) { 0.0f, 1.0f, 0.0f },
         &view
     );
 
-    mat4x4 proj;
-    mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, -1.0f, &proj);
+    //mat_identity(&view);
+
+
 
     timeT time = getTime();
     int size = 0;
@@ -75,8 +76,12 @@ void gameMain(void) {
             sleep(10);
             updateDisplay();
         }
-
         time = getTime();
+
+        mat4x4 proj;
+        mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -2.0f, -0.1f, &proj);
+        //mat4x4_ortho      (-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, &proj);
+        //mat_identity(&proj);
 
         clearDisplay(0.0f, 0.0f, 0.5f);
 
@@ -112,7 +117,7 @@ void gameMain(void) {
             drawText(lol, (int)(size / 10.0f)+10);
         }
 
-        //shaderPostProcess(postfx_shader);
+        shaderPostProcess(postfx_shader);
 
         updateDisplay();
     }

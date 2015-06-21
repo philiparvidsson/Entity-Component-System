@@ -264,7 +264,7 @@ static inline void mat4x4_look_at(vec3 const *pos, vec3 const *at,
 }
 
 static inline void mat4x4_ortho(float left, float right, float bottom,
-                                float top, float near, float far, mat4x4 *res)
+                                float top, float far, float near, mat4x4 *res)
 {
     float l=left, r=right, b=bottom, t=top, n=near, f=far;
 
@@ -277,14 +277,14 @@ static inline void mat4x4_ortho(float left, float right, float bottom,
 }
 
 static inline void mat4x4_perspective(float left, float right, float bottom,
-                                        float top, float near, float far, mat4x4 *res)
+                                        float top, float far, float near, mat4x4 *res)
 {
     float l=left, r=right, b=bottom, t=top, n=near, f=far;
 
     *res = (mat4x4) {
-        (-2.0f*f)/(r-l),  0.0f,            (r+l)/(r-l), 0.0f,
+        -(2.0f*f)/(r-l),  0.0f,            (r+l)/(r-l), 0.0f,
          0.0f,           -(2.0f*f)/(t-b),  (t+b)/(t-b), 0.0f,
-         0.0f,            0.0f,           -(n+f)/(n-f), (2.0f*n*f)/(n-f),
+         0.0f,            0.0f,           (f+n)/(f-n), (-2.0f*f*n)/(f-n),
          0.0f,            0.0f,           -1.0f,        0.0f
     };
 }

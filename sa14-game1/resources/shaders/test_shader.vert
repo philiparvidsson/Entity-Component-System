@@ -17,7 +17,7 @@ void main() {
     normal = Normal;
     uv = UV;
 
-    mat4 mvp = Proj * View * Model;
+    mat4 pvm = Proj * View * Model;
 
-    gl_Position = mvp * vec4(Vertex, 1.0);
+    gl_Position = pvm * vec4(Vertex, 1.0);
 }
