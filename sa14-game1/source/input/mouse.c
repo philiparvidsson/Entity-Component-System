@@ -1,10 +1,21 @@
+/*------------------------------------------------
+ * INCLUDES
+ *----------------------------------------------*/
+
 #include "mouse.h"
+
+#include "core/common.h"
+#include "core/debug.h"
 
 #include <windows.h>
 
+/*------------------------------------------------
+ * FUNCTIONS
+ *----------------------------------------------*/
+
 void getMouseState(mouseStateT *mouse_state) {
     POINT cursor_pos;
-    GetCursorPos(&cursor_pos);
+    assert(GetCursorPos(&cursor_pos));
 
     //ScreenToClient(0, &cursor_pos);
 

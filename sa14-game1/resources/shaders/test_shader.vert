@@ -19,5 +19,6 @@ void main() {
 
     mat4 pvm = Proj * View * Model;
 
-    gl_Position = pvm * vec4(Vertex, 1.0);
+    vec3 Vertex2 = Vertex;
+    gl_Position = pvm * vec4(Vertex2, 1.0);
 }

@@ -284,7 +284,7 @@ static inline void mat4x4_perspective(float left, float right, float bottom,
     *res = (mat4x4) {
         -(2.0f*f)/(r-l),  0.0f,            (r+l)/(r-l), 0.0f,
          0.0f,           -(2.0f*f)/(t-b),  (t+b)/(t-b), 0.0f,
-         0.0f,            0.0f,           (f+n)/(f-n), (-2.0f*f*n)/(f-n),
+         0.0f,            0.0f,            (f+n)/(f-n), (-2.0f*f*n)/(f-n),
          0.0f,            0.0f,           -1.0f,        0.0f
     };
 }

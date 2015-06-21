@@ -1,5 +1,5 @@
-#ifndef mouse_h_
-#define mouse_h_
+#ifndef keyboard_h_
+#define keyboard_h_
 
 /*------------------------------------------------
  * INCLUDES
@@ -12,14 +12,15 @@
  *----------------------------------------------*/
 
 typedef struct {
-    int  x, y;
-    bool left_button, right_button;
-} mouseStateT;
+    int lol;
+} keyboardStateT;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-void getMouseState(mouseStateT *mouse_state);
+void getKeyboardState(keyboardStateT *keyboard_state);
 
-#endif // mouse_h_
+bool isKeyPressed(int key, keyboardStateT const *keyboard_state);
+
+#endif // keyboard_h_

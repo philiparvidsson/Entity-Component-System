@@ -60,6 +60,9 @@
     <ClCompile Include="source\core\common.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\input\keyboard.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -112,6 +115,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\input\mouse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\input\keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

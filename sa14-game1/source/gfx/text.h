@@ -11,7 +11,7 @@
  * FUNCTIONS
  *----------------------------------------------*/
 
-void drawText(string const *text, int point_size);
+void drawText(string const *text, float x, float y);
 void loadFontFromFile(string const *file_name);
 
 #endif // text_h_

@@ -35,5 +35,5 @@ out vec4 frag_color;
  *----------------------------------------------*/
 
 void main() {
-    frag_color = texture(Tex, vec2(uv.x, 1.0 - uv.y));
+    frag_color = texture(Tex, vec2(uv.x, uv.y));
 }

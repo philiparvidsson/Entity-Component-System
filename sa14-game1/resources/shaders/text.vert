@@ -39,7 +39,7 @@ out vec2 uv;
 void main() {
     uv = tex_coord;
 
-    float x = -1.0 + TextRect.x + (vert_pos.x + 1.0) * (TextRect.z / ScreenSize.x);
-    float y = -1.0 + TextRect.y + (vert_pos.y + 1.0) * (TextRect.w / ScreenSize.y);
+    float x = -1.0 + (vert_pos.x + 1.0) * (TextRect.z / ScreenSize.x) + (2.0 * TextRect.x / ScreenSize.x);
+    float y = 1.0 - (vert_pos.y + 1.0) * (TextRect.w / ScreenSize.y) - (2.0 * TextRect.y / ScreenSize.y);
     gl_Position = vec4(x, y, 0.0, 1.0);
 }

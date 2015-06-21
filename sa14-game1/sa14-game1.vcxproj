@@ -108,6 +108,7 @@
     <ClCompile Include="source\gfx\trimesh.c" />
     <ClCompile Include="source\gfx\shader.c" />
     <ClCompile Include="source\gfx\text.c" />
+    <ClCompile Include="source\input\keyboard.c" />
     <ClCompile Include="source\input\mouse.c" />
     <ClCompile Include="source\objects\lolcone.c" />
     <ClCompile Include="source\sa14-game1.c" />
@@ -129,6 +130,7 @@
     <ClInclude Include="source\gfx\trimesh.h" />
     <ClInclude Include="source\gfx\shader.h" />
     <ClInclude Include="source\gfx\text.h" />
+    <ClInclude Include="source\input\keyboard.h" />
     <ClInclude Include="source\input\mouse.h" />
     <ClInclude Include="source\math\matrix.h" />
     <ClInclude Include="source\math\vector.h" />

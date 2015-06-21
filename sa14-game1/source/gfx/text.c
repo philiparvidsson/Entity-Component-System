@@ -23,7 +23,7 @@
 
 string *font_name = "Calibri";
 
-int font_size = 16;
+int font_size = 24;
 
 shaderT *text_shader = NULL;
 
@@ -56,7 +56,7 @@ void setTextFont(string const *name, int size) {
     font_size = size;
 }
 
-void drawText(string const *text, int point_size) {
+void drawText(string const *text, float x, float y) {
     //checkGraphicsInited();
 
     text = strToWide(text);
@@ -64,7 +64,7 @@ void drawText(string const *text, int point_size) {
     HDC hdc = CreateCompatibleDC(0);
 
     string *font_face = strToWide(font_name);
-    int font_height = -MulDiv(point_size, GetDeviceCaps(hdc, LOGPIXELSY), 72);
+    int font_height = -MulDiv(font_size, GetDeviceCaps(hdc, LOGPIXELSY), 72);
     HFONT hfont = CreateFontW(font_height, 0, 0, 0, FW_NORMAL, FALSE, FALSE,
                               FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
                               CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
@@ -125,23 +125,25 @@ void drawText(string const *text, int point_size) {
     shaderT *old_shader = useShader(text_shader);
 
     setShaderParam("ScreenSize", &(vec2) { 640.0f, 640.0f });
-    setShaderParam("TextRect", &(vec4) { 0.0f, 0.0, (float)width, (float)height });
+    setShaderParam("TextRect", &(vec4) { (float)x, (float)y, (float)width, (float)height });
 
     GLint depth_mask;
     glGetIntegerv(GL_DEPTH_WRITEMASK, &depth_mask);
 
-    GLboolean depth_test;
+    GLboolean cull_face, depth_test;
+    glGetBooleanv(GL_CULL_FACE, &cull_face);
     glGetBooleanv(GL_DEPTH_TEST, &depth_test);
 
     glDepthMask(GL_FALSE);
+    glDisable  (GL_CULL_FACE);
     glDisable  (GL_DEPTH_TEST);
 
     drawMesh(text_quad);
 
     glDepthMask(depth_mask);
 
-    if (depth_test)
-        glEnable(GL_DEPTH_TEST);
+    if (cull_face)  glEnable(GL_CULL_FACE);
+    if (depth_test) glEnable(GL_DEPTH_TEST);
     
     freeMesh(text_quad);
 
