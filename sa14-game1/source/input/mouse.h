@@ -8,4 +8,6 @@ typedef struct {
     bool left_button, right_button;
 } mouseStateT;
 
+void getMouseState(mouseStateT *mouse_state);
+
 #endif // mouse_h_

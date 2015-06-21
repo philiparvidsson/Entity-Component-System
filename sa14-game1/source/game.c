@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "gfx/text.h"
+
 /*------------------------------------------------
  * GLOBALS
  *----------------------------------------------*/
@@ -47,7 +49,6 @@ void gameMain(void) {
     compileVertexShader(test_shader, readFile("resources/shaders/test_shader.vert"));
     compileFragmentShader(test_shader, readFile("resources/shaders/test_shader.frag"));
 
-
     shaderT *postfx_shader = createShader();
     compileVertexShader(postfx_shader, readFile("resources/shaders/postfx.vert"));
     compileFragmentShader(postfx_shader, readFile("resources/shaders/postfx.frag"));
@@ -65,6 +66,7 @@ void gameMain(void) {
     mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, -1.0f, &proj);
 
     timeT time = getTime();
+    int size = 0;
     while (windowIsOpen()) {
         dt += elapsedSecsSince(time);
 
@@ -78,7 +80,18 @@ void gameMain(void) {
 
         clearDisplay(0.0f, 0.0f, 0.5f);
 
-        mat_rot_y(dt, &cube.transform);
+        mouseStateT ms;
+        getMouseState(&ms);
+        float lol = ms.x / 200.0f;
+        float lol2 = ms.y / 200.0f;
+
+        mat4x4 a, b;
+        mat_rot_y(lol, &a);
+        mat_rot_x(lol2, &b);
+
+        mat_identity(&cube.transform);
+        mat_mul(&a, &cube.transform, &cube.transform);
+        mat_mul(&b, &cube.transform, &cube.transform);
 
         useShader(test_shader);
 
@@ -88,15 +101,18 @@ void gameMain(void) {
 
         drawMesh(cube.mesh);
 
+        size += 1;
+        if (size > 1000)
+            size = 1000;
+
         if (dt < 10.0f) {
             int secs = 10 - (int)dt;
             char lol[100];
             sprintf(lol, "%d", secs);
-            drawText(lol, 72);
+            drawText(lol, (int)(size / 10.0f)+10);
         }
 
-        shaderPostProcess(postfx_shader);
-        shaderPostProcess(postfx_shader);
+        //shaderPostProcess(postfx_shader);
 
         updateDisplay();
     }

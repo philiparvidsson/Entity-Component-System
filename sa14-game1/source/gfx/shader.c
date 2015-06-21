@@ -141,6 +141,21 @@ void setShaderParam(string const *name, void const *value) {
     case GL_FLOAT:
         glUniform1f(loc, *(GLfloat *)value);
         break;
+    case GL_FLOAT_VEC2:
+        glUniform2fv(loc, 1, (GLfloat *)value);
+        break;
+    case GL_FLOAT_VEC3:
+        glUniform3fv(loc, 1, (GLfloat *)value);
+        break;
+    case GL_FLOAT_VEC4:
+        glUniform4fv(loc, 1, (GLfloat *)value);
+        break;
+    case GL_FLOAT_MAT2:
+        glUniformMatrix2fv(loc, 1, GL_TRUE, (GLfloat *)value);
+        break;
+    case GL_FLOAT_MAT3:
+        glUniformMatrix3fv(loc, 1, GL_TRUE, (GLfloat *)value);
+        break;
     case GL_FLOAT_MAT4:
         glUniformMatrix4fv(loc, 1, GL_TRUE, (GLfloat *)value);
         break;

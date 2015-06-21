@@ -10,6 +10,8 @@
 #include "gfx/shader.h"
 #include "gfx/trimesh.h"
 
+#include "input/mouse.h"
+
 #include "math/matrix.h"
 #include "math/vector.h"
 

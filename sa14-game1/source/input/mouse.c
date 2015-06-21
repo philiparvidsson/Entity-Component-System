@@ -2,14 +2,15 @@
 
 #include <windows.h>
 
-mouseStateT getMouseState(void) {
+void getMouseState(mouseStateT *mouse_state) {
     POINT cursor_pos;
     GetCursorPos(&cursor_pos);
 
-    mouseStateT mouse_state = { 0 };
-
     //ScreenToClient(0, &cursor_pos);
 
-    mouse_state.x = cursor_pos.x;
-    mouse_state.y = cursor_pos.y;
+    mouse_state->x = cursor_pos.x;
+    mouse_state->y = cursor_pos.y;
+
+    mouse_state->left_button  = (GetAsyncKeyState(VK_LBUTTON) & 0x8000);
+    mouse_state->right_button = (GetAsyncKeyState(VK_RBUTTON) & 0x8000);
 }

@@ -64,7 +64,7 @@ void drawText(string const *text, int point_size) {
     HDC hdc = CreateCompatibleDC(0);
 
     string *font_face = strToWide(font_name);
-    int font_height = -MulDiv(font_size, GetDeviceCaps(hdc, LOGPIXELSY), 72);
+    int font_height = -MulDiv(point_size, GetDeviceCaps(hdc, LOGPIXELSY), 72);
     HFONT hfont = CreateFontW(font_height, 0, 0, 0, FW_NORMAL, FALSE, FALSE,
                               FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
                               CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
@@ -117,20 +117,15 @@ void drawText(string const *text, int point_size) {
 
     free(bitmap_data);
 
-    triMeshT *text_quad = createQuad(width / 320.0f, height / 320.0f);
-
-    /*text_quad->verts[0].xyz = (vec3) { (width / 320.0f)-1.0f, 1.0f, 0.0f };
-    text_quad->verts[1].xyz = (vec3) { -1.0f, 1.0f, 0.0f };
-    text_quad->verts[2].xyz = (vec3) { -1.0f, 1.0f - height / 320.0f, 0.0f };
-    text_quad->verts[3].xyz = (vec3) { (width / 320.0f) - 1.0f, 1.0f - height / 320.0f, 0.0f };
-    */
+    triMeshT *text_quad = createQuad(2.0f, 2.0f);
 
     if (!text_shader)
         initTextShader();
 
     shaderT *old_shader = useShader(text_shader);
 
-    updateMesh(text_quad);
+    setShaderParam("ScreenSize", &(vec2) { 640.0f, 640.0f });
+    setShaderParam("TextRect", &(vec4) { 0.0f, 0.0, (float)width, (float)height });
 
     GLint depth_mask;
     glGetIntegerv(GL_DEPTH_WRITEMASK, &depth_mask);
@@ -146,7 +141,7 @@ void drawText(string const *text, int point_size) {
     glDepthMask(depth_mask);
 
     if (depth_test)
-        glEnable(depth_test);
+        glEnable(GL_DEPTH_TEST);
     
     freeMesh(text_quad);
 
