@@ -246,8 +246,6 @@ static void setFrameRate(float fps) {
     window->frame_time = (int)(freq.QuadPart/fps);
 
     assert(QueryPerformanceCounter(&window->last_update));
-
-    trace("frame rate set to %.2f fps", fps);
 }
 
 void initGraphics(string const *title, int width, int height) {

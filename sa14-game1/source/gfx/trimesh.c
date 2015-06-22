@@ -153,11 +153,11 @@ int meshNumVerts(triMeshT const *mesh) {
     return (mesh->num_tris);
 }
 
-triT *meshGetTris(triMeshT *mesh) {
+triT *meshTrisPtr(triMeshT *mesh) {
     return (mesh->tris);
 }
 
-vertexT *meshGetVerts(triMeshT *mesh) {
+vertexT *meshVertsPtr(triMeshT *mesh) {
     return (mesh->verts);
 }
 
@@ -265,10 +265,10 @@ triMeshT *createBox(float width, float height, float length) {
 
 
     for (int i = 0; i < 24; i += 4) {
-        v[i+0].uv = (vec2) { 1.0f, 0.0f };
-        v[i+1].uv = (vec2) { 0.0f, 0.0f };
-        v[i+2].uv = (vec2) { 0.0f, 1.0f };
-        v[i+3].uv = (vec2) { 1.0f, 1.0f };
+        v[i+0].uv = (vec2) { 1.0f, 1.0f };
+        v[i+1].uv = (vec2) { 0.0f, 1.0f };
+        v[i+2].uv = (vec2) { 0.0f, 0.0f };
+        v[i+3].uv = (vec2) { 1.0f, 0.0f };
     }
 
     updateMesh(box);

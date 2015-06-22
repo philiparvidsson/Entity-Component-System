@@ -102,6 +102,7 @@
     <ClCompile Include="source\core\common.c" />
     <ClCompile Include="source\core\debug.c" />
     <ClCompile Include="source\core\file_io.c" />
+    <ClCompile Include="source\core\log.c" />
     <ClCompile Include="source\core\time.c" />
     <ClCompile Include="source\game.c" />
     <ClCompile Include="source\gfx\graphics.c" />
@@ -125,6 +126,7 @@
     <ClInclude Include="source\core\common.h" />
     <ClInclude Include="source\core\debug.h" />
     <ClInclude Include="source\core\file_io.h" />
+    <ClInclude Include="source\core\log.h" />
     <ClInclude Include="source\core\time.h" />
     <ClInclude Include="source\game.h" />
     <ClInclude Include="source\gfx\graphics.h" />

@@ -66,6 +66,9 @@
     <ClCompile Include="source\objects\playership.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\log.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -124,6 +127,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\objects\playership.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

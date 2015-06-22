@@ -10,6 +10,7 @@
 #include "gfx/shader.h"
 #include "gfx/trimesh.h"
 
+#include "input/keyboard.h"
 #include "input/mouse.h"
 
 #include "math/matrix.h"
@@ -21,19 +22,11 @@
  * TYPES
  *----------------------------------------------*/
 
-typedef struct cameraT {
-    vec3 pos;
-    vec3 target;
-    vec3 up;
-    float fov;
-};
-
-typedef enum {
-    CountDownState
-} gameStateT;
-
 typedef struct {
-    gameStateT state;
+    keyboardStateT keyboard;
+    mouseStateT    mouse;
+
+    arrayT *objects;
 } gameT;
 
 typedef struct {

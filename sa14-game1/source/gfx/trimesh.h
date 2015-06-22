@@ -60,8 +60,8 @@ void drawMesh(triMeshT const *mesh);
 int meshNumTris(triMeshT const *mesh);
 int meshNumVerts(triMeshT const *mesh);
 
-triT *meshGetTris(triMeshT *mesh);
-vertexT *meshGetVerts(triMeshT *mesh);
+triT *meshTrisPtr(triMeshT *mesh);
+vertexT *meshVertsPtr(triMeshT *mesh);
 
 triMeshT *createBox(float width, float height, float length);
 triMeshT *createCone(float radius, float height, int num_sides);

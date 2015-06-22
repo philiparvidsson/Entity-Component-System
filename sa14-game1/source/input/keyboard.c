@@ -49,6 +49,6 @@ void getKeyboardState(keyboardStateT *keyboard_state) {
     }
 }
 
-bool isKeyPressed(keyboardStateT const *keyboard_state, keyboardKeyT key) {
+bool keyIsPressed(keyboardStateT const *keyboard_state, keyboardKeyT key) {
     return (keyboard_state->key_states[key & 255]);
 }
