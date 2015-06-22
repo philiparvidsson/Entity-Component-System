@@ -110,7 +110,8 @@
     <ClCompile Include="source\gfx\text.c" />
     <ClCompile Include="source\input\keyboard.c" />
     <ClCompile Include="source\input\mouse.c" />
-    <ClCompile Include="source\objects\lolcone.c" />
+    <ClCompile Include="source\objects\playership.c" />
+    <ClCompile Include="source\physics\world.c" />
     <ClCompile Include="source\sa14-game1.c" />
   </ItemGroup>
   <ItemGroup>
@@ -134,7 +135,8 @@
     <ClInclude Include="source\input\mouse.h" />
     <ClInclude Include="source\math\matrix.h" />
     <ClInclude Include="source\math\vector.h" />
-    <ClInclude Include="source\objects\lolcone.h" />
+    <ClInclude Include="source\objects\playership.h" />
+    <ClInclude Include="source\physics\world.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\glew32.dll" />

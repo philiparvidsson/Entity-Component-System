@@ -214,5 +214,5 @@ void *arrayGet(arrayT const *a, int i) {
  *   int num_elements = arrayLength(my_array);
  *------------------------------------*/
 int arrayLength(arrayT const *a) {
-    return a->num_elems;
+    return (a->num_elems);
 }

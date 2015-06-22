@@ -30,7 +30,7 @@
 static void printIntroMessage(void) {
     printf("sa14-game1 v%s by %s\n\n\n", ProgramVersion, ProgramAuthors);
     printf("Some time in the not too distant future, this program will be a\n"
-           "really cool game instead of this crap that does nothing...\n");
+           "really cool game instead of this crap that does nothing...\n\n");
 }
 
 /*--------------------------------------

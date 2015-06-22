@@ -6,6 +6,8 @@
 
 #include "core/time.h"
 
+#include "input/keyboard.h"
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,7 +25,7 @@ gameT *game = NULL;
  *----------------------------------------------*/
 
 void initGame(void) {
-    initGraphics("Game Window", 640, 640);
+    initGraphics("Game Window", 1280, 720);
 
     loadFontFromFile("resources/fonts/sector_034.ttf");
 
@@ -65,11 +67,17 @@ void gameMain(void) {
     //mat_identity(&view);
 
 
-
+    float kewk = 0.0f;
     timeT time = getTime();
     int size = 0;
     while (windowIsOpen()) {
         dt += elapsedSecsSince(time);
+
+        keyboardStateT kb;
+        getKeyboardState(&kb);
+
+        if (isKeyPressed(&kb, ArrowLeft))
+            kewk -= 1/60.0f;
 
         // Pause if we lose focus.
         while (!windowIsFocused()) {
@@ -92,7 +100,7 @@ void gameMain(void) {
 
         mat4x4 a, b, c;
         mat_rot_y(lol, &a);
-        mat_rot_x(lol2, &b);
+        mat_rot_x(kewk, &b);
         mat_transl_xyz(0.0f, 0.0f, -0.0f, &c);
 
         mat_identity(&cube.transform);
@@ -118,6 +126,8 @@ void gameMain(void) {
             sprintf(lol, "%d", secs);
             drawText(lol, 320.0f, 320.0f);
         }
+
+        shaderPostProcess(postfx_shader);
 
         updateDisplay();
     }

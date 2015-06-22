@@ -27,6 +27,9 @@ void exitGraphics(void);
 void clearDisplay(float r, float g, float b);
 void updateDisplay(void);
 
+int screenWidth();
+int screenHeight();
+
 bool windowIsFocused(void);
 bool windowIsOpen(void);
 

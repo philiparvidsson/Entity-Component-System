@@ -16,7 +16,7 @@ void main() {
     vec3 light_pos = vec3(-0.05, 1.0, 1.85);
 
     vec3 n = (Model * vec4(Normal, 1.0)).xyz;
-    vec3 d = (View * vec4(light_pos, 1.0)).xyz - (View * Model * vec4(Vertex, 1.0)).xyz;
+    vec3 d = (vec4(light_pos, 1.0)).xyz - (View * Model * vec4(Vertex, 1.0)).xyz;
 
     n = normalize(n);
     d = normalize(d);

@@ -12,8 +12,15 @@
  *----------------------------------------------*/
 
 typedef struct {
-    int lol;
+    bool key_states[256];
 } keyboardStateT;
+
+typedef enum {
+    ArrowLeft,
+    ArrowRight,
+    ArrowUp,
+    ArrowDown
+} keyboardKeyT;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -21,6 +28,6 @@ typedef struct {
 
 void getKeyboardState(keyboardStateT *keyboard_state);
 
-bool isKeyPressed(int key, keyboardStateT const *keyboard_state);
+bool isKeyPressed(keyboardStateT const *keyboard_state, keyboardKeyT key);
 
 #endif // keyboard_h_

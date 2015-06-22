@@ -32,6 +32,8 @@ timeT getTime(void);
 
 int elapsedMicrosecsSince(timeT time);
 
+int elapsedMillisecsSince(timeT time);
+
 float elapsedSecsSince(timeT time);
 
 #endif // time_h_

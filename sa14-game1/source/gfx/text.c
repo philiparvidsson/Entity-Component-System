@@ -7,6 +7,7 @@
 #include "core/common.h"
 #include "core/debug.h"
 
+#include "gfx/graphics.h"
 #include "gfx/shader.h"
 #include "gfx/trimesh.h"
 
@@ -124,7 +125,7 @@ void drawText(string const *text, float x, float y) {
 
     shaderT *old_shader = useShader(text_shader);
 
-    setShaderParam("ScreenSize", &(vec2) { 640.0f, 640.0f });
+    setShaderParam("ScreenSize", &(vec2) { (float)screenWidth(), (float)screenHeight() });
     setShaderParam("TextRect", &(vec4) { (float)x, (float)y, (float)width, (float)height });
 
     GLint depth_mask;
@@ -154,7 +155,7 @@ void drawText(string const *text, float x, float y) {
 }
 
 void loadFontFromFile(string const *file_name) {
-    file_name = strToWide(file_name);
-    assert(AddFontResourceExW(file_name, FR_PRIVATE, NULL) > 0);
-    free(file_name);
+    string *s = strToWide(file_name);
+    assert(AddFontResourceExW(s, FR_PRIVATE, NULL) > 0);
+    free(s);
 }

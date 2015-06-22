@@ -45,9 +45,6 @@
     <ClCompile Include="source\game.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\objects\lolcone.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\gfx\trimesh.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -61,6 +58,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\input\keyboard.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\physics\world.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\objects\playership.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -105,9 +108,6 @@
     <ClInclude Include="source\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\objects\lolcone.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\gfx\trimesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -118,6 +118,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\input\keyboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\physics\world.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\objects\playership.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

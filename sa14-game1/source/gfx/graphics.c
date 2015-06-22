@@ -246,6 +246,8 @@ static void setFrameRate(float fps) {
     window->frame_time = (int)(freq.QuadPart/fps);
 
     assert(QueryPerformanceCounter(&window->last_update));
+
+    trace("frame rate set to %.2f fps", fps);
 }
 
 void initGraphics(string const *title, int width, int height) {
@@ -352,6 +354,14 @@ void updateDisplay(void) {
     } while (perf_count.QuadPart < window->frame_time);
 
     assert(QueryPerformanceCounter(&window->last_update));
+}
+
+int screenWidth() {
+    return window->width;
+}
+
+int screenHeight() {
+    return window->height;
 }
 
 bool windowIsFocused(void) {

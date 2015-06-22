@@ -174,7 +174,8 @@ void shaderPostProcess(shaderT const *shader) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, 640, 640, 0);
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0,
+                     screenWidth(), screenHeight(), 0);
 
     triMeshT *quad = createQuad(2.0f, 2.0f);
 

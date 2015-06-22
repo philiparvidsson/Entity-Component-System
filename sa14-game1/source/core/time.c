@@ -54,6 +54,10 @@ int elapsedMicrosecsSince(timeT time) {
     return (count.QuadPart);
 }
 
+int elapsedMillisecsSince(timeT time) {
+    return (elapsedMicrosecsSince(time) / 1000);
+}
+
 float elapsedSecsSince(timeT time) {
     return (elapsedMicrosecsSince(time) / 1000000.0f);
 }

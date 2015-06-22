@@ -18,6 +18,8 @@
 
 #include "core/common.h"
 
+#include <stdio.h>
+
 /*------------------------------------------------
  * MACROS
  *----------------------------------------------*/
@@ -48,6 +50,8 @@
  *   assert(some_ptr != NULL);
  *------------------------------------*/
 #define assert(expr) if (!(expr)) { error("The assertion '"#expr"' failed"); }
+
+#define trace(s, ...) printf(":"s"\n", __VA_ARGS__);
 
 /*------------------------------------------------
  * FUNCTIONS
