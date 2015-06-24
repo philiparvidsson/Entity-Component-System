@@ -42,9 +42,6 @@
     <ClCompile Include="source\gfx\text.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\game.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\gfx\trimesh.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -63,13 +60,22 @@
     <ClCompile Include="source\physics\world.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\objects\playership.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\core\log.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\physics\body.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\objects\playership.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\objects\camera.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\game.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\gameobject.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -111,9 +117,6 @@
     <ClInclude Include="source\gfx\text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\gfx\trimesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -129,9 +132,6 @@
     <ClInclude Include="source\physics\world.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\objects\playership.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\core\log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -145,6 +145,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\physics\physics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\objects\playership.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\objects\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\game\game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\game\gameobject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

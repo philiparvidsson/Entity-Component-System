@@ -38,7 +38,7 @@ struct bodyT {
 struct worldT {
     aabbT bounds;
 
-    bodyT* first_body;
+    bodyT* body_list;
 };
 
 #endif

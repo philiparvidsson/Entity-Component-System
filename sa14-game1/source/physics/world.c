@@ -2,13 +2,11 @@
  * INCLUDES
  *----------------------------------------------*/
 
+#include "physics_p.h"
 #include "world.h"
 
-#include "core/array.h"
 #include "core/common.h"
 #include "core/debug.h"
-
-#include "physics/physics_p.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -44,15 +42,15 @@ void worldAddBody(worldT* world, bodyT* body) {
 
     body->world = world;
 
-    if (world->first_body)
-        world->first_body->prev = body;
+    if (world->body_list)
+        world->body_list->prev = body;
 
-    body->next = world->first_body;
-    world->first_body = body;
+    body->next = world->body_list;
+    world->body_list = body;
 }
 
 void worldStep(worldT* world, float dt) {
-    bodyT* b = world->first_body;
+    bodyT* b = world->body_list;
 
     while (b) {
         bodyT* body = b;

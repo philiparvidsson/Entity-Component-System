@@ -1,10 +1,18 @@
+#ifndef game_h_
+#define game_h_
+
 /*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
 
+typedef struct gameObjectT gameObjectT;
+typedef struct gameT gameT;
+
 #include "core/array.h"
 #include "core/common.h"
 #include "core/file_io.h"
+
+#include "game/gameobject.h"
 
 #include "gfx/graphics.h"
 #include "gfx/shader.h"
@@ -16,8 +24,7 @@
 #include "math/matrix.h"
 #include "math/vector.h"
 
-#include "physics/body.h"
-#include "physics/world.h"
+#include "physics/physics.h"
 
 #include <stdlib.h>
 
@@ -25,26 +32,24 @@
  * TYPES
  *----------------------------------------------*/
 
-typedef struct {
+
+struct gameT {
+    // Below are the input devices. They will be queried at the start of every
+    // single frame.
     keyboardStateT keyboard;
     mouseStateT    mouse;
 
-    arrayT* objects;
+    // The list of game objects.
+    gameObjectT* object_list;
 
+    // The game object that represents the player.
+    gameObjectT* player;
+
+    // The world used for physical simulation of all game object bodies.
     worldT* world;
-} gameT;
+};
 
-typedef struct gameObjectT {
-    gameT    *game;
 
-    triMeshT* model;
-    mat4x4    transform;
-
-    bodyT    *body;
-
-    void(*cleanupFunc)(struct gameObjectT*);
-    void(*updateFunc)(struct gameObjectT*);
-} gameObjectT;
 
 /*------------------------------------------------
  * CONSTANTS
@@ -57,3 +62,6 @@ typedef struct gameObjectT {
  *----------------------------------------------*/
 
 void gameMain(void);
+void gameAddObject(gameT* game, gameObjectT* o);
+
+#endif // game_h_

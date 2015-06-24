@@ -80,7 +80,7 @@ void freeArray(arrayT* a);
  * Usage:
  *   arrayAdd(my_array, &elem);
  *------------------------------------*/
-void *arrayAdd(arrayT* a, const void* elem);
+void* arrayAdd(arrayT* a, const void* elem);
 
 /*--------------------------------------
  * Function: arrayRemove(a, i)
@@ -111,7 +111,7 @@ void arrayRemove(arrayT* a, int i);
  * Usage:
  *   myTypeT* ptr = (myTypeT*)arrayGet(my_array, 1);
  *------------------------------------*/
-void *arrayGet(const arrayT* a, int i);
+void* arrayGet(const arrayT* a, int i);
 
 /*--------------------------------------
  * Function: arrayLength()

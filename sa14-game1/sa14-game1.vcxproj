@@ -104,13 +104,15 @@
     <ClCompile Include="source\core\file_io.c" />
     <ClCompile Include="source\core\log.c" />
     <ClCompile Include="source\core\time.c" />
-    <ClCompile Include="source\game.c" />
+    <ClCompile Include="source\game\game.c" />
+    <ClCompile Include="source\game\gameobject.c" />
     <ClCompile Include="source\gfx\graphics.c" />
     <ClCompile Include="source\gfx\trimesh.c" />
     <ClCompile Include="source\gfx\shader.c" />
     <ClCompile Include="source\gfx\text.c" />
     <ClCompile Include="source\input\keyboard.c" />
     <ClCompile Include="source\input\mouse.c" />
+    <ClCompile Include="source\objects\camera.c" />
     <ClCompile Include="source\objects\playership.c" />
     <ClCompile Include="source\physics\body.c" />
     <ClCompile Include="source\physics\world.c" />
@@ -129,7 +131,8 @@
     <ClInclude Include="source\core\file_io.h" />
     <ClInclude Include="source\core\log.h" />
     <ClInclude Include="source\core\time.h" />
-    <ClInclude Include="source\game.h" />
+    <ClInclude Include="source\game\game.h" />
+    <ClInclude Include="source\game\gameobject.h" />
     <ClInclude Include="source\gfx\graphics.h" />
     <ClInclude Include="source\gfx\trimesh.h" />
     <ClInclude Include="source\gfx\shader.h" />
@@ -138,6 +141,7 @@
     <ClInclude Include="source\input\mouse.h" />
     <ClInclude Include="source\math\matrix.h" />
     <ClInclude Include="source\math\vector.h" />
+    <ClInclude Include="source\objects\camera.h" />
     <ClInclude Include="source\objects\playership.h" />
     <ClInclude Include="source\physics\aabb.h" />
     <ClInclude Include="source\physics\body.h" />

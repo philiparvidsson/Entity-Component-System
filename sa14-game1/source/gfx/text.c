@@ -86,7 +86,7 @@ void drawText(const string* text, float x, float y) {
     rect.left++;
     rect.top++;
 
-    void *bitmap_data = calloc(width*height, sizeof(uint32_t));
+    void* bitmap_data = calloc(width*height, sizeof(uint32_t));
     for (int i = 3; i < width*height*4; i+= 4)
         *((uint8_t*)bitmap_data+i) = 0xff;
 

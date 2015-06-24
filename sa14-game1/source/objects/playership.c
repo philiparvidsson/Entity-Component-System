@@ -1,33 +1,57 @@
-#include "game.h"
+#include "playership.h"
 
-#include "gfx/trimesh.h"
+#include "game/game.h"
 
-#include "physics/physics.h"
+#include <stdlib.h>
 
-static void playerShipCleanup(gameObjectT* o) {
-    bodyFree(o->body);
-    o->body = NULL;
+typedef struct {
+    triMeshT* model;
+    mat4x4 transform;
 
-    freeMesh(o->model);
-    o->model = NULL;
+    bodyT* body;
+} playerShipT;
+
+static void cleanupFunc(gameObjectT* o) {
+
+    if (o->data) {
+        playerShipT* p = o->data;
+
+        bodyFree(p->body);
+        freeMesh(p->model);
+
+        free(o->data);
+        o->data = NULL;
+    }
 }
 
-static void playerShipUpdate(gameObjectT* o) {
-    vec3 vel = (vec3) { 0.0f, 0.0f, 0.0f };
+static void drawFunc(gameObjectT* o) {
+    playerShipT* p = o->data;
 
-
-    if (keyIsPressed(&o->game->keyboard, ArrowLeft)) vel.x = -0.3f;
-    else if (keyIsPressed(&o->game->keyboard, ArrowRight)) vel.x = 0.3f;
-
-    if (keyIsPressed(&o->game->keyboard, ArrowUp)) vel.y = 0.3f;
-    else if (keyIsPressed(&o->game->keyboard, ArrowDown)) vel.y = -0.3f;
-
-    bodySetVelocity(o->body, vel);
+    setShaderParam("Model", &p->transform);
 }
 
-void createPlayerShip(gameObjectT* o) {
-    o->body        = bodyNew(1.0f * Kilogram);
-    o->model       = createBox(0.1f, 0.1f, 0.1f);
-    o->cleanupFunc = playerShipCleanup;
-    o->updateFunc  = playerShipUpdate;
+static void updateFunc(gameObjectT* o) {
+    if (keyIsPressed(&o->game->keyboard, ArrowLeft)) {
+        playerShipT* p = o->data;
+        vec3 pos = bodyGetPosition(p->body);
+        pos.x -= 0.01f;
+        bodySetPosition(p->body, pos);
+    }
+}
+
+gameObjectT* createPlayerShip(void) {
+    gameObjectT* o = calloc(1, sizeof(gameObjectT));
+
+    o->cleanupFunc = cleanupFunc;
+    o->drawFunc    = drawFunc;
+    o->updateFunc  = updateFunc;
+
+    o->data = malloc(sizeof(playerShipT));
+
+    playerShipT* p = o->data;
+
+    p->body  = bodyNew(1.0f * Kilogram);
+    p->model = createBox(0.1f, 0.1f, 0.1f);
+
+    return (o);
 }

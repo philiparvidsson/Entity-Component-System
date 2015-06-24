@@ -15,7 +15,7 @@
 
 #include "core/common.h"
 
-#include "game.h"
+#include "game/game.h"
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -44,5 +44,15 @@ static void printIntroMessage(void) {
 int main(void) {
     printIntroMessage();
 
-    gameMain();
+    gameT* game = createGame();
+
+    gameObjectT* camera = createCamera();
+    gameObjectT* player = createPlayerShip();
+
+    gameAddObject(game, camera);
+    gameAddObject(game, player);
+
+    gameMain(game, NULL);
+
+    exitGame(game);
 }

@@ -1,13 +1,12 @@
-#include "body.h"
 #include "physics_p.h"
+#include "body.h"
 
 #include "core/common.h"
 
 #include "math/vector.h"
 
-#include <string.h>
-
 #include <stdlib.h>
+#include <string.h>
 
 bodyT* bodyAlloc(void) {
     bodyT* body = malloc(sizeof(bodyT));
@@ -67,7 +66,6 @@ void bodySetType(bodyT* body, bodyTypeT type) {
 }
 
 void bodyApplyForce(bodyT* body, vec3 force) {
-    body->acc.x += force.x / body->mass;
-    body->acc.y += force.y / body->mass;
-    body->acc.z += force.z / body->mass;
+    vec_scale(&force, 1.0f / body->mass, &force);
+    vec_add(&body->acc, &force, &body->acc);
 }

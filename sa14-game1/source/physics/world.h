@@ -16,6 +16,7 @@
 
 worldT* worldAlloc(void);
 void worldInit(worldT* world);
+worldT* worldNew(void);
 void worldFree(worldT* world);
 void worldAddBody(worldT* world, bodyT* body);
 void worldStep(worldT* world, float dt);
