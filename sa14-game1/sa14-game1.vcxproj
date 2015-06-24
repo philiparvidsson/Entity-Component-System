@@ -105,7 +105,7 @@
     <ClCompile Include="source\core\log.c" />
     <ClCompile Include="source\core\time.c" />
     <ClCompile Include="source\game\game.c" />
-    <ClCompile Include="source\game\gameobject.c" />
+    <ClCompile Include="source\game\entity.c" />
     <ClCompile Include="source\gfx\graphics.c" />
     <ClCompile Include="source\gfx\trimesh.c" />
     <ClCompile Include="source\gfx\shader.c" />
@@ -132,7 +132,8 @@
     <ClInclude Include="source\core\log.h" />
     <ClInclude Include="source\core\time.h" />
     <ClInclude Include="source\game\game.h" />
-    <ClInclude Include="source\game\gameobject.h" />
+    <ClInclude Include="source\game\entity.h" />
+    <ClInclude Include="source\game\game_private.h" />
     <ClInclude Include="source\gfx\graphics.h" />
     <ClInclude Include="source\gfx\trimesh.h" />
     <ClInclude Include="source\gfx\shader.h" />

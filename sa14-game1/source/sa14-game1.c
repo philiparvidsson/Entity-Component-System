@@ -50,11 +50,11 @@ int main(void) {
 
     initGame();
 
-    gameObjectT* camera = createCamera();
-    gameObjectT* player = createPlayerShip();
+    entityT* camera = createCamera();
+    entityT* player = createPlayerShip();
 
-    gameAddObject(camera);
-    gameAddObject(player);
+    gameAddEntity(camera);
+    gameAddEntity(player);
 
     gameMain(frameFunc);
 }

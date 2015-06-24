@@ -2,17 +2,21 @@
  * INCLUDES
  *----------------------------------------------*/
 
+#include "game_private.h"
 #include "game.h"
 
+#include "core/common.h"
+#include "core/debug.h"
 #include "core/time.h"
 
 #include "input/keyboard.h"
+#include "input/mouse.h"
 
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+/*------------------------------------------------
+ * CONSTANTS
+ *----------------------------------------------*/
 
-#include "gfx/text.h"
+#define TimeStep (1.0f/120.0f)
 
 /*------------------------------------------------
  * GLOBALS
@@ -30,24 +34,24 @@ static void queryInputDevices() {
 }
 
 static void updateObjects() {
-    gameObjectT* o = game->object_list;
-    while (o) {
-        if (o->updateFunc)
-            o->updateFunc(o);
+    entityT* e = game->entities;
+    while (e) {
+        if (e->updateFunc)
+            e->updateFunc(e);
 
-        o = o->next;
+        e = e->next;
     }
 }
 
 static void drawAll() {
     clearDisplay(0.0f, 0.0f, 0.6f);
 
-    gameObjectT* o = game->object_list;
-    while (o) {
-        if (o->drawFunc)
-            o->drawFunc(o);
+    entityT* e = game->entities;
+    while (e) {
+        if (e->drawFunc)
+            e->drawFunc(e);
 
-        o = o->next;
+        e = e->next;
     }
 
     updateDisplay();
@@ -63,14 +67,14 @@ void initGame(void) {
 void exitGame() {
     exitGraphics();
 
-    gameObjectT* o = game->object_list;
-    while (o) {
-        if (o->cleanupFunc)
-            o->cleanupFunc(o);
+    entityT* e = game->entities;
+    while (e) {
+        if (e->cleanupFunc)
+            e->cleanupFunc(e);
 
-        gameObjectT* old_o = o;
-        o = o->next;
-        free(old_o);
+        entityT* old_e = e;
+        e = e->next;
+        free(old_e);
     }
 
     worldFree(game->world);
@@ -108,16 +112,16 @@ void gameMain(void (*frameFunc(float))) {
     }
 }
 
-void gameAddObject(gameObjectT* o) {
-    assert(o->game == NULL);
+void gameAddEntity(entityT* e) {
+    assert(e->game == NULL);
 
-    o->game = game;
+    e->game = game;
 
-    if (game->object_list)
-        game->object_list->prev = o;
+    if (game->entities)
+        game->entities->prev = e;
 
-    o->next = game->object_list;
-    game->object_list = o;
+    e->next = game->entities;
+    game->entities = e;
 }
 
 gameT* gameGetInst(void) {

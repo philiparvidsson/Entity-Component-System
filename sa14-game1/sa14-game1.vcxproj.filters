@@ -75,7 +75,7 @@
     <ClCompile Include="source\game\game.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\game\gameobject.c">
+    <ClCompile Include="source\game\entity.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -156,7 +156,10 @@
     <ClInclude Include="source\game\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\game\gameobject.h">
+    <ClInclude Include="source\game\game_private.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\game\entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

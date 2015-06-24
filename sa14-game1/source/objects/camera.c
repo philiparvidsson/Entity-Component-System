@@ -2,41 +2,45 @@
 
 #include "game/game.h"
 
+#include "gfx/shader.h"
+
+#include "math/matrix.h"
+#include "math/vector.h"
+
+#include <stdlib.h>
+
 typedef struct {
     mat4x4 proj;
     mat4x4 view;
     shaderT* shader;
 } cameraT;
 
-static void cameraCleanup(gameObjectT* o) {
-    if (!o->data)
-        return;
-
-    cameraT* camera = (cameraT*)o->data;
+static void cameraCleanup(entityT* entity) {
+    cameraT* camera = (cameraT*)entityGetData(entity);
 
     deleteShader(camera->shader);
     camera->shader = NULL;
 
-    free(o->data);
-    o->data = NULL;
+    free(camera);
+    entitySetData(entity, NULL);
 }
 
-static void cameraUpdate(gameObjectT* o) {
-    cameraT* camera = (cameraT*)o->data;
+static void cameraUpdate(entityT* entity) {
+    cameraT* camera = (cameraT*)entityGetData(entity);
 
     useShader(camera->shader);
     setShaderParam("Proj", &camera->proj);
     setShaderParam("View", &camera->view);
 }
 
-gameObjectT* createCamera() {
-    gameObjectT* o = calloc(1, sizeof(gameObjectT));
+entityT* createCamera() {
+    entityT* entity = entityNew();
 
-    o->cleanupFunc = cameraCleanup;
-    o->updateFunc  = cameraUpdate;
+    entitySetCleanupFunc(entity, cameraCleanup);
+    entitySetUpdateFunc(entity, cameraUpdate);
 
-    o->data = malloc(sizeof(cameraT));
-    cameraT* camera = (cameraT*)o->data;
+    cameraT* camera = malloc(sizeof(cameraT));
+    entitySetData(entity, camera);
 
     mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -0.1f, &camera->proj);
 
@@ -48,5 +52,5 @@ gameObjectT* createCamera() {
     compileVertexShader(camera->shader, readFile("resources/shaders/test_shader.vert"));
     compileFragmentShader(camera->shader, readFile("resources/shaders/test_shader.frag"));
 
-    return (o);
+    return (entity);
 }
