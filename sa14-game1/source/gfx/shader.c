@@ -28,20 +28,20 @@
  *------------------------------------*/
 struct shaderT {
     GLuint  id;      // The shader program identifier, given by OpenGL.
-    arrayT *shaders; // The attached shaders. Used to detach and delete them.
+    arrayT* shaders; // The attached shaders. Used to detach and delete them.
 };
 
 /*------------------------------------------------
  * GLOBALS
  *----------------------------------------------*/
 
-shaderT *active_shader = NULL;
+shaderT* active_shader = NULL;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-static void compileShader(GLenum type, shaderT *prog, string const *source) {
+static void compileShader(GLenum type, shaderT* prog, const string* source) {
     assert(source != NULL);
 
     GLuint shader_id = glCreateShader(type);
@@ -79,8 +79,8 @@ static void compileShader(GLenum type, shaderT *prog, string const *source) {
     arrayAdd(prog->shaders, &shader_id);
 }
 
-shaderT *createShader(void) {
-    shaderT *shader = malloc(sizeof(shaderT));
+shaderT* createShader(void) {
+    shaderT* shader = malloc(sizeof(shaderT));
 
     shader->id      = glCreateProgram();
     shader->shaders = newArray(sizeof(GLuint));
@@ -88,9 +88,9 @@ shaderT *createShader(void) {
     return (shader);
 }
 
-void deleteShader(shaderT *shader) {
+void deleteShader(shaderT* shader) {
     for (int i = 0; i < arrayLength(shader->shaders); i++) {
-        GLuint shader_id = *(GLuint *)arrayGet(shader->shaders, i);
+        GLuint shader_id = *(GLuint*)arrayGet(shader->shaders, i);
         glDeleteShader(shader_id);
     }
 
@@ -102,8 +102,8 @@ void deleteShader(shaderT *shader) {
     free(shader);
 }
 
-shaderT *useShader(shaderT const *shader) {
-    shaderT *old_shader = active_shader;
+shaderT* useShader(const shaderT* shader) {
+    shaderT* old_shader = active_shader;
 
     glUseProgram(shader ? shader->id : 0);
     active_shader = shader;
@@ -111,19 +111,19 @@ shaderT *useShader(shaderT const *shader) {
     return (old_shader);
 }
 
-void compileFragmentShader(shaderT *shader, string const *source) {
+void compileFragmentShader(shaderT* shader, const string* source) {
     compileShader(GL_FRAGMENT_SHADER, shader, source);
 }
 
-void compileGeometryShader(shaderT *shader, string const *source) {
+void compileGeometryShader(shaderT* shader, const string* source) {
     compileShader(GL_GEOMETRY_SHADER, shader, source);
 }
 
-void compileVertexShader(shaderT *shader, string const *source) {
+void compileVertexShader(shaderT* shader, const string* source) {
     compileShader(GL_VERTEX_SHADER, shader, source);
 }
 
-void setShaderParam(string const *name, void const *value) {
+void setShaderParam(const string* name, const void* value) {
     if (!active_shader)
         error("No shader in use");
 
@@ -136,35 +136,35 @@ void setShaderParam(string const *name, void const *value) {
     GLint loc = glGetUniformLocation(active_shader->id, name);
     switch (type) {
     case GL_INT:
-        glUniform1i(loc, *(GLint *)value);
+        glUniform1i(loc, *(GLint*)value);
         break;
     case GL_FLOAT:
-        glUniform1f(loc, *(GLfloat *)value);
+        glUniform1f(loc, *(GLfloat*)value);
         break;
     case GL_FLOAT_VEC2:
-        glUniform2fv(loc, 1, (GLfloat *)value);
+        glUniform2fv(loc, 1, (GLfloat*)value);
         break;
     case GL_FLOAT_VEC3:
-        glUniform3fv(loc, 1, (GLfloat *)value);
+        glUniform3fv(loc, 1, (GLfloat*)value);
         break;
     case GL_FLOAT_VEC4:
-        glUniform4fv(loc, 1, (GLfloat *)value);
+        glUniform4fv(loc, 1, (GLfloat*)value);
         break;
     case GL_FLOAT_MAT2:
-        glUniformMatrix2fv(loc, 1, GL_TRUE, (GLfloat *)value);
+        glUniformMatrix2fv(loc, 1, GL_TRUE, (GLfloat*)value);
         break;
     case GL_FLOAT_MAT3:
-        glUniformMatrix3fv(loc, 1, GL_TRUE, (GLfloat *)value);
+        glUniformMatrix3fv(loc, 1, GL_TRUE, (GLfloat*)value);
         break;
     case GL_FLOAT_MAT4:
-        glUniformMatrix4fv(loc, 1, GL_TRUE, (GLfloat *)value);
+        glUniformMatrix4fv(loc, 1, GL_TRUE, (GLfloat*)value);
         break;
     default:
         error("Unknown uniform type specified");
     }
 }
 
-void shaderPostProcess(shaderT const *shader) {
+void shaderPostProcess(const shaderT* shader) {
     GLuint fb_tex_id;
     glGenTextures(1, &fb_tex_id);
 
@@ -177,11 +177,11 @@ void shaderPostProcess(shaderT const *shader) {
     glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0,
                      screenWidth(), screenHeight(), 0);
 
-    triMeshT *quad = createQuad(2.0f, 2.0f);
+    triMeshT* quad = createQuad(2.0f, 2.0f);
 
     clearDisplay(1.0f, 0.0f, 1.0f);
 
-    shaderT *old_shader = useShader(shader);
+    shaderT* old_shader = useShader(shader);
     drawMesh(quad);
     useShader(old_shader);
 

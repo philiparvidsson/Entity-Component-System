@@ -39,7 +39,7 @@
  * Usage:
  *   long num_bytes = fileSize("foo.bin");
  *------------------------------------*/
-long fileSize(string const *file_name) {
+long fileSize(const string* file_name) {
     FILE* fp = fopen(file_name, "rb");
 
     if (!fp)
@@ -69,7 +69,7 @@ long fileSize(string const *file_name) {
  * Usage:
  *   uint8_t *data = readFile("foo.bin");
  *------------------------------------*/
-uint8_t *readFile(string const *file_name) {
+uint8_t *readFile(const string* file_name) {
     FILE* fp = fopen(file_name, "rb");
 
     if (!fp)

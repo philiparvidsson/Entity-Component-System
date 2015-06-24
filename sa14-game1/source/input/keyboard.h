@@ -26,8 +26,8 @@ typedef enum {
  * FUNCTIONS
  *----------------------------------------------*/
 
-void getKeyboardState(keyboardStateT *keyboard_state);
+void getKeyboardState(keyboardStateT* keyboard_state);
 
-bool keyIsPressed(keyboardStateT const *keyboard_state, keyboardKeyT key);
+bool keyIsPressed(const keyboardStateT* keyboard_state, keyboardKeyT key);
 
 #endif // keyboard_h_

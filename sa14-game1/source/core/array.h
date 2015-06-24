@@ -48,9 +48,9 @@ typedef struct arrayT arrayT;
  *   Creates a new, dynamic array.
  *
  * Usage:
- *   arrayT *int_array = newArray(sizeof(int));
+ *   arrayT* int_array = newArray(sizeof(int));
  *------------------------------------*/
-arrayT *newArray(size_t elem_size);
+arrayT* newArray(size_t elem_size);
 
 /*--------------------------------------
  * Function: freeArray()
@@ -63,7 +63,7 @@ arrayT *newArray(size_t elem_size);
  * Usage:
  *   freeArray(my_array);
  *------------------------------------*/
-void freeArray(arrayT *a);
+void freeArray(arrayT* a);
 
 /*--------------------------------------
  * Function: arrayAdd()
@@ -80,7 +80,7 @@ void freeArray(arrayT *a);
  * Usage:
  *   arrayAdd(my_array, &elem);
  *------------------------------------*/
-void *arrayAdd(arrayT *a, void const *elem);
+void *arrayAdd(arrayT* a, const void* elem);
 
 /*--------------------------------------
  * Function: arrayRemove(a, i)
@@ -94,7 +94,7 @@ void *arrayAdd(arrayT *a, void const *elem);
  * Usage:
  *   arrayRemove(a, 0);
  *------------------------------------*/
-void arrayRemove(arrayT *a, int i);
+void arrayRemove(arrayT* a, int i);
 
 /*--------------------------------------
  * Function: arrayGet()
@@ -109,9 +109,9 @@ void arrayRemove(arrayT *a, int i);
  *   Retrieves a pointer to an element inside the array.
  *
  * Usage:
- *   myTypeT *ptr = (myTypeT *)arrayGet(my_array, 1);
+ *   myTypeT* ptr = (myTypeT*)arrayGet(my_array, 1);
  *------------------------------------*/
-void *arrayGet(arrayT const *a, int i);
+void *arrayGet(const arrayT* a, int i);
 
 /*--------------------------------------
  * Function: arrayLength()
@@ -127,6 +127,6 @@ void *arrayGet(arrayT const *a, int i);
  * Usage:
  *   int num_elements = arrayLength(my_array);
  *------------------------------------*/
-int arrayLength(arrayT const *a);
+int arrayLength(const arrayT* a);
 
 #endif // array_h_

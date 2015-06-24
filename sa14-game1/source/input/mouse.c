@@ -13,7 +13,7 @@
  * FUNCTIONS
  *----------------------------------------------*/
 
-void getMouseState(mouseStateT *mouse_state) {
+void getMouseState(mouseStateT* mouse_state) {
     POINT cursor_pos;
     assert(GetCursorPos(&cursor_pos));
 

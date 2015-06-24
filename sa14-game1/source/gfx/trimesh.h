@@ -52,19 +52,19 @@ typedef struct triMeshT triMeshT;
  * FUNCTIONS
  *----------------------------------------------*/
 
-triMeshT *newMesh(int num_verts, int num_tris);
-void freeMesh(triMeshT *mesh);
-void updateMesh(triMeshT const *mesh);
-void drawMesh(triMeshT const *mesh);
+triMeshT* newMesh(int num_verts, int num_tris);
+void freeMesh(triMeshT* mesh);
+void updateMesh(const triMeshT* mesh);
+void drawMesh(const triMeshT* mesh);
 
-int meshNumTris(triMeshT const *mesh);
-int meshNumVerts(triMeshT const *mesh);
+int meshNumTris(const triMeshT* mesh);
+int meshNumVerts(const triMeshT* mesh);
 
-triT *meshTrisPtr(triMeshT *mesh);
-vertexT *meshVertsPtr(triMeshT *mesh);
+triT* meshTrisPtr(triMeshT* mesh);
+vertexT* meshVertsPtr(triMeshT* mesh);
 
-triMeshT *createBox(float width, float height, float length);
-triMeshT *createCone(float radius, float height, int num_sides);
-triMeshT *createQuad(float width, float height);
+triMeshT* createBox(float width, float height, float length);
+triMeshT* createCone(float radius, float height, int num_sides);
+triMeshT* createQuad(float width, float height);
 
 #endif // trimesh_h_

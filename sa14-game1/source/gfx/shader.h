@@ -23,16 +23,16 @@ typedef struct shaderT shaderT;
  * FUNCTIONS
  *----------------------------------------------*/
 
-shaderT *createShader(void);
-void deleteShader(shaderT *shader);
+shaderT* createShader(void);
+void deleteShader(shaderT* shader);
 
-void compileFragmentShader(shaderT *shader, string const *source);
-void compileGeometryShader(shaderT *shader, string const *source);
-void compileVertexShader(shaderT *shader, string const *source);
+void compileFragmentShader(shaderT* shader, const string* source);
+void compileGeometryShader(shaderT* shader, const string* source);
+void compileVertexShader(shaderT* shader, const string* source);
 
-void setShaderParam(string const *name, void const *value);
-shaderT *useShader(shaderT const *shader);
+void setShaderParam(const string* name, const void* value);
+shaderT* useShader(const shaderT* shader);
 
-void shaderPostProcess(shaderT const *shader);
+void shaderPostProcess(const shaderT* shader);
 
 #endif // shader_h_

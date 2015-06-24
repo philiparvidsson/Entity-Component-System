@@ -20,6 +20,6 @@ typedef struct {
  * FUNCTIONS
  *----------------------------------------------*/
 
-void getMouseState(mouseStateT *mouse_state);
+void getMouseState(mouseStateT* mouse_state);
 
 #endif // mouse_h_

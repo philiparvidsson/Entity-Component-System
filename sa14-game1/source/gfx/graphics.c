@@ -59,7 +59,7 @@
  *   Represents the graphics window.
  *------------------------------------*/
 typedef struct windowT {
-    string const *title;      // Window title.
+    const string* title;      // Window title.
     int           width,      // Window width, in pixels.
                   height;     // Window height, in pixels.
     int           frame_time;
@@ -77,13 +77,13 @@ typedef struct windowT {
  * GLOBALS
  *----------------------------------------------*/
 
-windowT *window = NULL;
+windowT* window = NULL;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-static string *createWideString(string const *str) {
+static string *createWideString(const string* str) {
     size_t  len   = mbstowcs(NULL, str, 0)+1;
     wchar_t *wstr = malloc(sizeof(wchar_t) * len);
 
@@ -138,7 +138,7 @@ static void unregisterWindowClass(void) {
     assert(UnregisterClassW(ClassName, GetModuleHandleW(NULL)));
 }
 
-static void createWindow(string const *title, int width, int height) {
+static void createWindow(const string* title, int width, int height) {
     if (window)
         error("createWindow() was called twice");
 
@@ -248,7 +248,7 @@ static void setFrameRate(float fps) {
     assert(QueryPerformanceCounter(&window->last_update));
 }
 
-void initGraphics(string const *title, int width, int height) {
+void initGraphics(const string* title, int width, int height) {
     createWindow(title, width, height);
     setupPixelFormat();
 

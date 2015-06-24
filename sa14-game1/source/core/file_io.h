@@ -38,7 +38,7 @@
  * Usage:
  *   long num_bytes = fileSize("foo.bin");
  *------------------------------------*/
-long fileSize(string const *file_name);
+long fileSize(const string* file_name);
 
 /*--------------------------------------
  * Function: readFile()
@@ -57,6 +57,6 @@ long fileSize(string const *file_name);
  * Usage:
  *   string data = readFile("foo.bin");
  *------------------------------------*/
-uint8_t *readFile(string const *file_name);
+uint8_t *readFile(const string* file_name);
 
 #endif // file_io_h_

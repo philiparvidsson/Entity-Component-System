@@ -73,6 +73,6 @@
  *   errorExit("An error has occurred", "main.c", 42);
  *
  *------------------------------------*/
-void errorExit(string const *msg, string const *func_name, int line);
+void errorExit(const string* msg, const string* func_name, int line);
 
 #endif // debug_h_

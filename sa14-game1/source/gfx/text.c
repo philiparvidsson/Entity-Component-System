@@ -26,7 +26,7 @@ string *font_name = "Calibri";
 
 int font_size = 24;
 
-shaderT *text_shader = NULL;
+shaderT* text_shader = NULL;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -45,19 +45,19 @@ static void initTextShader(void) {
     free(fs_src);
 }
 
-static string *strToWide(string const *str) {
+static string *strToWide(const string* str) {
     size_t len = mbstowcs(NULL, str, 0) + 1;
     wchar_t *wstr = malloc(sizeof(wchar_t)*len);
     mbstowcs(wstr, str, len);
     return wstr;
 }
 
-void setTextFont(string const *name, int size) {
+void setTextFont(const string* name, int size) {
     font_name = name;
     font_size = size;
 }
 
-void drawText(string const *text, float x, float y) {
+void drawText(const string* text, float x, float y) {
     //checkGraphicsInited();
 
     text = strToWide(text);
@@ -88,7 +88,7 @@ void drawText(string const *text, float x, float y) {
 
     void *bitmap_data = calloc(width*height, sizeof(uint32_t));
     for (int i = 3; i < width*height*4; i+= 4)
-        *((uint8_t *)bitmap_data+i) = 0xff;
+        *((uint8_t*)bitmap_data+i) = 0xff;
 
     HBITMAP hbitmap = CreateBitmap(width, height, 1, 32, bitmap_data);
     SelectObject(hdc, hbitmap);
@@ -103,7 +103,7 @@ void drawText(string const *text, float x, float y) {
     DeleteDC(hdc);
 
     for (int i = 3; i < width*height*4; i += 4)
-        *((uint8_t *)bitmap_data + i) ^= 0xff;
+        *((uint8_t*)bitmap_data + i) ^= 0xff;
 
     GLuint text_tex_id;
     glGenTextures(1, &text_tex_id);
@@ -118,12 +118,12 @@ void drawText(string const *text, float x, float y) {
 
     free(bitmap_data);
 
-    triMeshT *text_quad = createQuad(2.0f, 2.0f);
+    triMeshT* text_quad = createQuad(2.0f, 2.0f);
 
     if (!text_shader)
         initTextShader();
 
-    shaderT *old_shader = useShader(text_shader);
+    shaderT* old_shader = useShader(text_shader);
 
     setShaderParam("ScreenSize", &(vec2) { (float)screenWidth(), (float)screenHeight() });
     setShaderParam("TextRect", &(vec4) { (float)x, (float)y, (float)width, (float)height });
@@ -154,7 +154,7 @@ void drawText(string const *text, float x, float y) {
     useShader(old_shader);
 }
 
-void loadFontFromFile(string const *file_name) {
+void loadFontFromFile(const string* file_name) {
     string *s = strToWide(file_name);
     assert(AddFontResourceExW(s, FR_PRIVATE, NULL) > 0);
     free(s);

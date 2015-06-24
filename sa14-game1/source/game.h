@@ -16,6 +16,9 @@
 #include "math/matrix.h"
 #include "math/vector.h"
 
+#include "physics/body.h"
+#include "physics/world.h"
+
 #include <stdlib.h>
 
 /*------------------------------------------------
@@ -26,14 +29,21 @@ typedef struct {
     keyboardStateT keyboard;
     mouseStateT    mouse;
 
-    arrayT *objects;
+    arrayT* objects;
+
+    worldT* world;
 } gameT;
 
-typedef struct {
-    triMeshT *mesh;
+typedef struct gameObjectT {
+    gameT    *game;
+
+    triMeshT* model;
     mat4x4    transform;
 
-    void(*update)(void);
+    bodyT    *body;
+
+    void(*cleanupFunc)(struct gameObjectT*);
+    void(*updateFunc)(struct gameObjectT*);
 } gameObjectT;
 
 /*------------------------------------------------

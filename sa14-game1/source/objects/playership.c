@@ -2,15 +2,32 @@
 
 #include "gfx/trimesh.h"
 
-static void playerShipUpdate(gameObjectT *o) {
-    static float ff;
+#include "physics/physics.h"
 
-    ff += 0.005f;
+static void playerShipCleanup(gameObjectT* o) {
+    bodyFree(o->body);
+    o->body = NULL;
 
-    mat_rot_y(ff, &o->transform);
+    freeMesh(o->model);
+    o->model = NULL;
 }
 
-void createPlayerShip(gameObjectT *o) {
-    o->mesh = createBox(0.1, 0.1f, 0.1f);
-    o->update = playerShipUpdate;
+static void playerShipUpdate(gameObjectT* o) {
+    vec3 vel = (vec3) { 0.0f, 0.0f, 0.0f };
+
+
+    if (keyIsPressed(&o->game->keyboard, ArrowLeft)) vel.x = -0.3f;
+    else if (keyIsPressed(&o->game->keyboard, ArrowRight)) vel.x = 0.3f;
+
+    if (keyIsPressed(&o->game->keyboard, ArrowUp)) vel.y = 0.3f;
+    else if (keyIsPressed(&o->game->keyboard, ArrowDown)) vel.y = -0.3f;
+
+    bodySetVelocity(o->body, vel);
+}
+
+void createPlayerShip(gameObjectT* o) {
+    o->body        = bodyNew(1.0f * Kilogram);
+    o->model       = createBox(0.1f, 0.1f, 0.1f);
+    o->cleanupFunc = playerShipCleanup;
+    o->updateFunc  = playerShipUpdate;
 }

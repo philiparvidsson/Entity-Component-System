@@ -5,6 +5,6 @@
 
 #define log_info(s) logInfo(s)
 
-void logInfo(string const *msg);
+void logInfo(const string* msg);
 
 #endif // log_h_

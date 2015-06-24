@@ -89,7 +89,7 @@ static void printLastErrorWin32(void) {
  *   errorExit("An error has occurred", "main.c", 42);
  *
  *------------------------------------*/
-void errorExit(string const *msg, string const *func_name, int line) {
+void errorExit(const string* msg, const string* func_name, int line) {
     printf("\n----------------------------------------\n"
            "ERROR: %s in %s() on line %d.\n\n"
            "This program will now exit.\n", msg, func_name, line);

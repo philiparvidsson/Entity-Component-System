@@ -22,7 +22,7 @@
  * FUNCTIONS
  *----------------------------------------------*/
 
-void initGraphics(string const *title, int width, int height);
+void initGraphics(const string* title, int width, int height);
 void exitGraphics(void);
 void clearDisplay(float r, float g, float b);
 void updateDisplay(void);

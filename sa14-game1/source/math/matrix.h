@@ -43,28 +43,28 @@
                : (((vec_n(v))== 4) ? ( 2) \
                :                     (-1))))
 
-#define mat_identity(r) mat_identity_((float *)r, mat_n(*r))
+#define mat_identity(r) mat_identity_((float*)r, mat_n(*r))
 
-#define mat_transl_xy(x, y, r) mat_transl_xy_(x, y, (float *)r, mat_n(*r))
-#define mat_transl_xyz(x, y, z, r) mat_transl_xyz_(x, y, z, (float *)r, mat_n(*r))
+#define mat_transl_xy(x, y, r) mat_transl_xy_(x, y, (float*)r, mat_n(*r))
+#define mat_transl_xyz(x, y, z, r) mat_transl_xyz_(x, y, z, (float*)r, mat_n(*r))
 
-#define mat_rot_x(a, r) mat_rot_x_(a, (float *)r, mat_n(*r))
-#define mat_rot_y(a, r) mat_rot_y_(a, (float *)r, mat_n(*r))
-#define mat_rot_z(a, r) mat_rot_z_(a, (float *)r, mat_n(*r))
+#define mat_rot_x(a, r) mat_rot_x_(a, (float*)r, mat_n(*r))
+#define mat_rot_y(a, r) mat_rot_y_(a, (float*)r, mat_n(*r))
+#define mat_rot_z(a, r) mat_rot_z_(a, (float*)r, mat_n(*r))
 
 #define mat_add(a, b, r) \
-    mat_add_((float *)a, (float *)b, (float *)r, mat_n(*a), mat_n(*b), mat_n(*r))
+    mat_add_((float*)a, (float*)b, (float*)r, mat_n(*a), mat_n(*b), mat_n(*r))
 
 #define mat_sub(a, b, r) \
-    mat_sub_((float *)a, (float *)b, (float *)r, mat_n(*a), mat_n(*b), mat_n(*r))
+    mat_sub_((float*)a, (float*)b, (float*)r, mat_n(*a), mat_n(*b), mat_n(*r))
 
 #define mat_mul(a, b, r) \
-    mat_mul_((float *)a, (float *)b, (float *)r, mat_n(*a), mat_n(*b), mat_n(*r))
+    mat_mul_((float*)a, (float*)b, (float*)r, mat_n(*a), mat_n(*b), mat_n(*r))
 
 #define mat_div(a, b, r) \
-    mat_div_((float *)a, (float *)b, (float *)r, mat_n(*a), mat_n(*b), mat_n(*r))
+    mat_div_((float*)a, (float*)b, (float*)r, mat_n(*a), mat_n(*b), mat_n(*r))
 
-#define mat_transpose(m) mat_transpose_((float *)m, mat_n(*m))
+#define mat_transpose(m) mat_transpose_((float*)m, mat_n(*m))
 
 
 /*------------------------------------------------
@@ -175,7 +175,7 @@ static inline void mat_rot_z_(float a, float *m, int n) {
     m[n+1] =  cosf(a);
 }
 
-static inline void mat_add_(float const *a, float const *b, float *r, int a_n, int b_n, int r_n) {
+static inline void mat_add_(const float* a, const float* b, float *r, int a_n, int b_n, int r_n) {
     mat_check_args_3();
 
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
@@ -184,7 +184,7 @@ static inline void mat_add_(float const *a, float const *b, float *r, int a_n, i
     }
 }
 
-static inline void mat_sub_(float const *a, float const *b, float *r, int a_n, int b_n, int r_n) {
+static inline void mat_sub_(const float* a, const float* b, float *r, int a_n, int b_n, int r_n) {
     mat_check_args_3();
 
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
@@ -193,12 +193,12 @@ static inline void mat_sub_(float const *a, float const *b, float *r, int a_n, i
     }
 }
 
-static inline void mat_mul_(float const *a, float const *b, float *r, int a_n, int b_n, int r_n) {
+static inline void mat_mul_(const float* a, const float* b, float *r, int a_n, int b_n, int r_n) {
     mat_check_args_3();
 
     int const  n = min(a_n, min(b_n, r_n));
     mat4x4     t;
-    float     *m = (r==a || r==b) ? (float *)&t : r;
+    float     *m = (r==a || r==b) ? (float*)&t : r;
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
@@ -211,7 +211,7 @@ static inline void mat_mul_(float const *a, float const *b, float *r, int a_n, i
         }
     }
 
-    if (m == (float *)&t) {
+    if (m == (float*)&t) {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++)
                 r[i*r_n+j] = m[i*r_n+j];
@@ -219,7 +219,7 @@ static inline void mat_mul_(float const *a, float const *b, float *r, int a_n, i
     }
 }
 
-static inline void mat_div_(float const *a, float const *b, float *r, int a_n, int b_n, int r_n) {
+static inline void mat_div_(const float* a, const float* b, float *r, int a_n, int b_n, int r_n) {
     mat_check_args_3();
 
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
@@ -228,8 +228,8 @@ static inline void mat_div_(float const *a, float const *b, float *r, int a_n, i
     }
 }
 
-static inline void mat4x4_look_at(vec3 const *pos, vec3 const *at,
-                                  vec3 const *up, mat4x4 *r)
+static inline void mat4x4_look_at(const vec3* pos, const vec3* at,
+                                  const vec3* up, mat4x4 *r)
 {
     vec3 x_axis, y_axis, z_axis;
 

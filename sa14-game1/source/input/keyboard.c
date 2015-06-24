@@ -15,7 +15,7 @@
  * FUNCTIONS
  *----------------------------------------------*/
 
-void getKeyboardState(keyboardStateT *keyboard_state) {
+void getKeyboardState(keyboardStateT* keyboard_state) {
     BYTE keys[256];
     assert(GetKeyboardState(keys));
 
@@ -49,6 +49,6 @@ void getKeyboardState(keyboardStateT *keyboard_state) {
     }
 }
 
-bool keyIsPressed(keyboardStateT const *keyboard_state, keyboardKeyT key) {
+bool keyIsPressed(const keyboardStateT* keyboard_state, keyboardKeyT key) {
     return (keyboard_state->key_states[key & 255]);
 }

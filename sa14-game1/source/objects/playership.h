@@ -3,6 +3,6 @@
 
 #include "game.h"
 
-gameObjectT *createPlayerShip(void);
+gameObjectT* createPlayerShip(void);
 
 #endif // lolcone_h_

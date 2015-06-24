@@ -56,7 +56,7 @@
  * Usage:
  *   vec_add(&a, &b, &r);
  *------------------------------------*/
-#define vec_add(a, b, r) vec_add_((float *)a, (float *)b, (float *)r, \
+#define vec_add(a, b, r) vec_add_((float*)a, (float*)b, (float*)r, \
                                   min(min(vec_n(*a), vec_n(*b)), vec_n(*r)))
 
 /*--------------------------------------
@@ -73,7 +73,7 @@
  * Usage:
  *   vec_sub(&a, &b, &r);
  *------------------------------------*/
-#define vec_sub(a, b, r) vec_sub_((float *)a, (float *)b, (float *)r, \
+#define vec_sub(a, b, r) vec_sub_((float*)a, (float*)b, (float*)r, \
                                   min(min(vec_n(*a), vec_n(*b)), vec_n(*r)))
 
 /*--------------------------------------
@@ -90,7 +90,7 @@
  * Usage:
  *   vec_mul(&a, &b, &r);
  *------------------------------------*/
-#define vec_mul(a, b, r) vec_mul_((float *)a, (float *)b, (float *)r, \
+#define vec_mul(a, b, r) vec_mul_((float*)a, (float*)b, (float*)r, \
                                   min(min(vec_n(*a), vec_n(*b)), vec_n(*r)))
 
 /*--------------------------------------
@@ -107,7 +107,7 @@
  * Usage:
  *   vec_div(&a, &b, &r);
  *------------------------------------*/
-#define vec_div(a, b, r) vec_div_((float *)a, (float *)b, (float *)r, \
+#define vec_div(a, b, r) vec_div_((float*)a, (float*)b, (float*)r, \
                                   min(min(vec_n(*a), vec_n(*b)), vec_n(*r)))
 
 /*--------------------------------------
@@ -124,7 +124,7 @@
  * Usage:
  *   vec_scale_(&a, 2.0f, &r);
  *------------------------------------*/
-#define vec_scale(v, f, r) vec_scale_((float *)v, f, (float *)r, \
+#define vec_scale(v, f, r) vec_scale_((float*)v, f, (float*)r, \
                                       min(vec_n(*v), vec_n(*r)))
 
 /*--------------------------------------
@@ -143,7 +143,7 @@
  * Usage:
  *   float d = vec_dot(&a, &b);
  *------------------------------------*/
-#define vec_dot(a, b) vec_dot_((float *)a, (float *)b, \
+#define vec_dot(a, b) vec_dot_((float*)a, (float*)b, \
                                min(vec_n(*a), vec_n(*b)))
 
 /*--------------------------------------
@@ -159,7 +159,7 @@
  *   vec_normalize(&a, &r);
  *------------------------------------*/
 #define vec_normalize(v, r) \
-    vec_normalize_((float *)v, (float *)r, min(vec_n(*v), vec_n(*r)))
+    vec_normalize_((float*)v, (float*)r, min(vec_n(*v), vec_n(*r)))
 
 /*--------------------------------------
  * Macro: vec_float_padding
@@ -258,7 +258,7 @@ typedef union {
  * Usage:
  *   vec_add_(&a, &b, &r, 3);
  *------------------------------------*/
-static inline void vec_add_(float const *a, float const *b, float *r, int n) {
+static inline void vec_add_(const float* a, const float* b, float *r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = a[i] + b[i];
 }
@@ -278,7 +278,7 @@ static inline void vec_add_(float const *a, float const *b, float *r, int n) {
  * Usage:
  *   vec_sub_(&a, &b, &r, 3);
  *------------------------------------*/
-static inline void vec_sub_(float const *a, float const *b, float *r, int n) {
+static inline void vec_sub_(const float* a, const float* b, float *r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = a[i] - b[i];
 }
@@ -298,7 +298,7 @@ static inline void vec_sub_(float const *a, float const *b, float *r, int n) {
  * Usage:
  *   vec_mul_(&a, &b, &r, 3);
  *------------------------------------*/
-static inline void vec_mul_(float const *a, float const *b, float *r, int n) {
+static inline void vec_mul_(const float* a, const float* b, float *r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = a[i] * b[i];
 }
@@ -318,7 +318,7 @@ static inline void vec_mul_(float const *a, float const *b, float *r, int n) {
  * Usage:
  *   vec_div_(&a, &b, &r, 3);
  *------------------------------------*/
-static inline void vec_div_(float const *a, float const *b, float *r, int n) {
+static inline void vec_div_(const float* a, const float* b, float *r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = a[i] / b[i];
 }
@@ -338,7 +338,7 @@ static inline void vec_div_(float const *a, float const *b, float *r, int n) {
  * Usage:
  *   vec_scale_(&a, 2.0f, &r, 3);
  *------------------------------------*/
-static inline void vec_scale_(float const *v, float f, float *r, int n) {
+static inline void vec_scale_(const float* v, float f, float *r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = v[i] * f;
 }
@@ -357,7 +357,7 @@ static inline void vec_scale_(float const *v, float f, float *r, int n) {
  * Usage:
  *   vec3_cross(&a, &b, &r);
  *------------------------------------*/
-static inline void vec3_cross(vec3 const *a, vec3 const *b, vec3 *r) {
+static inline void vec3_cross(const vec3* a, const vec3* b, vec3 *r) {
     r->x = a->y*b->z - a->z*b->y;
     r->y = a->z*b->x - a->x*b->z;
     r->z = a->x*b->y - a->y*b->x;
@@ -380,7 +380,7 @@ static inline void vec3_cross(vec3 const *a, vec3 const *b, vec3 *r) {
  * Usage:
  *   float d = vec_dot_(&a, &b, 3);
  *------------------------------------*/
-static inline float vec_dot_(float const *a, float const *b, int n) {
+static inline float vec_dot_(const float* a, const float* b, int n) {
     float d = 0.0f;
 
     for (int i = 0; i < n; i++)
@@ -402,7 +402,7 @@ static inline float vec_dot_(float const *a, float const *b, int n) {
  * Usage:
  *   vec_normalize(&a, &r, 3);
  *------------------------------------*/
-static inline void vec_normalize_(float const *v, float *r, int n) {
+static inline void vec_normalize_(const float* v, float *r, int n) {
     float d = vec_dot_(v, v, n);
 
     if (d > 0.0f) d = sqrtf(d);

@@ -9,7 +9,7 @@ static void setConsoleColor() {
     SetConsoleTextAttribute(hstdout, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 }
 
-void logInfo(string const *msg) {
+void logInfo(const string* msg) {
     setConsoleColor();
     printf("%s\n", msg);
 }

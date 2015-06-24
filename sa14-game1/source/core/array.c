@@ -42,10 +42,10 @@
  *   Represents an array of elements.
  *------------------------------------*/
 struct arrayT {
-    void   *data;      // The element data block.
-    int     num_elems; // Number of elements in the array.
-    int     max_elems; // The current array capacity.
-    size_t  elem_size; // The size of each array element, in bytes.
+    void*  data;      // The element data block.
+    int    num_elems; // Number of elements in the array.
+    int    max_elems; // The current array capacity.
+    size_t elem_size; // The size of each array element, in bytes.
 };
 
 /*------------------------------------------------
@@ -68,7 +68,7 @@ struct arrayT {
  * Usage:
  *   doubleArrayCapacity(my_array);
  *------------------------------------*/
-static void doubleArrayCapacity(arrayT *a) {
+static void doubleArrayCapacity(arrayT* a) {
     // We double the array capacity and copy the old elements into the new
     // data block, the release the old data block.
 
@@ -99,10 +99,10 @@ static void doubleArrayCapacity(arrayT *a) {
  *   Creates a new, dynamic array.
  *
  * Usage:
- *   arrayT *int_array = newArray(sizeof(int));
+ *   arrayT* int_array = newArray(sizeof(int));
  *------------------------------------*/
-arrayT *newArray(size_t elem_size) {
-    arrayT *a = malloc(sizeof(arrayT));
+arrayT* newArray(size_t elem_size) {
+    arrayT* a = malloc(sizeof(arrayT));
 
     a->data      = malloc(elem_size * InitialCapacity);
     a->num_elems = 0;
@@ -123,7 +123,7 @@ arrayT *newArray(size_t elem_size) {
  * Usage:
  *   freeArray(my_array);
  *------------------------------------*/
-void freeArray(arrayT *a) {
+void freeArray(arrayT* a) {
     free(a->data);
     free(a);
 }
@@ -143,12 +143,12 @@ void freeArray(arrayT *a) {
  * Usage:
  *   arrayAdd(my_array, &elem);
  *------------------------------------*/
-void *arrayAdd(arrayT *a, void const *elem) {
+void *arrayAdd(arrayT* a, const void* elem) {
     // If the array is full, we double its capacity.
     if (a->num_elems >= a->max_elems)
         doubleArrayCapacity(a);
 
-    void *dest = (char *)a->data + (a->num_elems * a->elem_size);
+    void *dest = (char*)a->data + (a->num_elems * a->elem_size);
     
     memcpy(dest, elem, a->elem_size);
     a->num_elems++;
@@ -168,11 +168,11 @@ void *arrayAdd(arrayT *a, void const *elem) {
  * Usage:
  *   arrayRemove(a, 0);
  *------------------------------------*/
-void arrayRemove(arrayT *a, int i) {
+void arrayRemove(arrayT* a, int i) {
     assert(0 <= i && i < a->num_elems);
 
-    void *dest = (char *)a->data + (i * a->elem_size);
-    void *src  = (char *)dest + a->elem_size;
+    void *dest = (char*)a->data + (i * a->elem_size);
+    void *src  = (char*)dest + a->elem_size;
     memmove(dest, src, (a->num_elems-i+1) * a->elem_size);
     a->num_elems--;
 }
@@ -190,12 +190,12 @@ void arrayRemove(arrayT *a, int i) {
  *   Retrieves a pointer to an element inside the array.
  *
  * Usage:
- *   myTypeT *ptr = (myTypeT *)arrayGet(my_array, 1);
+ *   myTypeT* ptr = (myTypeT*)arrayGet(my_array, 1);
  *------------------------------------*/
-void *arrayGet(arrayT const *a, int i) {
+void *arrayGet(const arrayT* a, int i) {
     assert(0 <= i && i < a->num_elems);
 
-    void *ptr = (char *)a->data + (i * a->elem_size);
+    void *ptr = (char*)a->data + (i * a->elem_size);
     return (ptr);
 }
 
@@ -213,6 +213,6 @@ void *arrayGet(arrayT const *a, int i) {
  * Usage:
  *   int num_elements = arrayLength(my_array);
  *------------------------------------*/
-int arrayLength(arrayT const *a) {
+int arrayLength(const arrayT* a) {
     return (a->num_elems);
 }

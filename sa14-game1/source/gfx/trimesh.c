@@ -22,7 +22,7 @@
  *   Represents a piece of geometry with a vertex mesh etc.
  *------------------------------------*/
 struct triMeshT {
-    vertexT *verts;     // The vertices.
+    vertexT* verts;     // The vertices.
     int      num_verts; // Number of vertices.
     triT    *tris;      // The triangles (faces).
     int      num_tris;  // Number of triangles.
@@ -49,10 +49,10 @@ struct triMeshT {
  *   returned pointer is actually a pointer to the internal type triMeshT_.
  *
  * Usage:
- *   triMeshT *mesh = newMesh(8, 6);
+ *   triMeshT* mesh = newMesh(8, 6);
  *------------------------------------*/
-triMeshT *newMesh(int num_verts, int num_tris) {
-    triMeshT *mesh = malloc(sizeof(triMeshT));
+triMeshT* newMesh(int num_verts, int num_tris) {
+    triMeshT* mesh = malloc(sizeof(triMeshT));
 
     mesh->num_verts = num_verts;
     mesh->verts     = malloc(sizeof(vertexT) * mesh->num_verts);
@@ -84,7 +84,7 @@ triMeshT *newMesh(int num_verts, int num_tris) {
  * Usage:
  *   freeMesh(my_mesh);
  *------------------------------------*/
-void freeMesh(triMeshT *mesh) {
+void freeMesh(triMeshT* mesh) {
     glDeleteBuffers(1, &mesh->vbo);
     glDeleteBuffers(1, &mesh->ibo);
 
@@ -104,7 +104,7 @@ void freeMesh(triMeshT *mesh) {
  * Usage:
  *   updateMesh(my_mesh);
  *------------------------------------*/
-void updateMesh(triMeshT const *mesh) {
+void updateMesh(const triMeshT* mesh) {
     size_t vb_size = sizeof(vertexT) * mesh->num_verts;
     size_t ib_size = sizeof(triT)    * mesh->num_tris;
 
@@ -127,37 +127,37 @@ void updateMesh(triMeshT const *mesh) {
  * Usage:
  *   drawMesh(my_mesh);
  *------------------------------------*/
-void drawMesh(triMeshT const *mesh) {
+void drawMesh(const triMeshT* mesh) {
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertexT), (void *)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertexT), &((vertexT *)NULL)->n);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertexT), &((vertexT *)NULL)->uv);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertexT), (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertexT), &((vertexT*)NULL)->n);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertexT), &((vertexT*)NULL)->uv);
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ibo);
-    glDrawElements(GL_TRIANGLES, mesh->num_tris*3, GL_UNSIGNED_INT, (void *)0);
+    glDrawElements(GL_TRIANGLES, mesh->num_tris*3, GL_UNSIGNED_INT, (void*)0);
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
 }
 
-int meshNumTris(triMeshT const *mesh) {
+int meshNumTris(const triMeshT* mesh) {
     return (mesh->num_verts);
 }
 
-int meshNumVerts(triMeshT const *mesh) {
+int meshNumVerts(const triMeshT* mesh) {
     return (mesh->num_tris);
 }
 
-triT *meshTrisPtr(triMeshT *mesh) {
+triT* meshTrisPtr(triMeshT* mesh) {
     return (mesh->tris);
 }
 
-vertexT *meshVertsPtr(triMeshT *mesh) {
+vertexT* meshVertsPtr(triMeshT* mesh) {
     return (mesh->verts);
 }
 
@@ -178,9 +178,9 @@ vertexT *meshVertsPtr(triMeshT *mesh) {
  *   sphere, which is not what we want.
  *
  * Usage:
- *   triMeshT *cube = createBox(1.0f, 1.0f, 1.0f);
+ *   triMeshT* cube = createBox(1.0f, 1.0f, 1.0f);
  *------------------------------------*/
-triMeshT *createBox(float width, float height, float length) {
+triMeshT* createBox(float width, float height, float length) {
     // Divide the measurements in half since we span the box in both ways per
     // dimension.
     width  /= 2.0f;
@@ -191,10 +191,10 @@ triMeshT *createBox(float width, float height, float length) {
     // shading to work properly (we don't want interpolated normals). Since each
     // vertex has its own normal, we need six sides times four vertices. Also,
     // each of the six sides is made up of two triangles.
-    triMeshT *box = newMesh(6*4, 6*2);
+    triMeshT* box = newMesh(6*4, 6*2);
 
     // Alias pointers for less code clutter.
-    vertexT *v = box->verts;
+    vertexT* v = box->verts;
     triT    *t = box->tris;
 
     // Front.
@@ -291,17 +291,17 @@ triMeshT *createBox(float width, float height, float length) {
  *   the normals.
  *
  * Usage:
- *   triMeshT *cone = createCone(0.1, 0.2f, 10);
+ *   triMeshT* cone = createCone(0.1, 0.2f, 10);
  *------------------------------------*/
-triMeshT *createCone(float radius, float height, int num_sides) {
+triMeshT* createCone(float radius, float height, int num_sides) {
     // One center bottom vertex, two vertices for each point around the radius
     // (because they need separate normals for shading to work properly) and
     // one separate top point for each face (again, because they need separate
     // normals).
-    triMeshT *cone = newMesh(1+num_sides*3, num_sides*2);
+    triMeshT* cone = newMesh(1+num_sides*3, num_sides*2);
 
     // Alias pointers for less code clutter.
-    vertexT *v = cone->verts;
+    vertexT* v = cone->verts;
     triT    *t = cone->tris;
 
     v[0].p = (vec3) { 0.0f,  0.0f, 0.0f };
@@ -354,13 +354,13 @@ triMeshT *createCone(float radius, float height, int num_sides) {
     return (cone);
 }
 
-triMeshT *createQuad(float width, float height) {
+triMeshT* createQuad(float width, float height) {
     float half_width = width * 0.5f, half_height = height * 0.5f;
 
-    triMeshT *quad = newMesh(4, 2);
+    triMeshT* quad = newMesh(4, 2);
 
     // Alias pointers for less code clutter.
-    vertexT *v = quad->verts;
+    vertexT* v = quad->verts;
     triT    *t = quad->tris;
 
     v[0].p = (vec3) {  half_width,  half_height, 0.0f };
