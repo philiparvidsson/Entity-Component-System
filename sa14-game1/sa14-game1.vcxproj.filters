@@ -33,18 +33,6 @@
     <ClCompile Include="source\core\file_io.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\gfx\graphics.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\gfx\shader.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\gfx\text.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\gfx\trimesh.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\core\time.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,16 +54,28 @@
     <ClCompile Include="source\physics\body.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\objects\playership.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\objects\camera.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\game\game.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\game\entity.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\cameraentity.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\playerentity.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\graphics.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\shader.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\text.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\trimesh.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -102,22 +102,10 @@
     <ClInclude Include="source\core\file_io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\gfx\graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\gfx\shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\math\matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\math\vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\gfx\text.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\gfx\trimesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\core\time.h">
@@ -147,12 +135,6 @@
     <ClInclude Include="source\physics\physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\objects\playership.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\objects\camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\game\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -160,6 +142,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\game\entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\entities\cameraentity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\entities\playerentity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\trimesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,8 +1,8 @@
-#include "playership.h"
+#include "playerentity.h"
 
 #include "game/game.h"
 
-#include "gfx/trimesh.h"
+#include "graphics/trimesh.h"
 
 #include "input/keyboard.h"
 
@@ -19,14 +19,14 @@ typedef struct {
     bodyT* body;
 } playerShipT;
 
-static void cleanupFunc(entityT* e) {
+static void playerCleanup(entityT* e) {
     playerShipT* p = (playerShipT*)entityGetData(e);
 
     bodyFree(p->body);
     freeMesh(p->model);
 }
 
-static void drawFunc(entityT* e) {
+static void playerDraw(entityT* e) {
     playerShipT* p = (playerShipT*)entityGetData(e);
 
     vec3 pos = bodyGetPosition(p->body);
@@ -37,33 +37,31 @@ static void drawFunc(entityT* e) {
     drawMesh(p->model);
 }
 
-static void updateFunc(entityT* e) {
+static void playerUpdate(entityT* e) {
     playerShipT* p = (playerShipT*)entityGetData(e);
     vec3 pos = bodyGetPosition(p->body);
 
-    if (keyIsPressed(&getGameInst()->keyboard, ArrowLeft))  pos.x -= 0.01f;
+    /*if (keyIsPressed(&getGameInst()->keyboard, ArrowLeft))  pos.x -= 0.01f;
     if (keyIsPressed(&e->game->keyboard, ArrowRight)) pos.x += 0.01f;
     if (keyIsPressed(&e->game->keyboard, ArrowUp))    pos.y += 0.01f;
-    if (keyIsPressed(&e->game->keyboard, ArrowDown))  pos.y -= 0.01f;
+    if (keyIsPressed(&e->game->keyboard, ArrowDown))  pos.y -= 0.01f;*/
 
     bodySetPosition(p->body, pos);
 }
 
 entityT* createPlayerShip(void) {
-    entityT* e = entityNew();
+    entityT* entity = entityNew();
+    playerShipT* p = malloc(sizeof(playerShipT));
 
-    e->cleanupFunc = cleanupFunc;
-    e->drawFunc    = drawFunc;
-    e->updateFunc  = updateFunc;
-
-    e->data = malloc(sizeof(playerShipT));
-
-    playerShipT* p = (playerShipT*)o->data;
+    entitySetData       (entity, p);
+    entitySetCleanupFunc(entity, playerCleanup);
+    entitySetDrawFunc   (entity, playerDraw);
+    entitySetUpdateFunc (entity, playerUpdate);
 
     p->body  = bodyNew(1.0f * Kilogram);
     p->model = createBox(0.1f, 0.1f, 0.1f);
 
     mat_identity(&p->transform);
 
-    return (e);
+    return (entity);
 }

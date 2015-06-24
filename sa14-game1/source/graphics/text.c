@@ -7,9 +7,9 @@
 #include "core/common.h"
 #include "core/debug.h"
 
-#include "gfx/graphics.h"
-#include "gfx/shader.h"
-#include "gfx/trimesh.h"
+#include "graphics/graphics.h"
+#include "graphics/shader.h"
+#include "graphics/trimesh.h"
 
 #include <stddef.h>
 #include <stdint.h>

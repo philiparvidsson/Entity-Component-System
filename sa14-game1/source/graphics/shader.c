@@ -8,8 +8,8 @@
 #include "core/common.h"
 #include "core/debug.h"
 
-#include "gfx/graphics.h"
-#include "gfx/trimesh.h"
+#include "graphics/graphics.h"
+#include "graphics/trimesh.h"
 
 #include <stdlib.h>
 

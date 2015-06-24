@@ -9,6 +9,8 @@
 #include "core/debug.h"
 #include "core/time.h"
 
+#include "graphics/graphics.h"
+
 #include "input/keyboard.h"
 #include "input/mouse.h"
 
@@ -36,8 +38,8 @@ static void queryInputDevices() {
 static void updateObjects() {
     entityT* e = game->entities;
     while (e) {
-        if (e->updateFunc)
-            e->updateFunc(e);
+        if (e->update_func)
+            e->update_func(e);
 
         e = e->next;
     }
@@ -48,8 +50,8 @@ static void drawAll() {
 
     entityT* e = game->entities;
     while (e) {
-        if (e->drawFunc)
-            e->drawFunc(e);
+        if (e->draw_func)
+            e->draw_func(e);
 
         e = e->next;
     }
@@ -69,8 +71,8 @@ void exitGame() {
 
     entityT* e = game->entities;
     while (e) {
-        if (e->cleanupFunc)
-            e->cleanupFunc(e);
+        if (e->cleanup_func)
+            e->cleanup_func(e);
 
         entityT* old_e = e;
         e = e->next;
@@ -83,15 +85,15 @@ void exitGame() {
     game = NULL;
 }
 
-void gameMain(void (*frameFunc(float))) {
+void gameMain(void (*frame_func(float))) {
     float dt = 0.0f;
     timeT time = getTime();
     while (windowIsOpen()) {
         dt += elapsedSecsSince(time);
         time = getTime();
 
-        if (frameFunc)
-            frameFunc(dt);
+        if (frame_func)
+            frame_func(dt);
 
         queryInputDevices();
 

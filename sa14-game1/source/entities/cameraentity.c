@@ -1,8 +1,8 @@
-#include "camera.h"
+#include "cameraentity.h"
 
 #include "game/game.h"
 
-#include "gfx/shader.h"
+#include "graphics/shader.h"
 
 #include "math/matrix.h"
 #include "math/vector.h"
@@ -35,12 +35,11 @@ static void cameraUpdate(entityT* entity) {
 
 entityT* createCamera() {
     entityT* entity = entityNew();
-
-    entitySetCleanupFunc(entity, cameraCleanup);
-    entitySetUpdateFunc(entity, cameraUpdate);
-
     cameraT* camera = malloc(sizeof(cameraT));
-    entitySetData(entity, camera);
+
+    entitySetData       (entity, camera);
+    entitySetCleanupFunc(entity, cameraCleanup);
+    entitySetUpdateFunc (entity, cameraUpdate);
 
     mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -0.1f, &camera->proj);
 
