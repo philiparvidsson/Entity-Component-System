@@ -35,6 +35,10 @@ static void printIntroMessage(void) {
     printf("Full source available at github.com/philiparvidsson\n\n");
 }
 
+static void frameFunc(float dt) {
+    // ...
+}
+
 /*--------------------------------------
  * Function: main()
  *
@@ -44,15 +48,13 @@ static void printIntroMessage(void) {
 int main(void) {
     printIntroMessage();
 
-    gameT* game = createGame();
+    initGame();
 
     gameObjectT* camera = createCamera();
     gameObjectT* player = createPlayerShip();
 
-    gameAddObject(game, camera);
-    gameAddObject(game, player);
+    gameAddObject(camera);
+    gameAddObject(player);
 
-    gameMain(game, NULL);
-
-    exitGame(game);
+    gameMain(frameFunc);
 }

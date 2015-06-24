@@ -15,15 +15,21 @@
 #include "gfx/text.h"
 
 /*------------------------------------------------
+ * GLOBALS
+ *----------------------------------------------*/
+
+static gameT* game = NULL;
+
+/*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-static void queryInputDevices(gameT* game) {
+static void queryInputDevices() {
     getKeyboardState(&game->keyboard);
     getMouseState(&game->mouse);
 }
 
-static void updateObjects(gameT* game) {
+static void updateObjects() {
     gameObjectT* o = game->object_list;
     while (o) {
         if (o->updateFunc)
@@ -33,7 +39,7 @@ static void updateObjects(gameT* game) {
     }
 }
 
-static void drawAll(gameT* game) {
+static void drawAll() {
     clearDisplay(0.0f, 0.0f, 0.6f);
 
     gameObjectT* o = game->object_list;
@@ -47,17 +53,14 @@ static void drawAll(gameT* game) {
     updateDisplay();
 }
 
-gameT* createGame(void) {
+void initGame(void) {
     initGraphics("Game Window", 720, 720);
 
-    gameT* game = calloc(1, sizeof(gameT));
-
+    game = calloc(1, sizeof(gameT));
     game->world = worldNew();
-
-    return (game);
 }
 
-void exitGame(gameT* game) {
+void exitGame() {
     exitGraphics();
 
     gameObjectT* o = game->object_list;
@@ -76,7 +79,7 @@ void exitGame(gameT* game) {
     game = NULL;
 }
 
-void gameMain(gameT* game, void (*frameFunc(gameT*, float))) {
+void gameMain(void (*frameFunc(float))) {
     float dt = 0.0f;
     timeT time = getTime();
     while (windowIsOpen()) {
@@ -84,18 +87,18 @@ void gameMain(gameT* game, void (*frameFunc(gameT*, float))) {
         time = getTime();
 
         if (frameFunc)
-            frameFunc(game, dt);
+            frameFunc(dt);
 
-        queryInputDevices(game);
+        queryInputDevices();
 
-        updateObjects(game);
+        updateObjects();
 
         while (dt >= TimeStep) {
             worldStep(game->world, TimeStep);
             dt -= TimeStep;
         }
 
-        drawAll(game);
+        drawAll();
 
         // Pause if we lose focus.
         while (!windowIsFocused()) {
@@ -105,7 +108,7 @@ void gameMain(gameT* game, void (*frameFunc(gameT*, float))) {
     }
 }
 
-void gameAddObject(gameT* game, gameObjectT* o) {
+void gameAddObject(gameObjectT* o) {
     assert(o->game == NULL);
 
     o->game = game;
@@ -115,4 +118,8 @@ void gameAddObject(gameT* game, gameObjectT* o) {
 
     o->next = game->object_list;
     game->object_list = o;
+}
+
+gameT* gameGetInst(void) {
+    return (game);
 }

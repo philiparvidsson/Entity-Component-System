@@ -62,6 +62,7 @@ struct gameT {
  *----------------------------------------------*/
 
 void gameMain(void);
-void gameAddObject(gameT* game, gameObjectT* o);
+void gameAddObject(gameObjectT* o);
+gameT* gameGetInst(void);
 
 #endif // game_h_
