@@ -56,5 +56,5 @@ int main(void) {
     gameAddEntity(camera);
     gameAddEntity(player);
 
-    gameMain(frameFunc);
+    gameMain();
 }

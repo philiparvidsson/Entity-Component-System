@@ -85,15 +85,14 @@ void exitGame() {
     game = NULL;
 }
 
-void gameMain(void (*frame_func(float))) {
+void gameMain(void) {
     float dt = 0.0f;
     timeT time = getTime();
     while (windowIsOpen()) {
-        dt += elapsedSecsSince(time);
         time = getTime();
 
-        if (frame_func)
-            frame_func(dt);
+        if (game->frame_func)
+            game->frame_func(dt);
 
         queryInputDevices();
 
@@ -111,6 +110,8 @@ void gameMain(void (*frame_func(float))) {
             sleep(10);
             updateDisplay();
         }
+
+        dt += elapsedSecsSince(time);
     }
 }
 
@@ -126,6 +127,10 @@ void gameAddEntity(entityT* e) {
     game->entities = e;
 }
 
-gameT* gameGetInst(void) {
-    return (game);
+gameFrameFuncT gameGetFrameFunc(void) {
+    return (game->frame_func);
+}
+
+void gameSetFrameFunc(gameFrameFuncT frame_func) {
+    game->frame_func = frame_func;
 }

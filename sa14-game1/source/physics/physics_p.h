@@ -1,5 +1,5 @@
-#ifndef physics_p_
-#define physics_p_
+#ifndef physics_p_h_
+#define physics_p_h_
 
 /*------------------------------------------------
  * INCLUDES
@@ -41,4 +41,4 @@ struct worldT {
     bodyT* body_list;
 };
 
-#endif
+#endif // physics_p_h_

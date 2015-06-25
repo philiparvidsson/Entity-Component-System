@@ -29,6 +29,8 @@ struct entityT {
 };
 
 struct gameT {
+    gameFrameFuncT frame_func;
+
     // Below are the input devices. They will be queried at the start of every
     // single frame.
     keyboardStateT keyboard;

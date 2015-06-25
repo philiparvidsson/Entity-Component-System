@@ -8,9 +8,11 @@
 typedef struct entityT entityT;
 typedef struct gameT gameT;
 
-typedef void(*entityCleanupFuncT)(entityT*);
-typedef void(*entityDrawFuncT)(entityT*);
-typedef void(*entityUpdateFuncT)(entityT*);
+typedef void (*entityCleanupFuncT)(entityT*);
+typedef void (*entityDrawFuncT)(entityT*);
+typedef void (*entityUpdateFuncT)(entityT*);
+
+typedef void (*gameFrameFuncT)(float);
 
 #include "core/common.h"
 
@@ -22,6 +24,7 @@ typedef void(*entityUpdateFuncT)(entityT*);
 
 void gameMain(void);
 void gameAddEntity(entityT* e);
-gameT* gameGetInst(void);
+gameFrameFuncT gameGetFrameFunc(void);
+void gameSetFrameFunc(gameFrameFuncT frame_func);
 
 #endif // game_h_
