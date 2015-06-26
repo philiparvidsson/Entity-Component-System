@@ -83,7 +83,7 @@ shaderT* createShader(void) {
     shaderT* shader = malloc(sizeof(shaderT));
 
     shader->id      = glCreateProgram();
-    shader->shaders = newArray(sizeof(GLuint));
+    shader->shaders = arrayNew(sizeof(GLuint));
 
     return (shader);
 }
@@ -98,7 +98,7 @@ void deleteShader(shaderT* shader) {
 
     glDeleteProgram(shader->id);
 
-    freeArray(shader->shaders);
+    arrayFree(shader->shaders);
     free(shader);
 }
 

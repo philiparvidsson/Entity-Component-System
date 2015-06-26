@@ -1,6 +1,9 @@
 #include "game_private.h"
 #include "entity.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 entityT* entityAlloc() {
     entityT* entity = malloc(sizeof(entityT));
 }
@@ -20,12 +23,12 @@ void entityFree(entityT* entity) {
     free(entity);
 }
 
-void* entityGetData(entityT* entity) {
-    return (entity->data);
+void* entityGetDataPtr(entityT* entity) {
+    return (entity->data_ptr);
 }
 
-void entitySetData(entityT* entity, void* data) {
-    entity->data = data;
+void entitySetDataPtr(entityT* entity, void* data_ptr) {
+    entity->data_ptr = data_ptr;
 }
 
 entityCleanupFuncT entityGetCleanupFunc(const entityT* entity) {

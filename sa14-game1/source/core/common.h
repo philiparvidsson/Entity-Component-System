@@ -62,15 +62,15 @@
 #define string stringT
 
 #ifndef clamp
-#define clamp(x, a, b) max(min(x, b), a)
+    #define clamp(x, a, b) max(min(x, b), a)
 #endif // clamp
 
 #ifndef min
-#define min(a, b) ((a) < (b) ? (a) : (b))
+    #define min(a, b) ((a) < (b) ? (a) : (b))
 #endif // min
 
 #ifndef max
-#define max(a, b) ((a) > (b) ? (a) : (b))
+    #define max(a, b) ((a) > (b) ? (a) : (b))
 #endif // max
 
 /*------------------------------------------------

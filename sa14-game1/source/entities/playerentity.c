@@ -20,17 +20,18 @@ typedef struct {
 } playerShipT;
 
 static void playerCleanup(entityT* e) {
-    playerShipT* p = (playerShipT*)entityGetData(e);
+    playerShipT* p = (playerShipT*)entityGetDataPtr(e);
 
     bodyFree(p->body);
     freeMesh(p->model);
 }
 
 static void playerDraw(entityT* e) {
-    playerShipT* p = (playerShipT*)entityGetData(e);
+    playerShipT* p = (playerShipT*)entityGetDataPtr(e);
 
     vec3 pos = bodyGetPosition(p->body);
     mat_transl_xyz(pos.x, pos.y, pos.z, &p->transform);
+
 
     setShaderParam("Model", &p->transform);
 
@@ -38,13 +39,14 @@ static void playerDraw(entityT* e) {
 }
 
 static void playerUpdate(entityT* e) {
-    playerShipT* p = (playerShipT*)entityGetData(e);
+    playerShipT* p = (playerShipT*)entityGetDataPtr(e);
     vec3 pos = bodyGetPosition(p->body);
 
-    /*if (keyIsPressed(&getGameInst()->keyboard, ArrowLeft))  pos.x -= 0.01f;
-    if (keyIsPressed(&e->game->keyboard, ArrowRight)) pos.x += 0.01f;
-    if (keyIsPressed(&e->game->keyboard, ArrowUp))    pos.y += 0.01f;
-    if (keyIsPressed(&e->game->keyboard, ArrowDown))  pos.y -= 0.01f;*/
+    keyboardT* kb = gameGetKeyboard();
+    if (keyIsPressed(kb, ArrowLeft))  pos.x -= 0.01f;
+    if (keyIsPressed(kb, ArrowRight)) pos.x += 0.01f;
+    if (keyIsPressed(kb, ArrowUp))    pos.y += 0.01f;
+    if (keyIsPressed(kb, ArrowDown))  pos.y -= 0.01f;
 
     bodySetPosition(p->body, pos);
 }
@@ -53,7 +55,7 @@ entityT* createPlayerShip(void) {
     entityT* entity = entityNew();
     playerShipT* p = malloc(sizeof(playerShipT));
 
-    entitySetData       (entity, p);
+    entitySetDataPtr    (entity, p);
     entitySetCleanupFunc(entity, playerCleanup);
     entitySetDrawFunc   (entity, playerDraw);
     entitySetUpdateFunc (entity, playerUpdate);

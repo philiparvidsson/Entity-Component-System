@@ -37,7 +37,7 @@ typedef struct arrayT arrayT;
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Function: newArray()
+ * Function: arrayNew(elem_size)
  * Parameters:
  *   elem_size  The array element size, in bytes.
  *
@@ -48,12 +48,12 @@ typedef struct arrayT arrayT;
  *   Creates a new, dynamic array.
  *
  * Usage:
- *   arrayT* int_array = newArray(sizeof(int));
+ *   arrayT* int_array = arrayNew(sizeof(int));
  *------------------------------------*/
-arrayT* newArray(size_t elem_size);
+arrayT* arrayNew(size_t elem_size);
 
 /*--------------------------------------
- * Function: freeArray()
+ * Function: arrayFree()
  * Parameters:
  *   a  The array to free from memory.
  *
@@ -61,9 +61,9 @@ arrayT* newArray(size_t elem_size);
  *   Frees the specified array from memory.
  *
  * Usage:
- *   freeArray(my_array);
+ *   arrayFree(my_array);
  *------------------------------------*/
-void freeArray(arrayT* a);
+void arrayFree(arrayT* a);
 
 /*--------------------------------------
  * Function: arrayAdd()

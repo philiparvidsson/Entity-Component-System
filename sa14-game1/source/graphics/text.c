@@ -38,6 +38,9 @@ static void initTextShader(void) {
     string *vs_src = readFile("resources/shaders/text.vert");
     string *fs_src = readFile("resources/shaders/text.frag");
 
+    if (!vs_src || !fs_src)
+        error("Could not load text shader");
+
     compileVertexShader(text_shader, vs_src);
     compileFragmentShader(text_shader, fs_src);
 
@@ -103,7 +106,7 @@ void drawText(const string* text, float x, float y) {
     DeleteDC(hdc);
 
     for (int i = 3; i < width*height*4; i += 4)
-        *((uint8_t*)bitmap_data + i) ^= 0xff;
+        *((uint8_t*)bitmap_data+i) ^= 0xff;
 
     GLuint text_tex_id;
     glGenTextures(1, &text_tex_id);

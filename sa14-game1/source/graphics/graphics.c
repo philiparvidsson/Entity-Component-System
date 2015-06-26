@@ -343,15 +343,18 @@ void updateDisplay(void) {
         if (!window)
             return;
 
+        // Give other threads to do some work instead of just spinning the CPU.
+        SwitchToThread();
+
         // We calculate how much time has passed since our latest display
         // update. If enough time has passed, we've displayed this frame exactly
         // the amount of time needed to maintain a set frame interval, so we can
         // exit the loop.
-        assert(QueryPerformanceCounter(&perf_count));
+        QueryPerformanceCounter(&perf_count);
         perf_count.QuadPart -= window->last_update.QuadPart;
     } while (perf_count.QuadPart < window->frame_time);
 
-    assert(QueryPerformanceCounter(&window->last_update));
+    QueryPerformanceCounter(&window->last_update);
 }
 
 int screenWidth() {

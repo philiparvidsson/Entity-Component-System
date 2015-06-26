@@ -10,6 +10,7 @@
 #include "core/time.h"
 
 #include "graphics/graphics.h"
+#include "graphics/text.h"
 
 #include "input/keyboard.h"
 #include "input/mouse.h"
@@ -31,8 +32,8 @@ static gameT* game = NULL;
  *----------------------------------------------*/
 
 static void queryInputDevices() {
-    getKeyboardState(&game->keyboard);
-    getMouseState(&game->mouse);
+    keyboardUpdate(game->keyboard);
+    mouseUpdate(game->mouse);
 }
 
 static void updateObjects() {
@@ -63,11 +64,16 @@ void initGame(void) {
     initGraphics("Game Window", 720, 720);
 
     game = calloc(1, sizeof(gameT));
+
+    game->keyboard = keyboardNew();
+    game->mouse = mouseNew();
+
     game->world = worldNew();
 }
 
 void exitGame() {
-    exitGraphics();
+    keyboardFree(game->keyboard);
+    mouseFree(game->mouse);
 
     entityT* e = game->entities;
     while (e) {
@@ -83,6 +89,8 @@ void exitGame() {
 
     free(game);
     game = NULL;
+
+    exitGraphics();
 }
 
 void gameMain(void) {
@@ -102,6 +110,7 @@ void gameMain(void) {
             worldStep(game->world, TimeStep);
             dt -= TimeStep;
         }
+
 
         drawAll();
 
@@ -133,4 +142,12 @@ gameFrameFuncT gameGetFrameFunc(void) {
 
 void gameSetFrameFunc(gameFrameFuncT frame_func) {
     game->frame_func = frame_func;
+}
+
+keyboardT* gameGetKeyboard(void) {
+    return (game->keyboard);
+}
+
+mouseT* gameGetMouse(void) {
+    return (game->mouse);
 }

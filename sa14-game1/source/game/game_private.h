@@ -18,7 +18,7 @@
 
 struct entityT {
     gameT* game;
-    void*  data;
+    void*  data_ptr;
 
     entityCleanupFuncT cleanup_func;
     entityDrawFuncT    draw_func;
@@ -33,8 +33,8 @@ struct gameT {
 
     // Below are the input devices. They will be queried at the start of every
     // single frame.
-    keyboardStateT keyboard;
-    mouseStateT    mouse;
+    keyboardT* keyboard;
+    mouseT*    mouse;
 
     // The list of game entities.
     entityT* entities;

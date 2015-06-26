@@ -16,17 +16,17 @@ typedef struct {
 } cameraT;
 
 static void cameraCleanup(entityT* entity) {
-    cameraT* camera = (cameraT*)entityGetData(entity);
+    cameraT* camera = (cameraT*)entityGetDataPtr(entity);
 
     deleteShader(camera->shader);
     camera->shader = NULL;
 
     free(camera);
-    entitySetData(entity, NULL);
+    entitySetDataPtr(entity, NULL);
 }
 
 static void cameraUpdate(entityT* entity) {
-    cameraT* camera = (cameraT*)entityGetData(entity);
+    cameraT* camera = (cameraT*)entityGetDataPtr(entity);
 
     useShader(camera->shader);
     setShaderParam("Proj", &camera->proj);
@@ -37,7 +37,7 @@ entityT* createCamera() {
     entityT* entity = entityNew();
     cameraT* camera = malloc(sizeof(cameraT));
 
-    entitySetData       (entity, camera);
+    entitySetDataPtr    (entity, camera);
     entitySetCleanupFunc(entity, cameraCleanup);
     entitySetUpdateFunc (entity, cameraUpdate);
 

@@ -11,9 +11,7 @@
  * TYPES
  *----------------------------------------------*/
 
-typedef struct {
-    bool key_states[256];
-} keyboardStateT;
+typedef struct keyboardT keyboardT;
 
 typedef enum {
     ArrowLeft,
@@ -26,8 +24,11 @@ typedef enum {
  * FUNCTIONS
  *----------------------------------------------*/
 
-void getKeyboardState(keyboardStateT* keyboard_state);
-
-bool keyIsPressed(const keyboardStateT* keyboard_state, keyboardKeyT key);
+keyboardT* keyboardAlloc(void);
+void keyboardInit(keyboardT* keyboard);
+keyboardT* keyboardNew(void);
+void keyboardFree(keyboardT* keyboard);
+void keyboardUpdate(keyboardT* keyboard);
+bool keyIsPressed(const keyboardT* keyboard, keyboardKeyT key);
 
 #endif // keyboard_h_

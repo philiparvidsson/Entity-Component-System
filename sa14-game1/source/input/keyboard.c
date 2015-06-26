@@ -11,11 +11,36 @@
 
 #include <windows.h>
 
+struct keyboardT {
+    bool state[256];
+};
+
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-void getKeyboardState(keyboardStateT* keyboard_state) {
+keyboardT* keyboardAlloc(void) {
+    keyboardT* keyboard = malloc(sizeof(keyboardT));
+
+    return (keyboard);
+}
+
+void keyboardInit(keyboardT* keyboard) {
+    memset(keyboard, 0, sizeof(keyboardT));
+}
+
+keyboardT* keyboardNew(void) {
+    keyboardT* keyboard = keyboardAlloc();
+    keyboardInit(keyboard);
+
+    return (keyboard);
+}
+
+void keyboardFree(keyboardT* keyboard) {
+    free(keyboard);
+}
+
+void keyboardUpdate(keyboardT* kb) {
     BYTE keys[256];
     assert(GetKeyboardState(keys));
 
@@ -34,7 +59,7 @@ void getKeyboardState(keyboardStateT* keyboard_state) {
     };
 
     for (int i = 0; i < 256; i++)
-        keyboard_state->key_states[i] = false;
+        kb->state[i] = false;
 
     for (int i = 0; i < 256; i++) {
         if (!(keys[i] & 0x80))
@@ -42,13 +67,13 @@ void getKeyboardState(keyboardStateT* keyboard_state) {
 
         for (int j = 0; j < 256; j++) {
             if (map_from[j] == i) {
-                keyboard_state->key_states[map_to[j]] = 1;
+                kb->state[map_to[j]] = true;
                 break;
             }
         }
     }
 }
 
-bool keyIsPressed(const keyboardStateT* keyboard_state, keyboardKeyT key) {
-    return (keyboard_state->key_states[key & 255]);
+bool keyIsPressed(const keyboardT* keyboard, keyboardKeyT key) {
+    return (keyboard->state[key & 255]);
 }

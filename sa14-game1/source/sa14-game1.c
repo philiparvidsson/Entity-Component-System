@@ -35,10 +35,6 @@ static void printIntroMessage(void) {
     printf("Full source available at github.com/philiparvidsson\n\n");
 }
 
-static void frameFunc(float dt) {
-    // ...
-}
-
 /*--------------------------------------
  * Function: main()
  *

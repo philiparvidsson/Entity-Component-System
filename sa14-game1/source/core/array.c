@@ -88,7 +88,7 @@ static void doubleArrayCapacity(arrayT* a) {
  *----------------------------------------------------------------------------*/
 
 /*--------------------------------------
- * Function: newArray(elem_size)
+ * Function: arrayNew(elem_size)
  * Parameters:
  *   elem_size  The array element size, in bytes.
  *
@@ -99,9 +99,9 @@ static void doubleArrayCapacity(arrayT* a) {
  *   Creates a new, dynamic array.
  *
  * Usage:
- *   arrayT* int_array = newArray(sizeof(int));
+ *   arrayT* int_array = arrayNew(sizeof(int));
  *------------------------------------*/
-arrayT* newArray(size_t elem_size) {
+arrayT* arrayNew(size_t elem_size) {
     arrayT* a = malloc(sizeof(arrayT));
 
     a->data      = malloc(elem_size * InitialCapacity);
@@ -113,7 +113,7 @@ arrayT* newArray(size_t elem_size) {
 }
 
 /*--------------------------------------
- * Function: freeArray(a)
+ * Function: arrayFree(a)
  * Parameters:
  *   a  The array to free from memory.
  *
@@ -121,9 +121,9 @@ arrayT* newArray(size_t elem_size) {
  *   Frees the specified array from memory.
  *
  * Usage:
- *   freeArray(my_array);
+ *   arrayFree(my_array);
  *------------------------------------*/
-void freeArray(arrayT* a) {
+void arrayFree(arrayT* a) {
     free(a->data);
     free(a);
 }
