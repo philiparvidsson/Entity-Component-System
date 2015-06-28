@@ -25,7 +25,7 @@ static void cameraCleanup(entityT* entity) {
     entitySetDataPtr(entity, NULL);
 }
 
-static void cameraUpdate(entityT* entity) {
+static void cameraUpdate(entityT* entity, float dt) {
     cameraT* camera = (cameraT*)entityGetDataPtr(entity);
 
     useShader(camera->shader);

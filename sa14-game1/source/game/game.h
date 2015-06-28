@@ -10,7 +10,7 @@ typedef struct gameT gameT;
 
 typedef void (*entityCleanupFuncT)(entityT*);
 typedef void (*entityDrawFuncT)(entityT*);
-typedef void (*entityUpdateFuncT)(entityT*);
+typedef void (*entityUpdateFuncT)(entityT*, float);
 
 typedef void (*gameFrameFuncT)(float);
 
@@ -28,6 +28,7 @@ typedef void (*gameFrameFuncT)(float);
 void initGame(void);
 void gameMain(void);
 void gameAddEntity(entityT* e);
+void gameRemoveEntity(entityT* e);
 gameFrameFuncT gameGetFrameFunc(void);
 void gameSetFrameFunc(gameFrameFuncT frame_func);
 keyboardT* gameGetKeyboard(void);

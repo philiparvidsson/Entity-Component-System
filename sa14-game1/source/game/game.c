@@ -36,11 +36,11 @@ static void queryInputDevices() {
     mouseUpdate(game->mouse);
 }
 
-static void updateObjects() {
+static void updateObjects(float dt) {
     entityT* e = game->entities;
     while (e) {
         if (e->update_func)
-            e->update_func(e);
+            e->update_func(e, dt);
 
         e = e->next;
     }
@@ -104,7 +104,7 @@ void gameMain(void) {
 
         queryInputDevices();
 
-        updateObjects();
+        updateObjects(dt);
 
         while (dt >= TimeStep) {
             worldStep(game->world, TimeStep);
@@ -134,6 +134,21 @@ void gameAddEntity(entityT* e) {
 
     e->next = game->entities;
     game->entities = e;
+}
+
+void gameRemoveEntity(entityT* e) {
+    assert(e->game == game);
+
+    e->game = NULL;
+
+    if (e->prev)
+        e->prev->next = e->next;
+
+    if (e->next)
+        e->next->prev = e->prev;
+
+    if (e == game->entities)
+        game->entities = game->entities->next;
 }
 
 gameFrameFuncT gameGetFrameFunc(void) {

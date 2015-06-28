@@ -41,7 +41,7 @@ static void playerDraw(entityT* e) {
     drawMesh(p->model);
 }
 
-static void playerUpdate(entityT* e) {
+static void playerUpdate(entityT* e, float dt) {
     playerShipT* p = (playerShipT*)entityGetDataPtr(e);
     vec3 pos = bodyGetPosition(p->body);
 
