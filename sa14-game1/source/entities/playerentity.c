@@ -24,6 +24,9 @@ static void playerCleanup(entityT* e) {
 
     bodyFree(p->body);
     freeMesh(p->model);
+    free(p);
+
+    entitySetDataPtr(e, NULL);
 }
 
 static void playerDraw(entityT* e) {
