@@ -45,11 +45,11 @@ static void playerUpdate(entityT* e, float dt) {
     playerShipT* p = (playerShipT*)entityGetDataPtr(e);
     vec3 pos = bodyGetPosition(p->body);
 
-    keyboardT* kb = gameGetKeyboard();
-    if (keyIsPressed(kb, ArrowLeft))  pos.x -= 0.01f;
-    if (keyIsPressed(kb, ArrowRight)) pos.x += 0.01f;
-    if (keyIsPressed(kb, ArrowUp))    pos.y += 0.01f;
-    if (keyIsPressed(kb, ArrowDown))  pos.y -= 0.01f;
+    keyboardStateT kb = gameGetKeyboardState();
+    if (keyIsPressed(&kb, ArrowLeft))  pos.x -= 0.01f;
+    if (keyIsPressed(&kb, ArrowRight)) pos.x += 0.01f;
+    if (keyIsPressed(&kb, ArrowUp))    pos.y += 0.01f;
+    if (keyIsPressed(&kb, ArrowDown))  pos.y -= 0.01f;
 
     bodySetPosition(p->body, pos);
 }

@@ -32,7 +32,7 @@ static gameT* game = NULL;
  *----------------------------------------------*/
 
 static void queryInputDevices() {
-    keyboardUpdate(game->keyboard);
+    getKeyboardState(&game->keyboard_state);
     mouseUpdate(game->mouse);
 }
 
@@ -65,14 +65,12 @@ void initGame(void) {
 
     game = calloc(1, sizeof(gameT));
 
-    game->keyboard = keyboardNew();
     game->mouse = mouseNew();
 
     game->world = worldNew();
 }
 
 void exitGame() {
-    keyboardFree(game->keyboard);
     mouseFree(game->mouse);
 
     entityT* e = game->entities;
@@ -159,8 +157,8 @@ void gameSetFrameFunc(gameFrameFuncT frame_func) {
     game->frame_func = frame_func;
 }
 
-keyboardT* gameGetKeyboard(void) {
-    return (game->keyboard);
+keyboardStateT gameGetKeyboardState(void) {
+    return (game->keyboard_state);
 }
 
 mouseT* gameGetMouse(void) {

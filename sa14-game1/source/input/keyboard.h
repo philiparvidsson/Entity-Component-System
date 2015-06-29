@@ -8,10 +8,14 @@
 #include "core/common.h"
 
 /*------------------------------------------------
- * TYPES
+ * CONSTANTS
  *----------------------------------------------*/
 
-typedef struct keyboardT keyboardT;
+#define KeyboardNumKeys 256
+
+/*------------------------------------------------
+ * TYPES
+ *----------------------------------------------*/
 
 typedef enum {
     ArrowLeft,
@@ -20,15 +24,22 @@ typedef enum {
     ArrowDown
 } keyboardKeyT;
 
+typedef struct {
+    bool alt, ctrl, shift;
+    bool keys[KeyboardNumKeys];
+} keyboardStateT;
+
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-keyboardT* keyboardAlloc(void);
-void keyboardInit(keyboardT* keyboard);
-keyboardT* keyboardNew(void);
-void keyboardFree(keyboardT* keyboard);
-void keyboardUpdate(keyboardT* keyboard);
-bool keyIsPressed(const keyboardT* keyboard, keyboardKeyT key);
+void getKeyboardState(keyboardStateT* keyboard_state);
+
+static inline bool keyIsPressed(const keyboardStateT* keyboard_state,
+                                      keyboardKeyT key)
+{
+    return (keyboard_state->keys[key % KeyboardNumKeys]);
+}
+
 
 #endif // keyboard_h_

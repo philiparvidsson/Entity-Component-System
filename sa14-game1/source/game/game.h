@@ -31,7 +31,7 @@ void gameAddEntity(entityT* e);
 void gameRemoveEntity(entityT* e);
 gameFrameFuncT gameGetFrameFunc(void);
 void gameSetFrameFunc(gameFrameFuncT frame_func);
-keyboardT* gameGetKeyboard(void);
+keyboardStateT gameGetKeyboardState(void);
 mouseT* gameGetMouse(void);
 
 #endif // game_h_

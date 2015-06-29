@@ -11,69 +11,45 @@
 
 #include <windows.h>
 
-struct keyboardT {
-    bool state[256];
-};
-
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-keyboardT* keyboardAlloc(void) {
-    keyboardT* keyboard = malloc(sizeof(keyboardT));
-
-    return (keyboard);
-}
-
-void keyboardInit(keyboardT* keyboard) {
-    memset(keyboard, 0, sizeof(keyboardT));
-}
-
-keyboardT* keyboardNew(void) {
-    keyboardT* keyboard = keyboardAlloc();
-    keyboardInit(keyboard);
-
-    return (keyboard);
-}
-
-void keyboardFree(keyboardT* keyboard) {
-    free(keyboard);
-}
-
-void keyboardUpdate(keyboardT* kb) {
-    BYTE keys[256];
+void getKeyboardState(keyboardStateT* keyboard_state) {
+    BYTE keys[KeyboardNumKeys];
     assert(GetKeyboardState(keys));
 
-    uint8_t map_from[256] = {
+    uint8_t map_from[KeyboardNumKeys] = {
         VK_UP,
         VK_DOWN,
         VK_LEFT,
         VK_RIGHT
     };
 
-    uint8_t map_to[256] = {
+    uint8_t map_to[KeyboardNumKeys] = {
         ArrowUp,
         ArrowDown,
         ArrowLeft,
         ArrowRight
     };
 
-    for (int i = 0; i < 256; i++)
-        kb->state[i] = false;
 
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < KeyboardNumKeys; i++)
+        keyboard_state->keys[i] = false;
+
+    if (keys[VK_MENU   ] & 0x80) keyboard_state->alt   = true;
+    if (keys[VK_CONTROL] & 0x80) keyboard_state->ctrl  = true;
+    if (keys[VK_SHIFT  ] & 0x80) keyboard_state->shift = true;
+
+    for (int i = 0; i < KeyboardNumKeys; i++) {
         if (!(keys[i] & 0x80))
             continue;
 
-        for (int j = 0; j < 256; j++) {
+        for (int j = 0; j < KeyboardNumKeys; j++) {
             if (map_from[j] == i) {
-                kb->state[map_to[j]] = true;
+                keyboard_state->keys[map_to[j]] = true;
                 break;
             }
         }
     }
-}
-
-bool keyIsPressed(const keyboardT* keyboard, keyboardKeyT key) {
-    return (keyboard->state[key & 255]);
 }

@@ -33,7 +33,7 @@ struct gameT {
 
     // Below are the input devices. They will be queried at the start of every
     // single frame.
-    keyboardT* keyboard;
+    keyboardStateT keyboard_state;
     mouseT*    mouse;
 
     // The list of game entities.
