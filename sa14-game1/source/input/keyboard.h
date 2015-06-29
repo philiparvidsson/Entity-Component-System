@@ -33,13 +33,10 @@ typedef struct {
  * FUNCTIONS
  *----------------------------------------------*/
 
-void getKeyboardState(keyboardStateT* keyboard_state);
+void updateKeyboardState(void);
 
-static inline bool keyIsPressed(const keyboardStateT* keyboard_state,
-                                      keyboardKeyT key)
-{
-    return (keyboard_state->keys[key % KeyboardNumKeys]);
-}
+keyboardStateT getKeyboardState(void);
 
+bool keyIsPressed(keyboardKeyT key);
 
 #endif // keyboard_h_

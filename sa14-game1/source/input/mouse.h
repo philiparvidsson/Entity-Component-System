@@ -11,16 +11,17 @@
  * TYPES
  *----------------------------------------------*/
 
-typedef struct mouseT mouseT;
+typedef struct {
+    int  x, y;
+    bool left_button, right_button;
+} mouseStateT;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-mouseT* mouseAlloc(void);
-void mouseInit(mouseT* mouse);
-mouseT* mouseNew(void);
-void mouseFree(mouseT* mouse);
-void mouseUpdate(mouseT* mouse);
+void updateMouseState(void);
+
+mouseStateT getMouseState(void);
 
 #endif // mouse_h_
