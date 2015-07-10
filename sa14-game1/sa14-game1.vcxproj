@@ -104,12 +104,12 @@
     <ClCompile Include="source\base\file_io.c" />
     <ClCompile Include="source\base\log.c" />
     <ClCompile Include="source\base\time.c" />
-    <ClCompile Include="source\components\render.c" />
+    <ClCompile Include="source\components\rendercomponent.c" />
     <ClCompile Include="source\engine\game.c" />
     <ClCompile Include="source\engine\component.c" />
     <ClCompile Include="source\engine\entity.c" />
     <ClCompile Include="source\engine\subsystem.c" />
-    <ClCompile Include="source\entities\player.c" />
+    <ClCompile Include="source\entities\playerentity.c" />
     <ClCompile Include="source\graphics\graphics.c" />
     <ClCompile Include="source\graphics\trimesh.c" />
     <ClCompile Include="source\graphics\shader.c" />
@@ -119,6 +119,7 @@
     <ClCompile Include="source\physics\body.c" />
     <ClCompile Include="source\physics\world.c" />
     <ClCompile Include="source\sa14-game1.c" />
+    <ClCompile Include="source\subsystems\rendersubsystem.c" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt" />
@@ -133,12 +134,13 @@
     <ClInclude Include="source\base\file_io.h" />
     <ClInclude Include="source\base\log.h" />
     <ClInclude Include="source\base\time.h" />
-    <ClInclude Include="source\components\render.h" />
+    <ClInclude Include="source\components\rendercomponent.h" />
     <ClInclude Include="source\engine\game.h" />
     <ClInclude Include="source\engine\engine_private.h" />
     <ClInclude Include="source\engine\component.h" />
     <ClInclude Include="source\engine\entity.h" />
     <ClInclude Include="source\engine\subsystem.h" />
+    <ClInclude Include="source\entities\playerentity.h" />
     <ClInclude Include="source\graphics\graphics.h" />
     <ClInclude Include="source\graphics\trimesh.h" />
     <ClInclude Include="source\graphics\shader.h" />
@@ -152,6 +154,7 @@
     <ClInclude Include="source\physics\physics.h" />
     <ClInclude Include="source\physics\physics_p.h" />
     <ClInclude Include="source\physics\world.h" />
+    <ClInclude Include="source\subsystems\rendersubsystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\glew32.dll" />

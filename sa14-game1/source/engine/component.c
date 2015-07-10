@@ -15,19 +15,3 @@ gameComponentT* newComponent(const string* subsystem_name) {
 void freeComponent(gameComponentT* component) {
     free(component);
 }
-
-void* getComponentDataPtr(gameComponentT* component) {
-    return (component->data_ptr);
-}
-
-void setComponentDataPtr(gameComponentT* component, void* data) {
-    component->data_ptr = data;
-}
-
-gameComponentUpdateFnT getComponentUpdateFunction(gameComponentT* component) {
-    return (component->update_fn);
-}
-
-void setComponentUpdateFunction(gameComponentT* component, gameComponentUpdateFnT update_fn) {
-    component->update_fn = update_fn;
-}

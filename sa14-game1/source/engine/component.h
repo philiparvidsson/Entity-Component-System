@@ -3,14 +3,20 @@
 
 #include "base/common.h"
 
+#include "engine/subsystem.h"
+
 typedef struct gameComponentT gameComponentT;
-typedef void(*gameComponentUpdateFnT)(gameComponentT*, float);
+
+struct gameComponentT {
+    gameSubsystemT* subsystem;
+    string* subsystem_name;
+
+    void* data;
+    void (*update_fn)(gameComponentT*, float);
+};
+
 
 gameComponentT* newComponent(const string* subsystem_name);
 void freeComponent(gameComponentT* component);
-void* getComponentDataPtr(gameComponentT* component);
-void setComponentDataPtr(gameComponentT* component, void* data);
-gameComponentUpdateFnT getComponentUpdateFn(gameComponentT* component);
-void setComponentUpdateFn(gameComponentT* component, gameComponentUpdateFnT update_fn);
 
 #endif // component_h_

@@ -45,10 +45,14 @@ int main(void) {
     printIntroMessage();
 
     initGame("Game Window L0L", 720, 720);
-    
-    // For every frame, the processes below will be executed in the order they
-    // are created.
-    gameCreateSubsystem("render");
+
+    gameSubsystemT* render_subsystem = createRenderSubsystem();
+
+    addSubsystemToGame(render_subsystem);
+
+    gameEntityT* player_entity = createPlayerEntity();
+
+    addEntityToGame(player_entity);
 
     gameMain();
 }

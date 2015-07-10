@@ -37,11 +37,29 @@ static void queryInputDevices(void) {
     updateMouseState();
 }
 
-static void updateEntities(const string* subsystem_name) {
+static void updateComponents(gameSubsystemT* subsystem, float dt) {
+    int num_components = arrayLength(subsystem->components);
+    for (int i = 0; i < num_components; i++) {
+        gameComponentT* component = *(gameComponentT**)arrayGet(subsystem->components, i);
 
+        if (component->update_fn)
+            component->update_fn(component, dt);
+    }
 }
 
-static void updateSubsystems(void) {
+static void updateSubsystems(float dt) {
+    int num_subsystems = arrayLength(game_inst->subsystems);
+    for (int i = 0; i < num_subsystems; i++) {
+        gameSubsystemT* subsystem = *(gameSubsystemT**)arrayGet(game_inst->subsystems, i);
+
+        if (subsystem->before_update_fn)
+            subsystem->before_update_fn(subsystem);
+
+        updateComponents(subsystem, dt);
+
+        if (subsystem->after_update_fn)
+            subsystem->after_update_fn(subsystem);
+    }
 }
 
 void initGame(const string* title, int screen_width, int screen_height) {
@@ -50,6 +68,9 @@ void initGame(const string* title, int screen_width, int screen_height) {
     initGraphics(title, screen_width, screen_height);
 
     game_inst = malloc(sizeof(gameT));
+
+    game_inst->entities = arrayNew(sizeof(gameEntityT*));
+    game_inst->subsystems = arrayNew(sizeof(gameSubsystemT*));
 }
 
 void exitGame(void) {
@@ -63,14 +84,14 @@ void exitGame(void) {
 }
 
 void gameMain(void) {
-    float dt = 0.0f;
     timeT time = getTime();
     while (windowIsOpen()) {
+        float dt = elapsedSecsSince(time);
         time = getTime();
 
         queryInputDevices();
-
-        updateSubsystems();
+        updateSubsystems(dt);
+        updateDisplay();
 
         // Pause if we lose focus.
         while (!windowIsFocused()) {
@@ -78,8 +99,11 @@ void gameMain(void) {
             updateDisplay();
         }
 
-        dt += elapsedSecsSince(time);
     }
+}
+
+void addSubsystemToGame(gameSubsystemT* subsystem) {
+    arrayAdd(game_inst->subsystems, &subsystem);
 }
 
 void addEntityToGame(gameEntityT* entity) {
@@ -94,7 +118,7 @@ void addEntityToGame(gameEntityT* entity) {
         gameComponentT* component = *(gameComponentT**)arrayGet(entity->components, i);
 
         for (int j = 0; j < num_subsystems; j++) {
-            gameSubsystemT* subsystem = arrayGet(game_inst->subsystems, j);
+            gameSubsystemT* subsystem = *(gameSubsystemT**)arrayGet(game_inst->subsystems, j);
 
             if ((component->subsystem_name == subsystem->name) ||
                 strcmp(component->subsystem_name, subsystem->name)==0)

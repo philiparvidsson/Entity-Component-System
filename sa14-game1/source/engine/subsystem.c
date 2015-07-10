@@ -12,6 +12,8 @@ gameSubsystemT* newSubsystem(const string* name) {
 }
 
 void freeSubsystem(gameSubsystemT* subsystem) {
+    subsystem->name = NULL;
+
     if (subsystem->components) {
         arrayFree(subsystem->components);
         subsystem->components = NULL;

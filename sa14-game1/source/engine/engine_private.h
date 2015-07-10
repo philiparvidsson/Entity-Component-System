@@ -21,34 +21,5 @@
  *----------------------------------------------*/
 
 
-struct gameComponentT {
-    subsystemT* subsystem;
-    string* subsystem_name;
-
-    void* data_ptr;
-    gameComponentUpdateFnT update_fn;
-};
-
-struct gameEntityT {
-    gameT* game;
-    arrayT* components;
-};
-
-struct gameSubsystemT {
-    string* name;
-    arrayT* components;
-};
-
-struct gameT {
-    gameFrameFuncT frame_func;
-
-    // Below are the input devices. They will be queried at the start of every
-    // single frame.
-    keyboardStateT keyboard_state;
-    mouseStateT    mouse_state;
-
-    gameEntityT* entities;
-    gameSubsystemT* subsystems;
-};
 
 #endif // engine_private_h_
