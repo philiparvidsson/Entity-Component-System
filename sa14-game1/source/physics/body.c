@@ -1,7 +1,7 @@
 #include "physics_p.h"
 #include "body.h"
 
-#include "core/common.h"
+#include "base/common.h"
 
 #include "math/vector.h"
 

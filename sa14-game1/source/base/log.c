@@ -1,6 +1,6 @@
 #include "log.h"
 
-#include "core/common.h"
+#include "base/common.h"
 
 #include <windows.h>
 

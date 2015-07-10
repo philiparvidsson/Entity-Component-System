@@ -112,7 +112,7 @@ typedef char stringT;
 // Some includes might depend on definitions in this file, so we put them at the
 // end of this file instead of the beginning.
 
-#include "core/debug.h"
+#include "base/debug.h"
 
 #include <stdbool.h>
 

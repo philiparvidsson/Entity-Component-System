@@ -5,8 +5,8 @@
 #include "physics_p.h"
 #include "world.h"
 
-#include "core/common.h"
-#include "core/debug.h"
+#include "base/common.h"
+#include "base/debug.h"
 
 #include <stdlib.h>
 #include <string.h>

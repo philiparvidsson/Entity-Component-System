@@ -4,8 +4,8 @@
 
 #include "keyboard.h"
 
-#include "core/common.h"
-#include "core/debug.h"
+#include "base/common.h"
+#include "base/debug.h"
 
 #include <stdint.h>
 

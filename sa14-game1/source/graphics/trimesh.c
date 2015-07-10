@@ -4,7 +4,7 @@
 
 #include "trimesh.h"
 
-#include "core/common.h"
+#include "base/common.h"
 
 #include <stddef.h>
 #include <stdlib.h>

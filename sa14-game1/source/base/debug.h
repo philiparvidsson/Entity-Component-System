@@ -16,7 +16,7 @@
  * INCLUDES
  *----------------------------------------------*/
 
-#include "core/common.h"
+#include "base/common.h"
 
 #include <stdio.h>
 

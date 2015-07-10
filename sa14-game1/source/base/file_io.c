@@ -15,7 +15,7 @@
 
 #include "file_io.h"
 
-#include "core/common.h"
+#include "base/common.h"
 
 #include <stdint.h>
 #include <stdio.h>

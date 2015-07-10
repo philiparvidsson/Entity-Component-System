@@ -21,25 +21,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\core\array.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\debug.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\sa14-game1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\file_io.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\time.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\input\mouse.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\common.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\input\keyboard.c">
@@ -48,22 +33,7 @@
     <ClCompile Include="source\physics\world.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\log.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\physics\body.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\game\game.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\game\entity.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\cameraentity.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\playerentity.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\graphics\graphics.c">
@@ -78,6 +48,39 @@
     <ClCompile Include="source\graphics\trimesh.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\engine\game.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\subsystem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\base\array.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\base\common.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\base\debug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\base\file_io.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\base\log.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\base\time.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\component.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\entity.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\playerentity.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -87,28 +90,13 @@
     <Text Include="resources\fonts\license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\core\array.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\debug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\GL\glew.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\file_io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\math\matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\math\vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\input\mouse.h">
@@ -118,9 +106,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\physics\world.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\physics\body.h">
@@ -135,21 +120,6 @@
     <ClInclude Include="source\physics\physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\game\game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\game\game_private.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\game\entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\entities\cameraentity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\entities\playerentity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\graphics\graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -160,6 +130,39 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\trimesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\subsystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\base\array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\base\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\base\debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\base\file_io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\base\log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\base\time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\engine_private.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

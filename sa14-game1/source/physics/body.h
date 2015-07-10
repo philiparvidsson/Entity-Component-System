@@ -1,7 +1,7 @@
 #ifndef body_h_
 #define body_h_
 
-#include "core/common.h"
+#include "base/common.h"
 
 #include "math/vector.h"
 

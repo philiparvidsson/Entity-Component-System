@@ -5,8 +5,8 @@
  * INCLUDES
  *----------------------------------------------*/
 
-#include "core/array.h"
-#include "core/common.h"
+#include "base/array.h"
+#include "base/common.h"
 
 #include "physics/physics.h"
 

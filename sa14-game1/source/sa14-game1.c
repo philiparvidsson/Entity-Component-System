@@ -13,9 +13,9 @@
  * INCLUDES
  *----------------------------------------------*/
 
-#include "core/common.h"
+#include "base/common.h"
 
-#include "game/game.h"
+#include "engine/game.h"
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -44,13 +44,11 @@ static void printIntroMessage(void) {
 int main(void) {
     printIntroMessage();
 
-    initGame();
-
-    entityT* camera = createCamera();
-    entityT* player = createPlayerShip();
-
-    gameAddEntity(camera);
-    gameAddEntity(player);
+    initGame("Game Window L0L", 720, 720);
+    
+    // For every frame, the processes below will be executed in the order they
+    // are created.
+    gameCreateSubsystem("render");
 
     gameMain();
 }

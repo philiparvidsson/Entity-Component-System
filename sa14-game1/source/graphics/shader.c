@@ -4,9 +4,9 @@
 
 #include "shader.h"
 
-#include "core/array.h"
-#include "core/common.h"
-#include "core/debug.h"
+#include "base/array.h"
+#include "base/common.h"
+#include "base/debug.h"
 
 #include "graphics/graphics.h"
 #include "graphics/trimesh.h"
@@ -41,7 +41,7 @@ shaderT* active_shader = NULL;
  * FUNCTIONS
  *----------------------------------------------*/
 
-static void compileShader(GLenum type, shaderT* prog, const string* source) {
+static void compileShader(GLenum type, shaderT* shader, const string* source) {
     assert(source != NULL);
 
     GLuint shader_id = glCreateShader(type);
@@ -62,21 +62,21 @@ static void compileShader(GLenum type, shaderT* prog, const string* source) {
         error("Shader failed to compile");
     }
 
-    glAttachShader(prog->id, shader_id);
-    glLinkProgram (prog->id);
+    glAttachShader(shader->id, shader_id);
+    glLinkProgram (shader->id);
 
-    glGetProgramiv(prog->id, GL_LINK_STATUS, &result);
+    glGetProgramiv(shader->id, GL_LINK_STATUS, &result);
     if (result == GL_FALSE) {
         GLint info_log_length;
-        glGetProgramiv(prog->id, GL_INFO_LOG_LENGTH, &info_log_length);
+        glGetProgramiv(shader->id, GL_INFO_LOG_LENGTH, &info_log_length);
         GLchar *log = malloc(sizeof(GLchar) * info_log_length);
-        glGetProgramInfoLog(prog->id, info_log_length, NULL, log);
+        glGetProgramInfoLog(shader->id, info_log_length, NULL, log);
         printf("\n%s", log);
         free(log);
         error("Shader program failed to link");
     }
 
-    arrayAdd(prog->shaders, &shader_id);
+    arrayAdd(shader->shaders, &shader_id);
 }
 
 shaderT* createShader(void) {

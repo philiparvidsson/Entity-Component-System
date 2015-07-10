@@ -17,7 +17,7 @@
  * INCLUDES
  *----------------------------------------------*/
 
-#include "core/common.h"
+#include "base/common.h"
 
 #include <limits.h> // CHAR_BIT
 #include <math.h>

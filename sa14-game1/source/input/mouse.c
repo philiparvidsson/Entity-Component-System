@@ -4,8 +4,8 @@
 
 #include "mouse.h"
 
-#include "core/common.h"
-#include "core/debug.h"
+#include "base/common.h"
+#include "base/debug.h"
 
 #include <windows.h>
 
@@ -30,12 +30,4 @@ void updateMouseState(void) {
 
 mouseStateT getMouseState(void) {
     return (mouse_state);
-}
-
-int mouseX(void) {
-    return (mouse_state.x);
-}
-
-int mouseY(void) {
-    return (mouse_state.y);
 }

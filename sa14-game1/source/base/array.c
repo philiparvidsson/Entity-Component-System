@@ -14,7 +14,7 @@
  *----------------------------------------------*/
 #include "array.h"
 
-#include "core/common.h"
+#include "base/common.h"
 
 #include <stdlib.h>
 #include <string.h> // memcpy(), memmove()
