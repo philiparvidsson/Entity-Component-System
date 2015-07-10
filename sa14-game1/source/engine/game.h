@@ -33,6 +33,6 @@ void gameRemoveEntity(entityT* e);
 gameFrameFuncT gameGetFrameFunc(void);
 void gameSetFrameFunc(gameFrameFuncT frame_func);
 
-subsystemT* gameCreateSubsystem(const string* name)
+subsystemT* gameCreateSubsystem(const string* name);
 
 #endif // game_h_

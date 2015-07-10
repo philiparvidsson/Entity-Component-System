@@ -78,7 +78,10 @@
     <ClCompile Include="source\engine\entity.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\entities\playerentity.c">
+    <ClCompile Include="source\components\render.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\player.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -163,6 +166,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\engine\entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\components\render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

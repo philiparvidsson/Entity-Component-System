@@ -104,11 +104,12 @@
     <ClCompile Include="source\base\file_io.c" />
     <ClCompile Include="source\base\log.c" />
     <ClCompile Include="source\base\time.c" />
+    <ClCompile Include="source\components\render.c" />
     <ClCompile Include="source\engine\game.c" />
     <ClCompile Include="source\engine\component.c" />
     <ClCompile Include="source\engine\entity.c" />
     <ClCompile Include="source\engine\subsystem.c" />
-    <ClCompile Include="source\entities\playerentity.c" />
+    <ClCompile Include="source\entities\player.c" />
     <ClCompile Include="source\graphics\graphics.c" />
     <ClCompile Include="source\graphics\trimesh.c" />
     <ClCompile Include="source\graphics\shader.c" />
@@ -132,6 +133,7 @@
     <ClInclude Include="source\base\file_io.h" />
     <ClInclude Include="source\base\log.h" />
     <ClInclude Include="source\base\time.h" />
+    <ClInclude Include="source\components\render.h" />
     <ClInclude Include="source\engine\game.h" />
     <ClInclude Include="source\engine\engine_private.h" />
     <ClInclude Include="source\engine\component.h" />

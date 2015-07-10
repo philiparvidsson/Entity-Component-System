@@ -20,7 +20,6 @@
  * TYPES
  *----------------------------------------------*/
 
-typedef void (*gameComponentUpdateFnT)(gameComponentT*, float);
 
 struct gameComponentT {
     subsystemT* subsystem;
