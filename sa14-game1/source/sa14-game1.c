@@ -46,12 +46,10 @@ int main(void) {
 
     initGame("Game Window L0L", 720, 720);
 
-    gameSubsystemT* render_subsystem = createRenderSubsystem();
+    addSubsystemToGame(newPhysicsSubsystem());
+    addSubsystemToGame(newGraphicsSubsystem());
 
-    addSubsystemToGame(render_subsystem);
-
-    gameEntityT* player_entity = createPlayerEntity();
-
+    gameEntityT* player_entity = newPlayerEntity();
     addEntityToGame(player_entity);
 
     gameMain();

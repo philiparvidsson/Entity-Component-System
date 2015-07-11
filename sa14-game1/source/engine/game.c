@@ -2,8 +2,6 @@
  * INCLUDES
  *----------------------------------------------*/
 
-#include "engine_private.h"
-
 #include "game.h"
 
 #include "base/common.h"
@@ -15,12 +13,6 @@
 
 #include "input/keyboard.h"
 #include "input/mouse.h"
-
-/*------------------------------------------------
- * CONSTANTS
- *----------------------------------------------*/
-
-#define TimeStep (1.0f/120.0f)
 
 /*------------------------------------------------
  * GLOBALS
@@ -53,12 +45,12 @@ static void updateSubsystems(float dt) {
         gameSubsystemT* subsystem = *(gameSubsystemT**)arrayGet(game_inst->subsystems, i);
 
         if (subsystem->before_update_fn)
-            subsystem->before_update_fn(subsystem);
+            subsystem->before_update_fn(subsystem, dt);
 
         updateComponents(subsystem, dt);
 
         if (subsystem->after_update_fn)
-            subsystem->after_update_fn(subsystem);
+            subsystem->after_update_fn(subsystem, dt);
     }
 }
 
@@ -106,30 +98,31 @@ void addSubsystemToGame(gameSubsystemT* subsystem) {
     arrayAdd(game_inst->subsystems, &subsystem);
 }
 
+gameSubsystemT* getGameSubsystem(const string* name) {
+    int num_subsystems = arrayLength(game_inst->subsystems);
+    for (int i = 0; i < num_subsystems; i++) {
+        gameSubsystemT* subsystem = *(gameSubsystemT**)arrayGet(game_inst->subsystems, i);
+
+        if (strcmp(subsystem->name, name)==0)
+            return (subsystem);
+    }
+
+    return (NULL);
+}
+
 void addEntityToGame(gameEntityT* entity) {
     assert(entity->game == NULL);
 
     entity->game = game_inst;
 
     int num_components = arrayLength(entity->components);
-    int num_subsystems = arrayLength(game_inst->subsystems);
-
     for (int i = 0; i < num_components; i++) {
         gameComponentT* component = *(gameComponentT**)arrayGet(entity->components, i);
 
-        for (int j = 0; j < num_subsystems; j++) {
-            gameSubsystemT* subsystem = *(gameSubsystemT**)arrayGet(game_inst->subsystems, j);
+        gameSubsystemT* subsystem = getGameSubsystem(component->subsystem_name);
+        assert(subsystem != NULL);
 
-            if ((component->subsystem_name == subsystem->name) ||
-                strcmp(component->subsystem_name, subsystem->name)==0)
-            {
-                assert(component->subsystem == NULL);
-
-                component->subsystem = subsystem;
-                arrayAdd(subsystem->components, &component);
-                break;
-            }
-        }
+        addComponentToSubsystem(component, subsystem);
     }
 }
 

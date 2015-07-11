@@ -5,12 +5,16 @@
 #include "base/common.h"
 
 typedef struct gameSubsystemT gameSubsystemT;
+
+#include "engine/component.h"
+
 struct gameSubsystemT {
     string* name;
     arrayT* components;
 
-    void (*before_update_fn)(gameSubsystemT*);
-    void (*after_update_fn)(gameSubsystemT*);
+    void (*before_update_fn)(gameSubsystemT*, float);
+    void (*after_update_fn)(gameSubsystemT*, float);
+    void (*add_component_fn)(gameSubsystemT*, gameComponentT*);
 
     void* data;
 };
@@ -18,5 +22,7 @@ struct gameSubsystemT {
 
 gameSubsystemT* newSubsystem(const string* name);
 void freeSubsystem(gameSubsystemT* subsystem);
+
+void addComponentToSubsystem(gameComponentT* component, gameSubsystemT* subsystem);
 
 #endif // subsystem_h_

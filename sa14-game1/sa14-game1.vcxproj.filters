@@ -78,13 +78,19 @@
     <ClCompile Include="source\engine\entity.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\subsystems\rendersubsystem.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\components\rendercomponent.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\entities\playerentity.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\subsystems\physicssubsystem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\subsystems\graphicssubsystem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\components\physicscomponent.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\components\graphicsomponent.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -162,22 +168,25 @@
     <ClInclude Include="source\base\time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\engine_private.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\engine\component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\engine\entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\subsystems\rendersubsystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\components\rendercomponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\entities\playerentity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\subsystems\physicssubsystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\subsystems\graphicssubsystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\components\physicscomponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\components\graphicscomponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,22 +1,27 @@
 #include "playerentity.h"
 
-#include "components/rendercomponent.h"
+#include "components/graphicscomponent.h"
+#include "components/physicscomponent.h"
 
 #include "engine/entity.h"
 
 #include "graphics/trimesh.h"
 
+static void handleInput(gameComponentT* component, float dt) {
+}
 
-
-gameEntityT* createPlayerEntity(void) {
+gameEntityT* newPlayerEntity(void) {
     gameEntityT* player_entity = newEntity();
 
-    gameComponentT* render_component = createRenderComponent();
+    // Graphics.
+    triMeshT* mesh = createBox(0.1f, 0.1f, 0.1f);
+    gameComponentT* graphics_component = newGraphicsComponent(mesh);
 
-    renderComponentDataT* render_data = render_component->data;
-    render_data->mesh = createBox(0.1f, 0.1f, 0.1f);
+    // Physics.
+    gameComponentT* physics_component = newPhysicsComponent(1.0f);
 
-    attachComponentToEntity(render_component, player_entity);
+    attachComponentToEntity(graphics_component, player_entity);
+    attachComponentToEntity(physics_component, player_entity);
 
     return (player_entity);
 }

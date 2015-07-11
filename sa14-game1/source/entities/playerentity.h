@@ -3,6 +3,6 @@
 
 #include "engine/entity.h"
 
-gameEntityT* createPlayerEntity(void);
+gameEntityT* newPlayerEntity(void);
 
 #endif // playerentity_h_

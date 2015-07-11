@@ -1,4 +1,8 @@
-#include "engine_private.h"
+#include "subsystem.h"
+
+#include "base/common.h"
+
+#include "engine/component.h"
 
 #include <stdlib.h>
 
@@ -23,5 +27,6 @@ void freeSubsystem(gameSubsystemT* subsystem) {
 }
 
 void addComponentToSubsystem(gameComponentT* component, gameSubsystemT* subsystem) {
-
+    assert(component->subsystem == NULL);
+    arrayAdd(subsystem->components, &component);
 }

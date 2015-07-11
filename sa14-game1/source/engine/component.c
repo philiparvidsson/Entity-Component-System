@@ -1,8 +1,16 @@
-#include "engine_private.h"
+/*------------------------------------------------
+ * INCLUDES
+ *----------------------------------------------*/
+
+#include "component.h"
 
 #include "base/common.h"
 
 #include <stdlib.h>
+
+/*------------------------------------------------
+ * FUNCTIONS
+ *----------------------------------------------*/
 
 gameComponentT* newComponent(const string* subsystem_name) {
     gameComponentT* component = calloc(1, sizeof(gameComponentT));

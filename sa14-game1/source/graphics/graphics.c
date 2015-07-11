@@ -37,7 +37,7 @@
 
 #define WindowStyle (~WS_MAXIMIZEBOX & WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME)
 
-#define WindowStyleEx WS_EX_LEFT
+#define WindowStyleEx (WS_EX_LEFT)
 
 /*--------------------------------------
  * Constant: DefaultFPS
