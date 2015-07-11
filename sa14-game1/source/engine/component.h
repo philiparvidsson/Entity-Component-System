@@ -22,7 +22,7 @@ struct gameComponentT {
     string* subsystem_name;
 
     void* data;
-    void (*init_fn)(gameComponentT*, gameSubsystemT*);
+    void (*init_fn)(gameComponentT*);
     void (*update_fn)(gameComponentT*, float);
     void (*cleanup_fn)(gameComponentT*);
 };

@@ -79,18 +79,19 @@ void gameMain(void) {
     timeT time = getTime();
     while (windowIsOpen()) {
         float dt = elapsedSecsSince(time);
-        time = getTime();
 
-        queryInputDevices();
-        updateSubsystems(dt);
-        updateDisplay();
-
-        // Pause if we lose focus.
+        // Pause if we lose focus. The time we pause should not be taken into
+        // account.
         while (!windowIsFocused()) {
             sleep(10);
             updateDisplay();
         }
 
+        time = getTime();
+
+        queryInputDevices();
+        updateSubsystems(dt);
+        updateDisplay();
     }
 }
 

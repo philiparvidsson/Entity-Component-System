@@ -28,5 +28,12 @@ void freeSubsystem(gameSubsystemT* subsystem) {
 
 void addComponentToSubsystem(gameComponentT* component, gameSubsystemT* subsystem) {
     assert(component->subsystem == NULL);
+    component->subsystem = subsystem;
     arrayAdd(subsystem->components, &component);
+
+    if (component->init_fn)
+        component->init_fn(component);
+
+    if (subsystem->add_component_fn)
+        subsystem->add_component_fn(subsystem, component);
 }

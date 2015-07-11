@@ -33,7 +33,7 @@ static void beginFrame(gameSubsystemT* subsystem, float dt) {
     mat4x4 proj, view;
 
     // @To-do: Camera logic should be here.
-    mat4x4_look_at(&(vec3) { 0.0f, 0.5f, 0.5f },
+    mat4x4_look_at(&(vec3) { 0.0f, 0.0f, 0.5f },
                    &(vec3) { 0.0f, 0.0f, 0.0f },
                    &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
 
@@ -52,7 +52,7 @@ gameSubsystemT* newGraphicsSubsystem(void) {
     compileVertexShader  (data->default_shader, readFile("resources/shaders/test_shader.vert"));
     compileFragmentShader(data->default_shader, readFile("resources/shaders/test_shader.frag"));
 
-    subsystem->data             = data;
+    subsystem->data = data;
     subsystem->before_update_fn = beginFrame;
 
     return (subsystem);

@@ -35,13 +35,18 @@ static void addBodyToWorld(gameSubsystemT* subsystem, gameComponentT* component)
     worldAddBody(subsystem_data->world, component_data->body);
 }
 
-static void updatePhysics(gameSubsystemT* subsystem, float dt) {
+static void stepWorld(gameSubsystemT* subsystem, float dt) {
     physicsSubsystemDataT* data = subsystem->data;
 
+    // We use data->dt to accumulate time so we always simulate exactly as much
+    // as we need to.
+
+    dt += data->dt;
     while (dt >= TimeStep) {
         worldStep(data->world, TimeStep);
         dt -= TimeStep;
     }
+    data->dt = dt;
 }
 
 gameSubsystemT* newPhysicsSubsystem(void) {
@@ -50,11 +55,9 @@ gameSubsystemT* newPhysicsSubsystem(void) {
 
     data->world = worldNew();
 
-    subsystem->data            = data;
-    subsystem->after_update_fn = updatePhysics;
-
+    subsystem->data = data;
+    subsystem->after_update_fn = stepWorld;
     subsystem->add_component_fn = addBodyToWorld;
-    //subsystem->remove_component_fn = addBodyToWorld;
 
     return (subsystem);
 }

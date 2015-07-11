@@ -34,10 +34,14 @@ static void draw(gameComponentT* component, float dt) {
     // The "Model" uniform variable is used by the vertex shader as the model
     // transform matrix.
     mat4x4 transform;
+    mat_identity(&transform);
 
+    mat4x4 transl;
     vec3 pos = bodyGetPosition(physics_data->body);
-    mat_transl_xyz(pos.x, pos.y, pos.z, &transform);
+    mat_transl_xyz(pos.x, pos.y, pos.z, &transl);
+
     mat_mul(&graphics_data->transform, &transform, &transform);
+    mat_mul(&transl, &transform, &transform);
 
     setShaderParam("Model", &transform);
 

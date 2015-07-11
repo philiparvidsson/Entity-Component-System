@@ -14,6 +14,7 @@
  *----------------------------------------------*/
 
 typedef struct {
+    float dt;
     worldT* world;
 } physicsSubsystemDataT;
 

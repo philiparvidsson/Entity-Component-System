@@ -12,6 +12,7 @@ typedef struct gameEntityT gameEntityT;
 struct gameEntityT {
     gameT* game;
     arrayT* components;
+    void* data;
 };
 
 
