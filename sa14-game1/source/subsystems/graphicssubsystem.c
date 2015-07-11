@@ -27,17 +27,17 @@ static void beginFrame(gameSubsystemT* subsystem, float dt) {
     // ...then we activate the default shader.
     useShader(data->default_shader);
 
-    // We also need to setup the shader by providing it with view and projection
-    // matrices.
+    // We also need to setup the shader by providing it with the projection and
+    // view matrices.
 
     mat4x4 proj, view;
 
     // @To-do: Camera logic should be here.
-    mat4x4_look_at(&(vec3) { 0.0f, 0.0f, 0.5f },
+    mat4x4_look_at(&(vec3) { 0.0f, 0.0f, 1.0f },
                    &(vec3) { 0.0f, 0.0f, 0.0f },
                    &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
 
-    mat4x4_perspective(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -0.01f, &proj);
+    mat4x4_perspective(-0.5f, 0.5f, -0.5f, 0.5f, -1.0f, -0.01f, &proj);
 
     setShaderParam("Proj", &proj);
     setShaderParam("View", &view);

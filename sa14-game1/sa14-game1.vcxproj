@@ -104,8 +104,9 @@
     <ClCompile Include="source\base\file_io.c" />
     <ClCompile Include="source\base\log.c" />
     <ClCompile Include="source\base\time.c" />
+    <ClCompile Include="source\components\intelligencecomponent.c" />
     <ClCompile Include="source\components\physicscomponent.c" />
-    <ClCompile Include="source\components\graphicsomponent.c" />
+    <ClCompile Include="source\components\graphicscomponent.c" />
     <ClCompile Include="source\engine\game.c" />
     <ClCompile Include="source\engine\component.c" />
     <ClCompile Include="source\engine\entity.c" />
@@ -136,6 +137,7 @@
     <ClInclude Include="source\base\file_io.h" />
     <ClInclude Include="source\base\log.h" />
     <ClInclude Include="source\base\time.h" />
+    <ClInclude Include="source\components\intelligencecomponent.h" />
     <ClInclude Include="source\components\physicscomponent.h" />
     <ClInclude Include="source\components\graphicscomponent.h" />
     <ClInclude Include="source\engine\game.h" />

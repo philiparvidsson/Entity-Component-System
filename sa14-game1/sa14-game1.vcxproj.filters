@@ -81,16 +81,19 @@
     <ClCompile Include="source\entities\playerentity.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\subsystems\physicssubsystem.c">
+    <ClCompile Include="source\components\graphicscomponent.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\subsystems\graphicssubsystem.c">
+    <ClCompile Include="source\components\intelligencecomponent.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\components\physicscomponent.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\components\graphicsomponent.c">
+    <ClCompile Include="source\subsystems\graphicssubsystem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\subsystems\physicssubsystem.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -177,16 +180,19 @@
     <ClInclude Include="source\entities\playerentity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\subsystems\physicssubsystem.h">
+    <ClInclude Include="source\components\graphicscomponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\subsystems\graphicssubsystem.h">
+    <ClInclude Include="source\components\intelligencecomponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\components\physicscomponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\components\graphicscomponent.h">
+    <ClInclude Include="source\subsystems\graphicssubsystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\subsystems\physicssubsystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

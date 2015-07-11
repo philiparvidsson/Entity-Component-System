@@ -39,7 +39,7 @@ static void stepWorld(gameSubsystemT* subsystem, float dt) {
     physicsSubsystemDataT* data = subsystem->data;
 
     // We use data->dt to accumulate time so we always simulate exactly as much
-    // as we need to.
+    // as we need to, with a fixed time step.
 
     dt += data->dt;
     while (dt >= TimeStep) {

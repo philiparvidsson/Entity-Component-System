@@ -43,7 +43,7 @@
  * Constant: DefaultFPS
  *
  * Description:
- *   The number of frames to display each second, by defaukt. This can be
+ *   The number of frames to display each second, by default. This can be
  *   configured with the setFrameRate() function.
  *------------------------------------*/
 #define DefaultFPS (60.0f)
@@ -263,14 +263,13 @@ void initGraphics(const string* title, int width, int height) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Ignore triangles that are "looking away" from the camera.
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
 
     // Enable z-buffering and make sure it's right-handed (i.e. -z is into the
     // screen).
     glEnable    (GL_DEPTH_TEST);
     glClearDepth(0.0f);
     glDepthFunc (GL_GREATER);
-    //glDepthRange(1.0f, 0.0f);
 
     setFrameRate(DefaultFPS);
 }
