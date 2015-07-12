@@ -78,9 +78,6 @@
     <ClCompile Include="source\engine\entity.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\entities\playerentity.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\components\graphicscomponent.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -94,6 +91,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\subsystems\physicssubsystem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\playerentity.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\texture.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -177,9 +180,6 @@
     <ClInclude Include="source\engine\entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\entities\playerentity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\components\graphicscomponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -193,6 +193,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\subsystems\physicssubsystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\entities\playerentity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -209,13 +215,19 @@
     <None Include="bin\glew32.dll" />
     <None Include="resources\shaders\text.vert" />
     <None Include="resources\shaders\text.frag" />
-    <None Include="resources\shaders\postfx.vert" />
     <None Include="resources\shaders\postfx.frag" />
+    <None Include="resources\shaders\splashscreen.frag" />
+    <None Include="resources\shaders\discard_z.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\sector_034.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\images\splash1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -1,3 +1,14 @@
+/*------------------------------------------------------------------------------
+ * File: discard_z.vert
+ * Created: June 21, 2015
+ * Last changed: June 21, 2015
+ *
+ * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ *
+ * Description:
+ *   A shader that discards the z-coordinate.
+ *----------------------------------------------------------------------------*/
+
 #version 430
 
 /*------------------------------------------------

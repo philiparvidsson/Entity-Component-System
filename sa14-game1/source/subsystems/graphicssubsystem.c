@@ -37,7 +37,8 @@ static void beginFrame(gameSubsystemT* subsystem, float dt) {
                    &(vec3) { 0.0f, 0.0f, 0.0f },
                    &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
 
-    mat4x4_perspective(-0.5f, 0.5f, -0.5f, 0.5f, -1.0f, -0.01f, &proj);
+    float r = (float)screenWidth() / screenHeight();
+    mat4x4_perspective(-0.5f * r, 0.5f * r, -0.5f, 0.5f, -1.0f, -0.01f, &proj);
 
     setShaderParam("Proj", &proj);
     setShaderParam("View", &view);

@@ -12,7 +12,6 @@
 static void handleInput(gameComponentT* component, float dt) {
     playerEntityDataT* player_data = component->entity->data;
 
-
     if (keyIsPressed(ArrowLeft))  player_data->angle += 1.5f * dt;
     if (keyIsPressed(ArrowRight)) player_data->angle -= 1.5f * dt;
 

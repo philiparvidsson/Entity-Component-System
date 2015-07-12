@@ -113,6 +113,7 @@
     <ClCompile Include="source\engine\subsystem.c" />
     <ClCompile Include="source\entities\playerentity.c" />
     <ClCompile Include="source\graphics\graphics.c" />
+    <ClCompile Include="source\graphics\texture.c" />
     <ClCompile Include="source\graphics\trimesh.c" />
     <ClCompile Include="source\graphics\shader.c" />
     <ClCompile Include="source\graphics\text.c" />
@@ -146,6 +147,7 @@
     <ClInclude Include="source\engine\subsystem.h" />
     <ClInclude Include="source\entities\playerentity.h" />
     <ClInclude Include="source\graphics\graphics.h" />
+    <ClInclude Include="source\graphics\texture.h" />
     <ClInclude Include="source\graphics\trimesh.h" />
     <ClInclude Include="source\graphics\shader.h" />
     <ClInclude Include="source\graphics\text.h" />
@@ -165,7 +167,8 @@
     <None Include="bin\glew32.dll" />
     <None Include="build\postbuild.bat" />
     <None Include="resources\shaders\postfx.frag" />
-    <None Include="resources\shaders\postfx.vert" />
+    <None Include="resources\shaders\discard_z.vert" />
+    <None Include="resources\shaders\splashscreen.frag" />
     <None Include="resources\shaders\test_shader.frag" />
     <None Include="resources\shaders\test_shader.vert" />
     <None Include="resources\shaders\text.frag" />
@@ -176,6 +179,9 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\fonts\sector_034.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\images\splash1.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
