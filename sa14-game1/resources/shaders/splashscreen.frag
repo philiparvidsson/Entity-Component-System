@@ -1,3 +1,15 @@
+/*------------------------------------------------------------------------------
+ * File: splashscreen.vert
+ * Created: July 14, 2015
+ * Last changed: July 14, 2015
+ *
+ * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ *
+ * Description:
+ *   Provides a splash screen shader that fades between white and a specified
+ *   splash screen texture.
+ *----------------------------------------------------------------------------*/
+
 #version 430
 
 /*------------------------------------------------
@@ -25,8 +37,8 @@ out vec4 frag_color;
 
 void main() {
     float fade   = clamp(Fade, 0.0, 1.0);
-    vec4  color0 = vec4(0.0, 0.0, 0.0, 1.0);
-    vec4  color1 = texture(SplashTex, uv);//vec4(1.0, 1.0, 1.0, 1.0);
+    vec4  color0 = vec4(1.0, 1.0, 1.0, 1.0);
+    vec4  color1 = texture(SplashTex, uv);
 
     frag_color = color0*fade + color1*(1.0-fade);
 }

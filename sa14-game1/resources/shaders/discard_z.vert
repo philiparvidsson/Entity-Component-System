@@ -6,7 +6,7 @@
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   A shader that discards the z-coordinate.
+ *   A shader that discards the z-coordinate and does nothing else.
  *----------------------------------------------------------------------------*/
 
 #version 430

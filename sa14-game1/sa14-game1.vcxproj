@@ -146,6 +146,7 @@
     <ClInclude Include="source\engine\entity.h" />
     <ClInclude Include="source\engine\subsystem.h" />
     <ClInclude Include="source\entities\playerentity.h" />
+    <ClInclude Include="source\graphics\bmp.h" />
     <ClInclude Include="source\graphics\graphics.h" />
     <ClInclude Include="source\graphics\texture.h" />
     <ClInclude Include="source\graphics\trimesh.h" />

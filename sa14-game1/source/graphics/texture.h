@@ -10,5 +10,7 @@ textureT* useTexture(textureT* texture, int index);
 textureT* createTextureFromScreen(void);
 bool getTextureRepeat(textureT* texture);
 void setTextureRepeat(textureT* texture, bool value);
+textureT* loadTextureFromFile(const void* file_name);
+textureT* createWhiteTexture(void);
 
 #endif // texture_h_

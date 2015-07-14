@@ -5,6 +5,7 @@
 #include "graphicssubsystem.h"
 
 #include "base/common.h"
+#include "base/file_io.h"
 
 #include "engine/game.h"
 #include "engine/subsystem.h"
@@ -24,10 +25,11 @@ static void beginFrame(gameSubsystemT* subsystem, float dt) {
     graphicsSubsystemDataT* data = subsystem->data;
 
     // We begin by clearing the frame buffer to some color...
-    clearDisplay(0.0f, 0.0f, 0.4f);
+    clearDisplay(1.0f, 1.0f, 1.0f);
 
-    // ...then we activate the default shader.
-    useShader(data->default_shader);
+    // ...then we activate the default shader and texture.
+    useShader (data->default_shader);
+    useTexture(data->default_texture, 0);
 
     // We also need to setup the shader by providing it with the projection and
     // view matrices.
@@ -39,8 +41,8 @@ static void beginFrame(gameSubsystemT* subsystem, float dt) {
                    &(vec3) { 0.0f, 0.0f, 0.0f },
                    &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
 
-    float r = (float)screenWidth() / screenHeight();
-    mat4x4_perspective(-0.5f * r, 0.5f * r, -0.5f, 0.5f, -1.0f, -0.01f, &proj);
+    float r = data->aspect_ratio;
+    mat4x4_perspective(-0.5f*r, 0.5f*r, -0.5f, 0.5f, -1.0f, -0.01f, &proj);
 
     setShaderParam("Proj", &proj);
     setShaderParam("View", &view);
@@ -50,10 +52,18 @@ gameSubsystemT* newGraphicsSubsystem(void) {
     gameSubsystemT* subsystem = newSubsystem("graphics");
     graphicsSubsystemDataT* data = calloc(1, sizeof(graphicsSubsystemDataT));
 
-    data->default_shader = createShader();
+    data->aspect_ratio    = screenWidth() / (float)screenHeight();
+    data->default_shader  = createShader();
+    data->default_texture = createWhiteTexture();
 
-    compileVertexShader  (data->default_shader, readFile("resources/shaders/test_shader.vert"));
-    compileFragmentShader(data->default_shader, readFile("resources/shaders/test_shader.frag"));
+    string* vert_src = readFile("resources/shaders/test_shader.vert");
+    string* frag_src = readFile("resources/shaders/test_shader.frag");
+
+    compileVertexShader  (data->default_shader, vert_src);
+    compileFragmentShader(data->default_shader, frag_src);
+
+    free(vert_src);
+    free(frag_src);
 
     subsystem->data = data;
     subsystem->before_update_fn = beginFrame;

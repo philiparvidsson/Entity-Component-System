@@ -115,6 +115,7 @@ typedef char stringT;
 #include "base/debug.h"
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 /*------------------------------------------------
  * FUNCTIONS

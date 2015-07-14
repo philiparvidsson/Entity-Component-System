@@ -10,7 +10,7 @@ layout(location = 2) in vec2 UV;
 
 layout(location = 0) out vec4 color;
 
-layout(binding = 0) uniform sampler2D snabel;
+layout(binding = 0) uniform sampler2D Texture;
 
 void main() {
     vec3 light_pos = vec3(-0.05, 1.0, 1.85);
@@ -34,5 +34,5 @@ void main() {
     lol.y *= (0.9+0.1*sin(uv.x*7.0));
 
     float f = 1.0;//cos((lol.y*uv.x) * 80.0) * 0.3 + 0.7;
-    color = vec4(vec3(f, 1.0, 1.0) * fq, 1.0);
+    color = vec4(vec3(f, 1.0, 1.0) * fq, 1.0) * texture(Texture, UV);
 }

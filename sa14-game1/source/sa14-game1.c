@@ -42,7 +42,7 @@ static void printIntroMessage(void) {
     printf("Some time in the not too distant future, this program will be a\n"
            "really cool game instead of this crap that does nothing...\n\n");
 
-    printf("Full source available at github.com/philiparvidsson\n\n");
+    printf("Full source available @ github.com/philiparvidsson\n\n");
 }
 
 
@@ -85,9 +85,9 @@ static void showSplashScreen(textureT* splash_tex, float secs) {
         // 100% texture color and no fade.
         float fade = 1.0f;
 
-        // Fade in the first 0.5 seconds...
-        if (elapsed < 0.5f)
-            fade = sin(elapsed*3.141592653);
+        // Fade in the first second...
+        if (elapsed < 1.0f)
+            fade = sin(0.5f*elapsed*3.141592653);
 
         // ...and fade out the last 0.5 seconds.
         float time_left = secs - elapsed;
@@ -124,7 +124,7 @@ int main(void) {
 
     initGame("Asteroids", 1280, 720);
 
-    textureT* tex = loadTextureFileBMP("resources/images/splash1.bmp");
+    textureT* tex = loadTextureFromFile("resources/images/splash1.bmp");
     showSplashScreen(tex, 3.0f);
     freeTexture(tex);
 

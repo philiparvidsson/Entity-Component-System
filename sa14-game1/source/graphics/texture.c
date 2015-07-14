@@ -3,14 +3,14 @@
 #include "base/common.h"
 #include "base/file_io.h"
 
+#include "graphics/bmp.h"
 #include "graphics/graphics.h"
 
 #include <GL/glew.h>
-#include <windows.h>
-
 #include <stdlib.h>
 
-#define MaxTextures (32)
+// OpenGL guarantees at least 16 which is also probably more than enough.
+#define MaxTextures (16)
 
 struct textureT {
     GLuint id;
@@ -49,33 +49,60 @@ textureT* useTexture(textureT* texture, int index) {
     return (old_tex);
 }
 
-textureT* loadTextureBMP(const void* bmp_data) {
-    textureT*   tex     = createTexture();
-    BITMAPINFO* bminfo  = bmp_data;
-    textureT*   old_tex = useTexture(tex, 0);
+textureT* createTextureFromBMP(const void* bmp_data) {
+    textureT*      texture     = createTexture();
+    bitmapHeaderT* bitmap      = bmp_data;
+    textureT*      old_texture = useTexture(texture, 0);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, bminfo->bmiHeader.biWidth, bminfo->bmiHeader.biHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, bminfo->bmiColors);
-    glGenerateMipmap(tex->id);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, bitmap->width, bitmap->height, 0, GL_BGR, GL_UNSIGNED_BYTE, bitmap->pixels);
+    glGenerateMipmap(texture->id);
 
-    useTexture(old_tex, 0);
+    useTexture(old_texture, 0);
 
-    return (tex);
+    return (texture);
 }
 
-textureT* loadTextureFileBMP(const void* file_name) {
-    void* bmp_data = readFile(file_name);
-    textureT* tex = loadTextureBMP(((char*)bmp_data)+14);
-    free(bmp_data);
-    return (tex);
+textureT* loadTextureFromFile(const void* file_name) {
+    textureT* texture = NULL;
+
+    char* data = readFile(file_name);
+
+    if (data[0]=='B' && data[1]=='M') {
+        // Bitmap file. The BMP file header is 14 bytes and not really important
+        // for loading it into a texture, so we skip past it.
+        texture = createTextureFromBMP(data+14);
+    }
+
+    free(data);
+
+    if (!texture)
+        error("Could not load texture");
+
+    return (texture);
 }
 
 textureT* createTextureFromScreen(void) {
-    textureT* tex = createTexture();
-    useTexture(tex, 0);
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0,
-                     screenWidth(), screenHeight(), 0);
+    textureT* texture     = createTexture();
+    textureT* old_texture = useTexture(texture, 0);
 
-    return (tex);
+    int width  = screenWidth(), height = screenHeight();
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, width, height, 0);
+
+    useTexture(old_texture, 0);
+
+    return (texture);
+}
+
+textureT* createWhiteTexture(void) {
+    // Red, green and blue color components. All set to 1.0 to get white color.
+    float data[] = { 1.0f, 1.0f, 1.0f };
+
+    textureT* texture     = createTexture();
+    textureT* old_texture = useTexture(texture, 0);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, 1, 1, 0, GL_RGB, GL_FLOAT, data);
+
+    useTexture(old_texture, 0);
 }
 
 bool getTextureRepeat(textureT* texture) {

@@ -43,6 +43,7 @@ static void draw(gameComponentT* component, float dt) {
     mat_mul(&graphics_data->transform, &transform, &transform);
     mat_mul(&transl, &transform, &transform);
 
+    // @To-do: Provide a  normal matrix here!!
     setShaderParam("Model", &transform);
 
     drawMesh(graphics_data->mesh);
