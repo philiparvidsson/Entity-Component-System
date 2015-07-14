@@ -55,6 +55,10 @@ gameSubsystemT* newPhysicsSubsystem(void) {
 
     data->world = worldNew();
 
+    // The physics subsystem is a bit different because all components are
+    // actually updated in the after_update_fn, not in each component's update
+    // function. This allows us to do collision etc more efficiently.
+
     subsystem->data = data;
     subsystem->after_update_fn = stepWorld;
     subsystem->add_component_fn = addBodyToWorld;

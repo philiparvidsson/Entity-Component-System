@@ -4,6 +4,8 @@
 
 #include "graphicssubsystem.h"
 
+#include "base/common.h"
+
 #include "engine/game.h"
 #include "engine/subsystem.h"
 

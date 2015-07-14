@@ -24,8 +24,9 @@ out vec4 frag_color;
  *----------------------------------------------*/
 
 void main() {
-    vec4 color0 = vec4(0.0, 0.0, 0.0, 1.0);
-    vec4 color1 = vec4(1.0, 1.0, 1.0, 1.0);
+    float fade   = clamp(Fade, 0.0, 1.0);
+    vec4  color0 = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4  color1 = texture(SplashTex, uv);//vec4(1.0, 1.0, 1.0, 1.0);
 
-    frag_color = color0*Fade + color1*(1.0-Fade);
+    frag_color = color0*fade + color1*(1.0-fade);
 }

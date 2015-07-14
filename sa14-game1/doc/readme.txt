@@ -1,31 +1,16 @@
 
-RIKTLINJER.
+GUIDELINES.
 
-  1. Inga rader får passera kolumn 80. Dvs, max 80 tecken per rad.
+  1. No lines may contain more than 80 characters.
 
-  2. Indentering sker med fyra mellanslag. Inga tabs. Konfigurera detta under
-     inställningar.
+  2. Indentation is done with four spaces. No tab characters.
 
-  3. Namngivning:
-       makroNamn
-       KonstantNamn
-       typNamnT
-       variabel_namn
-       funktionsNamn()
-       fil_namn.c
+  4. Naming:
+       macroName
+       ConstantName
+       typeNameT
+       variable_name
+       functionName()
+       file_name.c
 
 ------------------------------------------------------------
-
-pseudokod:
-
-    while true
-        update user inputs
-            här läser vi in knapptryck osv
-        handle inputs
-            här hanterar vi knapptryck. tex esc för att avsluta spelet osv
-        update game objects
-            här uppdaterar vi alla spelobjekt.. flyttar rymdskeppet framåt
-            (beroende på user inputs) osv..flyttar raketer osv framåt
-        render everything
-            här ritar vi upp allting på skärmen
-    loop

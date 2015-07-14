@@ -58,7 +58,7 @@ static void printIntroMessage(void) {
  * Usage:
  *   showSplashScreen(my_tex, 3.0f);
  *------------------------------------*/
-static void showSplashScreen(textureT* tex, float secs) {
+static void showSplashScreen(textureT* splash_tex, float secs) {
     string* vert_src = readFile("resources/shaders/discard_z.vert");
     string* frag_src = readFile("resources/shaders/splashscreen.frag");
 
@@ -69,35 +69,46 @@ static void showSplashScreen(textureT* tex, float secs) {
     compileFragmentShader(splash_shader, frag_src);
 
     useShader(splash_shader);
+    useTexture(splash_tex, 0);
 
     free(vert_src);
     free(frag_src);
 
     timeT time = getTime();
-    while (true) {
+    while (windowIsOpen()) {
         float elapsed = elapsedSecsSince(time);
 
         if (elapsed >= secs)
             break;
 
-        float fade = 0.0f;
+        // Default is fade=1.0, which gives a final value of 0.0, which is
+        // 100% texture color and no fade.
+        float fade = 1.0f;
 
-        if (elapsed < 1.0f)
-            fade = 1.0f - sin(0.5f*elapsed*3.141592653);
+        // Fade in the first 0.5 seconds...
+        if (elapsed < 0.5f)
+            fade = sin(elapsed*3.141592653);
 
+        // ...and fade out the last 0.5 seconds.
         float time_left = secs - elapsed;
-        if (time_left < 1.0f)
-            fade = 1.0f - sin(0.5f*time_left*3.141592653);
+        if (time_left < 0.5f)
+            fade = sin(time_left*3.141592653);
 
+        // We multiply the fade value by itself to get sin(x)^2.
+        fade *= fade;
+
+        // Invert it to get the correct value.
+        fade = 1.0f - fade;
+
+        clearDisplay(1.0f, 0.0f, 1.0f);
         setShaderParam("Fade", &fade);
-
-        clearDisplay(1.0f, 1.0f, 0.5f);
         drawMesh(quad);
         updateDisplay();
     }
 
     freeMesh(quad);
 
+    useTexture(NULL, 0);
     useShader(NULL);
     deleteShader(splash_shader);
 }
@@ -111,9 +122,11 @@ static void showSplashScreen(textureT* tex, float secs) {
 int main(void) {
     printIntroMessage();
 
-    initGame("Game Window L0L", 1280, 720);
+    initGame("Asteroids", 1280, 720);
 
-    showSplashScreen("hej.bmp", 3.0f);
+    textureT* tex = loadTextureFileBMP("resources/images/splash1.bmp");
+    showSplashScreen(tex, 3.0f);
+    freeTexture(tex);
 
     addSubsystemToGame(newPhysicsSubsystem());
     addSubsystemToGame(newGraphicsSubsystem());
