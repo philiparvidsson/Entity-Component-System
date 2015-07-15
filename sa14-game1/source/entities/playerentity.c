@@ -2,9 +2,7 @@
 
 #include "components/graphicscomponent.h"
 #include "components/physicscomponent.h"
-
 #include "engine/entity.h"
-
 #include "graphics/trimesh.h"
 
 #include "math/matrix.h"

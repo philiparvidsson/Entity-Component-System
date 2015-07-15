@@ -2,9 +2,7 @@
 #define body_h_
 
 #include "base/common.h"
-
 #include "math/vector.h"
-
 #include "physics/physics.h"
 
 typedef enum {

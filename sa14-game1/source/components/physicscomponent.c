@@ -5,9 +5,7 @@
 #include "physicscomponent.h"
 
 #include "base/common.h"
-
 #include "engine/component.h"
-
 #include "physics/physics.h"
 
 #include <stdlib.h>

@@ -6,9 +6,7 @@
 
 #include "base/common.h"
 #include "base/debug.h"
-
 #include "engine/game.h"
-
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
 #include "graphics/trimesh.h"

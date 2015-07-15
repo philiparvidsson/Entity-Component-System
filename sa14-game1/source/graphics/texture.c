@@ -6,7 +6,6 @@
 
 #include "base/common.h"
 #include "base/file_io.h"
-
 #include "graphics/bmp.h"
 #include "graphics/graphics.h"
 

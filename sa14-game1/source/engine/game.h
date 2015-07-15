@@ -5,15 +5,13 @@
  * INCLUDES
  *----------------------------------------------*/
 
-#include "base/common.h"
-#include "base/pak.h"
-
 typedef struct gameT gameT;
 
+#include "base/common.h"
+#include "base/pak.h"
 #include "engine/component.h"
 #include "engine/entity.h"
 #include "engine/subsystem.h"
-
 #include "input/keyboard.h"
 #include "input/mouse.h"
 

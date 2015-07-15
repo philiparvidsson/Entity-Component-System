@@ -2,7 +2,6 @@
 #include "body.h"
 
 #include "base/common.h"
-
 #include "math/vector.h"
 
 #include <stdlib.h>

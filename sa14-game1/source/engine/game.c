@@ -8,10 +8,8 @@
 #include "base/debug.h"
 #include "base/pak.h"
 #include "base/time.h"
-
 #include "graphics/graphics.h"
 #include "graphics/text.h"
-
 #include "input/keyboard.h"
 #include "input/mouse.h"
 

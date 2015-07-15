@@ -19,7 +19,6 @@
  *----------------------------------------------*/
 
 #include "base/common.h"
-
 #include "math/vector.h"
 
 #include <math.h>

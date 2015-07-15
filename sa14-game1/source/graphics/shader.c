@@ -7,7 +7,6 @@
 #include "base/array.h"
 #include "base/common.h"
 #include "base/debug.h"
-
 #include "graphics/graphics.h"
 #include "graphics/texture.h"
 #include "graphics/trimesh.h"

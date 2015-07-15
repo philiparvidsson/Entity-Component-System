@@ -3,7 +3,6 @@
 #include "base/array.h"
 #include "base/common.h"
 #include "base/debug.h"
-
 #include "engine/component.h"
 
 #include <stdlib.h>

@@ -1,11 +1,10 @@
 #ifndef gameentity_h_
 #define gameentity_h_
 
-#include "base/array.h"
-#include "base/common.h"
-
 typedef struct gameEntityT gameEntityT;
 
+#include "base/array.h"
+#include "base/common.h"
 #include "engine/component.h"
 #include "engine/game.h"
 

@@ -5,10 +5,9 @@
  * INCLUDES
  *----------------------------------------------*/
 
-#include "base/common.h"
-
 typedef struct gameComponentT gameComponentT;
 
+#include "base/common.h"
 #include "engine/entity.h"
 #include "engine/subsystem.h"
 
