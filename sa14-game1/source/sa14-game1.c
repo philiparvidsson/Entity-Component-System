@@ -16,9 +16,7 @@
 #include "base/common.h"
 #include "base/pak.h"
 #include "base/time.h"
-
 #include "engine/game.h"
-
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
 #include "graphics/texture.h"
@@ -129,6 +127,7 @@ int main(void) {
     addGamePak(pakOpenArchive("pak/images.pak", PakPassword));
     addGamePak(pakOpenArchive("pak/shaders.pak", PakPassword));
 
+#ifndef _DEBUG
     char* bmp_file = readGamePakFile("splash1.bmp");
     // The BMP file header is 14 bytes, so we skip past it. It's not needed for
     // loading the texture anyway.
@@ -136,6 +135,7 @@ int main(void) {
     free(bmp_file);
     showSplashScreen(splash_texture, 3.0f);
     freeTexture(splash_texture);
+#endif // _DEBUG
 
     addSubsystemToGame(newPhysicsSubsystem());
     addSubsystemToGame(newGraphicsSubsystem());

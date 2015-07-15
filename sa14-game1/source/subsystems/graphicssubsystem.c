@@ -22,12 +22,13 @@
 
 typedef struct {
     float aspect_ratio;
-    shaderT* default_shader;
+
+    shaderT*  default_shader;
     textureT* default_texture;
 
     shaderT* noise_shader;
-    float noise_intensity;
-    int noise_seed;
+    float    noise_intensity;
+    int      noise_seed;
 } graphicsDataT;
 
 /*------------------------------------------------
@@ -71,7 +72,7 @@ static void beginFrame(gameSubsystemT* subsystem, float dt) {
     graphicsDataT* gfx = subsystem->data;
 
     // We begin by clearing the frame buffer to some color...
-    clearDisplay(1.0f, 1.0f, 1.0f);
+    clearDisplay(0.0f, 0.0f, 0.5f);
 
     // ...then we activate the default shader and texture.
     useShader (gfx->default_shader);

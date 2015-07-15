@@ -4,9 +4,10 @@
 #include "math/vector.h"
 
 typedef struct {
+    float angle;
     float scale;
     vec3 rot_axis_1;
     vec3 rot_axis_2;
-} asteroidT;
+} asteroidEntityDataT;
 
 #endif // asteroidentity_h_
