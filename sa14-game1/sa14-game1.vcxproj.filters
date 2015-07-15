@@ -99,6 +99,9 @@
     <ClCompile Include="source\graphics\texture.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\base\pak.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -204,16 +207,13 @@
     <ClInclude Include="source\graphics\bmp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\base\pak.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="build\postbuild.bat">
       <Filter>Source Files</Filter>
-    </None>
-    <None Include="resources\shaders\test_shader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="resources\shaders\test_shader.vert">
-      <Filter>Shader Files</Filter>
     </None>
     <None Include="bin\glew32.dll" />
     <None Include="resources\shaders\text.vert" />
@@ -221,6 +221,14 @@
     <None Include="resources\shaders\postfx.frag" />
     <None Include="resources\shaders\splashscreen.frag" />
     <None Include="resources\shaders\discard_z.vert" />
+    <None Include="resources\shaders\noise.frag" />
+    <None Include="resources\shaders\default.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="resources\shaders\default.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="build\pak-tool.exe" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />

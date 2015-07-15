@@ -117,10 +117,13 @@ typedef char stringT;
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include <wchar.h>
+
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
 void sleep(int millisecs);
+wchar_t* wstrdup(const string* str);
 
 #endif // common_h_

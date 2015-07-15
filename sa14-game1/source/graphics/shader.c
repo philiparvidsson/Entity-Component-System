@@ -130,39 +130,43 @@ void setShaderParam(const string* name, const void* value) {
     if (!active_shader)
         error("No shader in use");
 
-    GLuint index;
+    GLuint index = (-1);
     glGetUniformIndices(active_shader->id, 1, &name, &index);
+
+    assert((int)index >= 0);
 
     GLint type = 0;
     glGetActiveUniformsiv(active_shader->id, 1, &index, GL_UNIFORM_TYPE, &type);
 
     GLint loc = glGetUniformLocation(active_shader->id, name);
     switch (type) {
-    case GL_INT       : glUniform1i       (loc,  *(GLint  *)value); break;
-    case GL_FLOAT     : glUniform1f       (loc,  *(GLfloat*)value); break;
-    case GL_FLOAT_VEC2: glUniform2fv      (loc, 1,          value); break;
-    case GL_FLOAT_VEC3: glUniform3fv      (loc, 1,          value); break;
-    case GL_FLOAT_VEC4: glUniform4fv      (loc, 1,          value); break;
-    case GL_FLOAT_MAT2: glUniformMatrix2fv(loc, 1, GL_TRUE, value); break;
-    case GL_FLOAT_MAT3: glUniformMatrix3fv(loc, 1, GL_TRUE, value); break;
-    case GL_FLOAT_MAT4: glUniformMatrix4fv(loc, 1, GL_TRUE, value); break;
-    default           : error("Unknown uniform type specified");
+    case GL_INT          : glUniform1i       (loc,  *(GLint  *)value); break;
+    case GL_UNSIGNED_INT : glUniform1ui      (loc,  *(GLuint *)value); break;
+    case GL_FLOAT        : glUniform1f       (loc,  *(GLfloat*)value); break;
+    case GL_FLOAT_VEC2   : glUniform2fv      (loc, 1,          value); break;
+    case GL_FLOAT_VEC3   : glUniform3fv      (loc, 1,          value); break;
+    case GL_FLOAT_VEC4   : glUniform4fv      (loc, 1,          value); break;
+    case GL_FLOAT_MAT2   : glUniformMatrix2fv(loc, 1, GL_TRUE, value); break;
+    case GL_FLOAT_MAT3   : glUniformMatrix3fv(loc, 1, GL_TRUE, value); break;
+    case GL_FLOAT_MAT4   : glUniformMatrix4fv(loc, 1, GL_TRUE, value); break;
+    default              : error("Unknown uniform type specified");
     }
 }
 
-void shaderPostProcess(const shaderT* shader) {
-    textureT* tex  = createTextureFromScreen();
-    triMeshT* quad = createQuad(2.0f, 2.0f);
+void shaderPostProcess(void) {
+    if (!active_shader)
+        error("No shader in use");
+
+    textureT* texture = createTextureFromScreen();
+    triMeshT* quad    = createQuad(2.0f, 2.0f);
 
     clearDisplay(1.0f, 0.0f, 1.0f);
 
-    useTexture(tex, 0);
+    useTexture(texture, 0);
 
-    shaderT* old_shader = useShader(shader);
     drawMesh(quad);
-    useShader(old_shader);
 
     freeMesh(quad);
     useTexture(NULL, 0);
-    freeTexture(tex);
+    freeTexture(texture);
 }

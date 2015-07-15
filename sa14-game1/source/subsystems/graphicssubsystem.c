@@ -5,7 +5,6 @@
 #include "graphicssubsystem.h"
 
 #include "base/common.h"
-#include "base/file_io.h"
 
 #include "engine/game.h"
 #include "engine/subsystem.h"
@@ -18,8 +17,26 @@
 #include <stdlib.h>
 
 /*------------------------------------------------
+ * GLOBALS
+ *----------------------------------------------*/
+
+static shaderT* noise_shader = NULL;
+
+/*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
+
+static void initPostFX(void) {
+    string* vert_src = readGamePakFile("shaders/discard_z.vert");
+    string* frag_src = readGamePakFile("shaders/noise.frag");
+
+    noise_shader = createShader();
+    compileVertexShader  (noise_shader, vert_src);
+    compileFragmentShader(noise_shader, frag_src);
+
+    free(vert_src);
+    free(frag_src);
+}
 
 static void beginFrame(gameSubsystemT* subsystem, float dt) {
     graphicsSubsystemDataT* data = subsystem->data;
@@ -48,6 +65,20 @@ static void beginFrame(gameSubsystemT* subsystem, float dt) {
     setShaderParam("View", &view);
 }
 
+static void applyPostFX(gameSubsystemT* subsystem, float dt) {
+    // Noise -------------------------------------
+
+    static float noise_intensity = 0.07f;
+    static int   noise_seed      = 0; noise_seed++;
+
+    useShader(noise_shader);
+    setShaderParam("Intensity", &noise_intensity);
+    setShaderParam("Seed"     , &noise_seed);
+    shaderPostProcess();
+
+    //--------------------------------------------
+}
+
 gameSubsystemT* newGraphicsSubsystem(void) {
     gameSubsystemT* subsystem = newSubsystem("graphics");
     graphicsSubsystemDataT* data = calloc(1, sizeof(graphicsSubsystemDataT));
@@ -56,8 +87,8 @@ gameSubsystemT* newGraphicsSubsystem(void) {
     data->default_shader  = createShader();
     data->default_texture = createWhiteTexture();
 
-    string* vert_src = readFile("resources/shaders/test_shader.vert");
-    string* frag_src = readFile("resources/shaders/test_shader.frag");
+    string* vert_src = readGamePakFile("shaders/default.vert");
+    string* frag_src = readGamePakFile("shaders/default.frag");
 
     compileVertexShader  (data->default_shader, vert_src);
     compileFragmentShader(data->default_shader, frag_src);
@@ -65,8 +96,11 @@ gameSubsystemT* newGraphicsSubsystem(void) {
     free(vert_src);
     free(frag_src);
 
+    initPostFX();
+
     subsystem->data = data;
     subsystem->before_update_fn = beginFrame;
+    subsystem->after_update_fn = applyPostFX;
 
     return (subsystem);
 }

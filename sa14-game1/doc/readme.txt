@@ -37,4 +37,10 @@ ARCHITECTURE.
      everything on my own. This obviously adds a lot of work, but also a lot of
      learning opportunities and experiences.
 
+  BUGS.
+
+    Please report any bugs to philip@philiparvidsson.com.
+
 ------------------------------------------------------------
+
+    - Philip Arvidsson, University of Borås

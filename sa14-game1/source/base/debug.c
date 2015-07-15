@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: debug.c
  * Created: June 8, 2015
- * Last changed: June 20, 2015
+ * Last changed: July 15, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -40,7 +40,7 @@ static void printLastErrorGL(void) {
     printf("\nglGetError() reports: %d", error);
 
     error = glGetError();
-    while (error != GL_NO_ERROR) {
+    while (error != GL_NO_ERROR && error != GL_INVALID_OPERATION) {
         printf(", %d", error);
         error = glGetError();
     }

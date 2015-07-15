@@ -6,6 +6,7 @@
  *----------------------------------------------*/
 
 #include "base/common.h"
+#include "base/pak.h"
 
 typedef struct gameT gameT;
 
@@ -16,10 +17,7 @@ typedef struct gameT gameT;
 #include "input/keyboard.h"
 #include "input/mouse.h"
 
-struct gameT {
-    arrayT* entities;
-    arrayT* subsystems;
-};
+
 
 
 /*------------------------------------------------
@@ -33,5 +31,7 @@ void gameMain(void);
 
 void addSubsystemToGame(gameSubsystemT* subsystem);
 //void addEntityToGame(gameEntityT* entity);
+void addGamePak(pakArchiveT* pak);
+char* readGamePakFile(const string* file_name);
 
 #endif // game_h_

@@ -7,6 +7,8 @@
 #include "base/common.h"
 #include "base/debug.h"
 
+#include "engine/game.h"
+
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
 #include "graphics/trimesh.h"
@@ -35,24 +37,17 @@ shaderT* text_shader = NULL;
 static void initTextShader(void) {
     text_shader = createShader();
 
-    string *vs_src = readFile("resources/shaders/text.vert");
-    string *fs_src = readFile("resources/shaders/text.frag");
+    string *vert_src = readGamePakFile("/shaders/text.vert");
+    string *frag_src = readGamePakFile("/shaders/text.frag");
 
-    if (!vs_src || !fs_src)
+    if (!vert_src || !frag_src)
         error("Could not load text shader");
 
-    compileVertexShader(text_shader, vs_src);
-    compileFragmentShader(text_shader, fs_src);
+    compileVertexShader(text_shader, vert_src);
+    compileFragmentShader(text_shader, frag_src);
 
-    free(vs_src);
-    free(fs_src);
-}
-
-static string *strToWide(const string* str) {
-    size_t len = mbstowcs(NULL, str, 0) + 1;
-    wchar_t *wstr = malloc(sizeof(wchar_t)*len);
-    mbstowcs(wstr, str, len);
-    return wstr;
+    free(vert_src);
+    free(frag_src);
 }
 
 void setTextFont(const string* name, int size) {
@@ -63,11 +58,11 @@ void setTextFont(const string* name, int size) {
 void drawText(const string* text, float x, float y) {
     //checkGraphicsInited();
 
-    text = strToWide(text);
+    text = wstrdup(text);
 
     HDC hdc = CreateCompatibleDC(0);
 
-    string *font_face = strToWide(font_name);
+    string *font_face = wstrdup(font_name);
     int font_height = -MulDiv(font_size, GetDeviceCaps(hdc, LOGPIXELSY), 72);
     HFONT hfont = CreateFontW(font_height, 0, 0, 0, FW_NORMAL, FALSE, FALSE,
                               FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
@@ -158,7 +153,7 @@ void drawText(const string* text, float x, float y) {
 }
 
 void loadFontFromFile(const string* file_name) {
-    string *s = strToWide(file_name);
+    string *s = wstrdup(file_name);
     assert(AddFontResourceExW(s, FR_PRIVATE, NULL) > 0);
     free(s);
 }

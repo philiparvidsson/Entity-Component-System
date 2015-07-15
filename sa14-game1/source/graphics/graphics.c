@@ -77,20 +77,11 @@ typedef struct windowT {
  * GLOBALS
  *----------------------------------------------*/
 
-windowT* window = NULL;
+static windowT* window = NULL;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
-
-static string *createWideString(const string* str) {
-    size_t  len   = mbstowcs(NULL, str, 0)+1;
-    wchar_t *wstr = malloc(sizeof(wchar_t) * len);
-
-    mbstowcs(wstr, str, len);
-
-    return (wstr);
-}
 
 /*--------------------------------------
  * Function: WindowProc()
@@ -152,7 +143,7 @@ static void createWindow(const string* title, int width, int height) {
 
     window = malloc(sizeof(windowT));
 
-    wchar_t *window_name = createWideString(title);
+    wchar_t *window_name = wstrdup(title);
 
     window->hwnd = CreateWindowExW(WindowStyleEx,
                                    ClassName,
@@ -328,7 +319,7 @@ void clearDisplay(float r, float g, float b) {
 void updateDisplay(void) {
     // Swap the buffer into the window if there's a device context handle.
     if (window->hdc)
-        assert(SwapBuffers(window->hdc));
+        SwapBuffers(window->hdc);
 
     // We enter a loop and stay in it just long enough to time and synchronize
     // the FPS, so we get a set amount of frames displayed each second.

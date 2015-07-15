@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: sa14-game1.c
  * Created: June 7, 2015
- * Last changed: June 9, 2015
+ * Last changed: July 14, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -14,7 +14,7 @@
  *----------------------------------------------*/
 
 #include "base/common.h"
-#include "base/file_io.h"
+#include "base/pak.h"
 #include "base/time.h"
 
 #include "engine/game.h"
@@ -59,8 +59,8 @@ static void printIntroMessage(void) {
  *   showSplashScreen(my_tex, 3.0f);
  *------------------------------------*/
 static void showSplashScreen(textureT* splash_tex, float secs) {
-    string* vert_src = readFile("resources/shaders/discard_z.vert");
-    string* frag_src = readFile("resources/shaders/splashscreen.frag");
+    string* vert_src = readGamePakFile("shaders/discard_z.vert");
+    string* frag_src = readGamePakFile("shaders/splashscreen.frag");
 
     shaderT* splash_shader = createShader();
     triMeshT* quad = createQuad(2.0f, 2.0f);
@@ -120,13 +120,21 @@ static void showSplashScreen(textureT* splash_tex, float secs) {
  *   Programmets huvudfunktion.
  *------------------------------------*/
 int main(void) {
+
     printIntroMessage();
 
     initGame("Asteroids", 1280, 720);
 
-    textureT* tex = loadTextureFromFile("resources/images/splash1.bmp");
-    showSplashScreen(tex, 3.0f);
-    freeTexture(tex);
+    pakArchiveT* pak = pakOpenArchive("resources.pak", "n3m3s1s!");
+    addGamePak(pak);
+
+    char* bmp_file = readGamePakFile("images/splash1.bmp");
+    // The BMP file header is 14 bytes, so we skip past it. It's not needed for
+    // loading the texture anyway.
+    textureT* splash_texture = loadTextureFromMemory(bmp_file+14, TexFormatBMP);
+    free(bmp_file);
+    showSplashScreen(splash_texture, 3.0f);
+    freeTexture(splash_texture);
 
     addSubsystemToGame(newPhysicsSubsystem());
     addSubsystemToGame(newGraphicsSubsystem());

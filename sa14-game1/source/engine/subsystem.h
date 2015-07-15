@@ -15,6 +15,7 @@ struct gameSubsystemT {
     void (*before_update_fn)(gameSubsystemT*, float);
     void (*after_update_fn)(gameSubsystemT*, float);
     void (*add_component_fn)(gameSubsystemT*, gameComponentT*);
+    void (*cleanup_fn)(gameSubsystemT*);
 
     void* data;
 };

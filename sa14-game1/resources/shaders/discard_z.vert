@@ -30,6 +30,5 @@ out vec2 uv;
 
 void main() {
     uv = tex_coord;
-
     gl_Position = vec4(vert_pos.xy, 0.0, 1.0);
 }
