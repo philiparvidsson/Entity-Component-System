@@ -9,6 +9,7 @@
 
 #include "math/matrix.h"
 
+static int lol;
 static void handleInput(gameComponentT* component, float dt) {
     playerEntityDataT* player_data = component->entity->data;
 
@@ -25,26 +26,33 @@ static void handleInput(gameComponentT* component, float dt) {
         bodyApplyForce(physics_data->body, f);
     }
 
-    graphicsComponentDataT* graphics_data = getEntityComponent(component->entity, "graphics")->data;
+    graphicsComponentDataT* gfx = getComponent(component->entity, "graphics")->data;
 
-    mat_rot_z(player_data->angle-90.0f*3.1415f/180.0f, &graphics_data->transform);
+    mat_rot_z(player_data->angle-90.0f*3.1415f/180.0f, &gfx->transform);
+    mat_rot_z(player_data->angle-90.0f*3.1415f/180.0f, &gfx->normal_transform);
+
+    lol++;
+    if (lol == 60) {
+        lol = 0;
+
+        gameEntityT* e = newAsteroidEntity();
+        addEntityToGame(e);
+    }
 }
 
 gameEntityT* newPlayerEntity(void) {
-    gameEntityT* player_entity = newEntity();
+    gameEntityT* entity = newEntity();
 
-    player_entity->data = calloc(1, sizeof(playerEntityDataT));
+    entity->data = calloc(1, sizeof(playerEntityDataT));
 
-    // Graphics.
     triMeshT* mesh = createCone(0.02f, 0.04f, 8);
-    gameComponentT* graphics_component = newGraphicsComponent(mesh);
+    gameComponentT* gfx_c = newGraphicsComponent(mesh);
 
-    // Physics.
-    gameComponentT* physics_component = newPhysicsComponent(1.0f);
-    physics_component->update_fn = handleInput;
+    gameComponentT* phys_c = newPhysicsComponent(1.0f);
+    phys_c->update_fn = handleInput;
 
-    attachComponentToEntity(graphics_component, player_entity);
-    attachComponentToEntity(physics_component, player_entity);
+    attachComponent(entity, gfx_c);
+    attachComponent(entity, phys_c);
 
-    return (player_entity);
+    return (entity);
 }

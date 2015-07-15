@@ -4,57 +4,19 @@
 
 #include "graphicscomponent.h"
 
-#include "components/physicscomponent.h"
-
+#include "base/common.h"
 #include "engine/component.h"
-
-#include "graphics/shader.h"
-#include "graphics/trimesh.h"
-
-#include <stdlib.h>
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-static void draw(gameComponentT* component, float dt) {
-    gameComponentT* physics_component = getEntityComponent(component->entity, "physics");
-
-    // The graphics component needs a physics component to pull the position
-    // from.
-    assert(physics_component != NULL);
-
-    graphicsComponentDataT* graphics_data = component->data;
-    physicsComponentDataT*  physics_data  = physics_component->data;
-
-    // If there's no mesh to render, we exit the function here.
-    if (!graphics_data->mesh)
-        return;
-
-    // The "Model" uniform variable is used by the vertex shader as the model
-    // transform matrix.
-    mat4x4 transform;
-    mat_identity(&transform);
-
-    mat4x4 transl;
-    vec3 pos = bodyGetPosition(physics_data->body);
-    mat_transl_xyz(pos.x, pos.y, pos.z, &transl);
-
-    mat_mul(&graphics_data->transform, &transform, &transform);
-    mat_mul(&transl, &transform, &transform);
-
-    // @To-do: Provide a  normal matrix here!!
-    setShaderParam("Model", &transform);
-
-    drawMesh(graphics_data->mesh);
-}
-
 static void cleanup(gameComponentT* component, gameSubsystemT* subsystem) {
-    graphicsComponentDataT* data = component->data;
+    graphicsComponentDataT* gfx = component->data;
 
-    if (data->mesh) {
-        freeMesh(data->mesh);
-        data->mesh = NULL;
+    if (gfx->mesh) {
+        freeMesh(gfx->mesh);
+        gfx->mesh = NULL;
     }
 }
 
@@ -64,9 +26,9 @@ gameComponentT* newGraphicsComponent(triMeshT* mesh) {
 
     data->mesh = mesh;
     mat_identity(&data->transform);
+    mat_identity(&data->normal_transform);
 
-    component->data       = data;
-    component->update_fn  = draw;
+    component->data = data;
     component->cleanup_fn = cleanup;
 
     return (component);

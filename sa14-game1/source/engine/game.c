@@ -32,7 +32,7 @@ static gameT* game_inst = NULL;
  * FUNCTIONS
  *----------------------------------------------*/
 
-static void gameCleanup() {
+static void gameCleanup(void) {
     // @To-do: Cleanup components here.
 
     for (int i = 0; i < arrayLength(game_inst->subsystems); i++) {
@@ -174,7 +174,7 @@ void addGamePak(pakArchiveT* pak) {
 }
 
 char* readGamePakFile(const string* file_name) {
-    for (int i = 0; i < arrayLength(game_inst->paks); i++) {
+    for (int i = arrayLength(game_inst->paks)-1; i >= 0; i--) {
         pakArchiveT* pak = *(pakArchiveT**)arrayGet(game_inst->paks, i);
 
         char* data = pakReadFile(pak, file_name);
@@ -182,5 +182,10 @@ char* readGamePakFile(const string* file_name) {
             return (data);
     }
 
-    return (NULL);
+    error("Could not load file");
 }
+
+/*void* delayedFree(void* mem) {
+    arrayAdd(game_inst->delayed_free, &mem);
+    return (mem);
+}*/

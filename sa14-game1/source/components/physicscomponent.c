@@ -16,6 +16,15 @@
  * FUNCTIONS
  *----------------------------------------------*/
 
+static void cleanup(gameComponentT* component, gameSubsystemT* subsystem) {
+    physicsComponentDataT* phys = component->data;
+
+    if (phys->body) {
+        bodyFree(phys->body);
+        phys->body = NULL;
+    }
+}
+
 gameComponentT* newPhysicsComponent(float mass) {
     gameComponentT* component = newComponent("physics");
     physicsComponentDataT* data = calloc(1, sizeof(physicsComponentDataT));
@@ -23,6 +32,7 @@ gameComponentT* newPhysicsComponent(float mass) {
     data->body = bodyNew(mass);
 
     component->data = data;
+    component->cleanup_fn = cleanup;
 
     return (component);
 }

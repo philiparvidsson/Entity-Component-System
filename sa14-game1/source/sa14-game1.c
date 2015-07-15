@@ -59,8 +59,8 @@ static void printIntroMessage(void) {
  *   showSplashScreen(my_tex, 3.0f);
  *------------------------------------*/
 static void showSplashScreen(textureT* splash_tex, float secs) {
-    string* vert_src = readGamePakFile("shaders/discard_z.vert");
-    string* frag_src = readGamePakFile("shaders/splashscreen.frag");
+    string* vert_src = readGamePakFile("discard_z.vert");
+    string* frag_src = readGamePakFile("splashscreen.frag");
 
     shaderT* splash_shader = createShader();
     triMeshT* quad = createQuad(2.0f, 2.0f);
@@ -125,10 +125,11 @@ int main(void) {
 
     initGame("Asteroids", 1280, 720);
 
-    pakArchiveT* pak = pakOpenArchive("resources.pak", "n3m3s1s!");
-    addGamePak(pak);
+    addGamePak(pakOpenArchive("pak/fonts.pak", PakPassword));
+    addGamePak(pakOpenArchive("pak/images.pak", PakPassword));
+    addGamePak(pakOpenArchive("pak/shaders.pak", PakPassword));
 
-    char* bmp_file = readGamePakFile("images/splash1.bmp");
+    char* bmp_file = readGamePakFile("splash1.bmp");
     // The BMP file header is 14 bytes, so we skip past it. It's not needed for
     // loading the texture anyway.
     textureT* splash_texture = loadTextureFromMemory(bmp_file+14, TexFormatBMP);

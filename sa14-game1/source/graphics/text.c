@@ -37,8 +37,8 @@ shaderT* text_shader = NULL;
 static void initTextShader(void) {
     text_shader = createShader();
 
-    string *vert_src = readGamePakFile("/shaders/text.vert");
-    string *frag_src = readGamePakFile("/shaders/text.frag");
+    string *vert_src = readGamePakFile("text.vert");
+    string *frag_src = readGamePakFile("text.frag");
 
     if (!vert_src || !frag_src)
         error("Could not load text shader");

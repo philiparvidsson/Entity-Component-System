@@ -5,15 +5,11 @@
 #include "physicssubsystem.h"
 
 #include "components/physicscomponent.h"
-
 #include "engine/game.h"
 #include "engine/subsystem.h"
-
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
-
 #include "math/matrix.h"
-
 #include "physics/physics.h"
 
 #include <stdlib.h>
@@ -23,6 +19,15 @@
  *----------------------------------------------*/
 
 #define TimeStep (1.0f/120.0f)
+
+/*------------------------------------------------
+ * TYPES
+ *----------------------------------------------*/
+
+typedef struct {
+    float dt;
+    worldT* world;
+} physicsSubsystemDataT;
 
 /*------------------------------------------------
  * FUNCTIONS

@@ -21,5 +21,8 @@ gameComponentT* newComponent(const string* subsystem_name) {
 }
 
 void freeComponent(gameComponentT* component) {
+    if (component->cleanup_fn)
+        component->cleanup_fn(component);
+
     free(component);
 }

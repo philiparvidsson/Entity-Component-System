@@ -19,7 +19,7 @@ struct gameEntityT {
 gameEntityT* newEntity(void);
 void freeEntity(gameEntityT* entity);
 
-void attachComponentToEntity(gameComponentT* component, gameEntityT* entity);
-gameComponentT* getEntityComponent(gameEntityT* entity, const string* subsystem_name);
+void attachComponent(gameEntityT* entity, gameComponentT* component);
+gameComponentT* getComponent(gameEntityT* entity, const string* subsystem_name);
 
 #endif // gameentity_h_

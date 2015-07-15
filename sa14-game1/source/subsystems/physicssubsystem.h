@@ -6,17 +6,7 @@
  *----------------------------------------------*/
 
 #include "engine/subsystem.h"
-
 #include "physics/physics.h"
-
-/*------------------------------------------------
- * TYPES
- *----------------------------------------------*/
-
-typedef struct {
-    float dt;
-    worldT* world;
-} physicsSubsystemDataT;
 
 /*------------------------------------------------
  * FUNCTIONS

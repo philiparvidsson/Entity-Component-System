@@ -26,14 +26,14 @@ void freeEntity(gameEntityT* entity) {
     return (entity);
 }
 
-void attachComponentToEntity(gameComponentT* component, gameEntityT* entity) {
+void attachComponent(gameEntityT* entity, gameComponentT* component) {
     assert(component->entity == NULL);
 
     component->entity = entity;
     arrayAdd(entity->components, &component);
 }
 
-gameComponentT* getEntityComponent(gameEntityT* entity, const string* subsystem_name) {
+gameComponentT* getComponent(gameEntityT* entity, const string* subsystem_name) {
     int num_components = arrayLength(entity->components);
     for (int i = 0; i < num_components; i++) {
         gameComponentT* component = *(gameComponentT**)arrayGet(entity->components, i);

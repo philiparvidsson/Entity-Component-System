@@ -5,10 +5,9 @@
  * INCLUDES
  *----------------------------------------------*/
 
+#include "base/common.h"
 #include "engine/component.h"
-
 #include "graphics/trimesh.h"
-
 #include "math/matrix.h"
 
 /*------------------------------------------------
@@ -16,9 +15,9 @@
  *----------------------------------------------*/
 
 typedef struct {
-    triMeshT* mesh;      // The model mesh.
-    mat4x4    transform; // The model transform matrix.
-    void*     data;      // Custom user data.
+    triMeshT* mesh;             // The model mesh.
+    mat4x4    transform;        // The model transform matrix.
+    mat4x4    normal_transform; // The model normal transform matrix.
 } graphicsComponentDataT;
 
 /*------------------------------------------------
