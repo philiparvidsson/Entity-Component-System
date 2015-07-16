@@ -129,7 +129,7 @@
   <ItemGroup>
     <Text Include="doc\readme.txt" />
     <Text Include="license.txt" />
-    <Text Include="resources\fonts\license.txt" />
+    <Text Include="doc\sector_034.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GL\glew.h" />

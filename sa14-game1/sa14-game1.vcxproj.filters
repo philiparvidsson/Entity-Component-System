@@ -108,7 +108,9 @@
       <Filter>Documentation Files</Filter>
     </Text>
     <Text Include="license.txt" />
-    <Text Include="resources\fonts\license.txt" />
+    <Text Include="doc\sector_034.txt">
+      <Filter>Documentation Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GL\glew.h">
@@ -216,12 +218,6 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="bin\glew32.dll" />
-    <None Include="resources\shaders\text.vert" />
-    <None Include="resources\shaders\text.frag" />
-    <None Include="resources\shaders\postfx.frag" />
-    <None Include="resources\shaders\splashscreen.frag" />
-    <None Include="resources\shaders\discard_z.vert" />
-    <None Include="resources\shaders\noise.frag" />
     <None Include="resources\shaders\default.frag">
       <Filter>Shader Files</Filter>
     </None>
@@ -229,16 +225,36 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="build\pak-tool.exe" />
+    <None Include="resources\shaders\discard_z.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="resources\shaders\noise.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="resources\shaders\postfx.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="resources\shaders\text.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="resources\shaders\text.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="resources\shaders\splashscreen.frag">
+      <Filter>Shader Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="resources\fonts\sector_034.ttf" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="resources\images\splash1.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\fonts\sector_034.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
   </ItemGroup>
 </Project>

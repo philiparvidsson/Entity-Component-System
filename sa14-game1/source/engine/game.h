@@ -15,9 +15,6 @@ typedef struct gameT gameT;
 #include "input/keyboard.h"
 #include "input/mouse.h"
 
-
-
-
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
@@ -25,10 +22,10 @@ typedef struct gameT gameT;
 void initGame(const string* title, int screen_width, int screen_height);
 void exitGame(void);
 
-void gameMain(void);
+void gameMain(void(*frame_func)(float dt));
 
 void addSubsystemToGame(gameSubsystemT* subsystem);
-//void addEntityToGame(gameEntityT* entity);
+void addEntityToGame(gameEntityT* entity);
 void addGamePak(pakArchiveT* pak);
 char* readGamePakFile(const string* file_name);
 //void* delayedFree(void* mem);

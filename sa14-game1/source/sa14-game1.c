@@ -111,6 +111,15 @@ static void showSplashScreen(textureT* splash_tex, float secs) {
     deleteShader(splash_shader);
 }
 
+static float lol;
+void frameFunc(float dt) {
+    lol += dt;
+    while (lol >= 0.1f) {
+        addEntityToGame(newAsteroidEntity());
+        lol -= 0.1f;
+    }
+}
+
 /*--------------------------------------
  * Function: main()
  *
@@ -143,5 +152,5 @@ int main(void) {
     gameEntityT* player_entity = newPlayerEntity();
     addEntityToGame(player_entity);
 
-    gameMain();
+    gameMain(frameFunc);
 }

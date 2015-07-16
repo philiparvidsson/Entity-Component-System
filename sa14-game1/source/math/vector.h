@@ -258,7 +258,7 @@ typedef union {
  * Usage:
  *   vec_add_(&a, &b, &r, 3);
  *------------------------------------*/
-static inline void vec_add_(const float* a, const float* b, float *r, int n) {
+static inline void vec_add_(const float* a, const float* b, float* r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = a[i] + b[i];
 }
@@ -278,7 +278,7 @@ static inline void vec_add_(const float* a, const float* b, float *r, int n) {
  * Usage:
  *   vec_sub_(&a, &b, &r, 3);
  *------------------------------------*/
-static inline void vec_sub_(const float* a, const float* b, float *r, int n) {
+static inline void vec_sub_(const float* a, const float* b, float* r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = a[i] - b[i];
 }
@@ -298,7 +298,7 @@ static inline void vec_sub_(const float* a, const float* b, float *r, int n) {
  * Usage:
  *   vec_mul_(&a, &b, &r, 3);
  *------------------------------------*/
-static inline void vec_mul_(const float* a, const float* b, float *r, int n) {
+static inline void vec_mul_(const float* a, const float* b, float* r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = a[i] * b[i];
 }
@@ -318,7 +318,7 @@ static inline void vec_mul_(const float* a, const float* b, float *r, int n) {
  * Usage:
  *   vec_div_(&a, &b, &r, 3);
  *------------------------------------*/
-static inline void vec_div_(const float* a, const float* b, float *r, int n) {
+static inline void vec_div_(const float* a, const float* b, float* r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = a[i] / b[i];
 }
@@ -338,7 +338,7 @@ static inline void vec_div_(const float* a, const float* b, float *r, int n) {
  * Usage:
  *   vec_scale_(&a, 2.0f, &r, 3);
  *------------------------------------*/
-static inline void vec_scale_(const float* v, float f, float *r, int n) {
+static inline void vec_scale_(const float* v, float f, float* r, int n) {
     for (int i = 0; i < n; i++)
         r[i] = v[i] * f;
 }
@@ -402,7 +402,7 @@ static inline float vec_dot_(const float* a, const float* b, int n) {
  * Usage:
  *   vec_normalize(&a, &r, 3);
  *------------------------------------*/
-static inline void vec_normalize_(const float* v, float *r, int n) {
+static inline void vec_normalize_(const float* v, float* r, int n) {
     float d = vec_dot_(v, v, n);
 
     if (d > 0.0f) d = sqrtf(d);

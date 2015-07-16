@@ -37,6 +37,19 @@ typedef struct arrayT arrayT;
  *----------------------------------------------*/
 
 /*--------------------------------------
+ * Function: arrayClear(a)
+ * Parameters:
+ *   a  The array to clear.
+ *
+ * Description:
+ *   Clears the specified array.
+ *
+ * Usage:
+ *   arrayClear(my_array);
+ *------------------------------------*/
+void arrayClear(arrayT* a);
+
+/*--------------------------------------
  * Function: arrayNew(elem_size)
  * Parameters:
  *   elem_size  The array element size, in bytes.

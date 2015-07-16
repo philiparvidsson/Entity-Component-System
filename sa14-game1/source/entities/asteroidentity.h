@@ -4,7 +4,10 @@
 #include "math/vector.h"
 
 typedef struct {
-    float angle;
+    float angle1;
+    float angle2;
+    float a1;
+    float a2;
     float scale;
     vec3 rot_axis_1;
     vec3 rot_axis_2;

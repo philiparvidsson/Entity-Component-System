@@ -7,7 +7,6 @@
 
 #include "math/matrix.h"
 
-static int lol;
 static void handleInput(gameComponentT* component, float dt) {
     playerEntityDataT* player = component->entity->data;
 
@@ -28,14 +27,6 @@ static void handleInput(gameComponentT* component, float dt) {
 
     mat_rot_z(player->angle - 90.0f*3.1415f / 180.0f, &gfx->transform);
     mat_rot_z(player->angle - 90.0f*3.1415f / 180.0f, &gfx->normal_transform);
-
-    lol++;
-    if (lol == 60) {
-        lol = 0;
-
-        gameEntityT* e = newAsteroidEntity();
-        addEntityToGame(e);
-    }
 }
 
 gameEntityT* newPlayerEntity(void) {

@@ -99,7 +99,7 @@ void exitGame(void) {
     done = true;
 }
 
-void gameMain(void) {
+void gameMain(void (*frame_func)(float dt)) {
     done = false;
 
     timeT time = getTime();
@@ -117,6 +117,9 @@ void gameMain(void) {
         }
 
         time = getTime();
+
+        if (frame_func)
+            frame_func(dt);
 
         queryInputDevices();
         updateSubsystems(dt);

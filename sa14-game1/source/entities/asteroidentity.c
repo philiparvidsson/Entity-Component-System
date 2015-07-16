@@ -43,41 +43,28 @@ static gameComponentT* createPhysicsComponent(void) {
     return (component);
 }
 
-static mat4x4 do_it(vec3 u, float a) {
-    mat4x4 m = { 0 };
-
-    m.x.x = cosf(a) + u.x*u.x*(1.0f - cosf(a));
-    m.x.y = u.x*u.y*(1.0f - cosf(a)) - u.z*sin(a);
-    m.x.z = u.x*u.z*(1.0f - cosf(a)) + u.y*sin(a);
-
-    m.y.x = u.y*u.x*(1.0f - cosf(a)) + u.z*sin(a);
-    m.y.y = cosf(a) + u.y*u.y*(1.0f - cosf(a));
-    m.y.z = u.y*u.z*(1.0f - cosf(a)) - u.x*sin(a);
-
-    m.z.x = u.z*u.x*(1.0f - cosf(a)) - u.y*sin(a);
-    m.z.y = u.z*u.y*(1.0f - cosf(a)) + u.x*sin(a);
-    m.z.z = cosf(a) + u.z*u.z*(1.0f - cosf(a));
-
-    m.w.w = 1.0f;
-
-    return m;
-}
-
 static void rotateAsteroid(gameComponentT* component, float dt) {
     asteroidEntityDataT* asteroid = component->entity->data;
 
-    asteroid->angle += 1.0f * dt;
-    float a = asteroid->angle;
+    asteroid->angle1 += asteroid->a1 * dt;
+    asteroid->angle2 += asteroid->a2 * dt;
 
     mat4x4 m;
     mat_identity(&m);
 
-    mat4x4 m0 = do_it(asteroid->rot_axis_1, a);
-    mat4x4 m1 = do_it(asteroid->rot_axis_2, a);
+    mat4x4 m0;
+    mat4x4 m1;
+
+    mat_rot(&asteroid->rot_axis_1, asteroid->angle1, &m0);
+    mat_rot(&asteroid->rot_axis_2, asteroid->angle2, &m1);
 
     mat_mul(&m0, &m, &m);
     mat_mul(&m1, &m, &m);
 
+    mat4x4 lole;
+    mat_scale(asteroid->scale, &lole);
+    lole.w.w = 1.0f;
+    mat_mul(&lole, &m, &m);
 
     graphicsComponentDataT* gfx = getComponent(component->entity, "graphics")->data;
     gfx->transform = m;
@@ -98,8 +85,11 @@ gameEntityT* newAsteroidEntity(void) {
 
     asteroidEntityDataT* asteroid = entity->data;
 
-    asteroid->angle      = 0.0f;
-    asteroid->scale      = 1.0f;
+    asteroid->a1 = (rand() / (float)RAND_MAX - 0.5f) * 6.0f;
+    asteroid->a2 = (rand() / (float)RAND_MAX - 0.5f) * 6.0f;
+    asteroid->angle1 = 0.0f;
+    asteroid->angle2 = 0.0f;
+    asteroid->scale = (0.5f + rand() / (float)RAND_MAX);
     asteroid->rot_axis_1 = randomVector();
     asteroid->rot_axis_2 = randomVector();
 

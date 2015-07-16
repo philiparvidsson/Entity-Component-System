@@ -47,9 +47,12 @@
 #define mat_transl_xy(x, y, r) mat_transl_xy_(x, y, (float*)r, mat_n(*r))
 #define mat_transl_xyz(x, y, z, r) mat_transl_xyz_(x, y, z, (float*)r, mat_n(*r))
 
+#define mat_rot(u, a, r) mat_rot_((float*)u, a, (float*)r, mat_n(*r))
 #define mat_rot_x(a, r) mat_rot_x_(a, (float*)r, mat_n(*r))
 #define mat_rot_y(a, r) mat_rot_y_(a, (float*)r, mat_n(*r))
 #define mat_rot_z(a, r) mat_rot_z_(a, (float*)r, mat_n(*r))
+
+#define mat_scale(f, r) mat_scale_(f, (float*)r, mat_n(*r))
 
 #define mat_add(a, b, r) \
     mat_add_((float*)a, (float*)b, (float*)r, mat_n(*a), mat_n(*b), mat_n(*r))
@@ -95,7 +98,7 @@ typedef union {
  * FUNCTIONS
  *----------------------------------------------*/
 
-static inline void mat_identity_(float *r, int n) {
+static inline void mat_identity_(float* r, int n) {
     mat_check_args_1();
 
     for (int i = 0; i < n; i++) {
@@ -104,7 +107,7 @@ static inline void mat_identity_(float *r, int n) {
     }
 }
 
-static inline void mat_transpose_(float *m, int n) {
+static inline void mat_transpose_(float* m, int n) {
     for (int i = 0; i < n-1; i++) {
         for (int j = (i+1); j < n; j++) {
             float tmp      = m[i*n+j];
@@ -114,7 +117,7 @@ static inline void mat_transpose_(float *m, int n) {
     }
 }
 
-static inline void mat_transl_xy_(float x, float y, float *m, int n) {
+static inline void mat_transl_xy_(float x, float y, float* m, int n) {
     mat_check_args_1();
 
     if (n < 3) error("Matrix is too small");
@@ -125,7 +128,7 @@ static inline void mat_transl_xy_(float x, float y, float *m, int n) {
     m[2*n-1] = y;
 }
 
-static inline void mat_transl_xyz_(float x, float y, float z, float *m, int n) {
+static inline void mat_transl_xyz_(float x, float y, float z, float* m, int n) {
     mat_check_args_1();
 
     if (n < 4) error("Matrix is too small");
@@ -137,44 +140,82 @@ static inline void mat_transl_xyz_(float x, float y, float z, float *m, int n) {
     m[3*n-1] = z;
 }
 
-static inline void mat_rot_x_(float a, float *m, int n) {
+static inline void mat_rot_(const vec3* u, float a, float* m, int n) {
     mat_check_args_1();
 
     if (n < 3) error("Matrix is too small");
 
     mat_identity_(m, n);
 
-    m[n  +1] =  cosf(a);
-    m[n  +2] = -sinf(a);
-    m[2*n+1] =  sinf(a);
-    m[2*n+2] =  cosf(a);
+    float cos_a = cosf(a), sin_a = sinf(a);
+    float one_minus_cos_a = 1.0f - cos_a;
+    float x = u->x, y = u->y, z = u->z;
+
+    m[0    ] = cos_a + x*x*one_minus_cos_a;
+    m[1    ] = x*y*one_minus_cos_a - z*sin_a;
+    m[2    ] = x*z*one_minus_cos_a + y*sin_a;
+    m[n    ] = y*x*one_minus_cos_a + z*sin_a;
+    m[n+1  ] = cos_a + y*y*one_minus_cos_a;
+    m[n+2  ] = y*z*one_minus_cos_a - x*sin_a;
+    m[2*n  ] = z*x*one_minus_cos_a - y*sin_a;
+    m[2*n+1] = z*y*one_minus_cos_a + x*sin_a;
+    m[2*n+2] = cos_a + z*z*one_minus_cos_a;
 }
 
-static inline void mat_rot_y_(float a, float *m, int n) {
+static inline void mat_rot_x_(float a, float* m, int n) {
     mat_check_args_1();
 
     if (n < 3) error("Matrix is too small");
 
     mat_identity_(m, n);
 
-    m[    0] =  cosf(a);
-    m[    2] =  sinf(a);
-    m[2*n  ] = -sinf(a);
-    m[2*n+2] =  cosf(a);
+    float cos_a = cosf(a), sin_a = sinf(a);
+
+    m[n  +1] =  cos_a;
+    m[n  +2] = -sin_a;
+    m[2*n+1] =  sin_a;
+    m[2*n+2] =  cos_a;
 }
 
-static inline void mat_rot_z_(float a, float *m, int n) {
+static inline void mat_rot_y_(float a, float* m, int n) {
+    mat_check_args_1();
+
+    if (n < 3) error("Matrix is too small");
+
+    mat_identity_(m, n);
+
+    float cos_a = cosf(a), sin_a = sinf(a);
+
+    m[    0] =  cos_a;
+    m[    2] =  sin_a;
+    m[2*n  ] = -sin_a;
+    m[2*n+2] =  cos_a;
+}
+
+static inline void mat_rot_z_(float a, float* m, int n) {
     mat_check_args_1();
 
     mat_identity_(m, n);
 
-    m[  0] =  cosf(a);
-    m[  1] = -sinf(a);
-    m[n  ] =  sinf(a);
-    m[n+1] =  cosf(a);
+    float cos_a = cosf(a);
+    float sin_a = sinf(a);
+
+    m[  0] =  cos_a;
+    m[  1] = -sin_a;
+    m[n  ] =  sin_a;
+    m[n+1] =  cos_a;
 }
 
-static inline void mat_add_(const float* a, const float* b, float *r, int a_n, int b_n, int r_n) {
+static inline void mat_scale_(float f, float* m, int n) {
+    mat_check_args_1();
+
+    mat_identity_(m, n);
+
+    for (int i = 0; i < n; i++)
+        m[i+i*n] = f;
+}
+
+static inline void mat_add_(const float* a, const float* b, float* r, int a_n, int b_n, int r_n) {
     mat_check_args_3();
 
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
@@ -183,7 +224,7 @@ static inline void mat_add_(const float* a, const float* b, float *r, int a_n, i
     }
 }
 
-static inline void mat_sub_(const float* a, const float* b, float *r, int a_n, int b_n, int r_n) {
+static inline void mat_sub_(const float* a, const float* b, float* r, int a_n, int b_n, int r_n) {
     mat_check_args_3();
 
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
@@ -192,7 +233,7 @@ static inline void mat_sub_(const float* a, const float* b, float *r, int a_n, i
     }
 }
 
-static inline void mat_mul_(const float* a, const float* b, float *r, int a_n, int b_n, int r_n) {
+static inline void mat_mul_(const float* a, const float* b, float* r, int a_n, int b_n, int r_n) {
     mat_check_args_3();
 
     int const  n = min(a_n, min(b_n, r_n));
@@ -218,7 +259,7 @@ static inline void mat_mul_(const float* a, const float* b, float *r, int a_n, i
     }
 }
 
-static inline void mat_div_(const float* a, const float* b, float *r, int a_n, int b_n, int r_n) {
+static inline void mat_div_(const float* a, const float* b, float* r, int a_n, int b_n, int r_n) {
     mat_check_args_3();
 
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
