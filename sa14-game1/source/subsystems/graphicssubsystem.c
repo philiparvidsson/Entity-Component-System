@@ -38,7 +38,7 @@ typedef struct {
 static void initPostFX(gameSubsystemT* subsystem) {
     graphicsDataT* gfx = subsystem->data;
 
-    gfx->noise_intensity = 0.07f;
+    gfx->noise_intensity = 0.11f;
     gfx->noise_seed = 0;
 
     string* vert_src = readGamePakFile("discard_z.vert");

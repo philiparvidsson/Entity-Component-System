@@ -354,6 +354,10 @@ triMeshT* createCone(float radius, float height, int num_sides) {
     return (cone);
 }
 
+triMeshT* createGeodesicSphere(float radius, int num_subdivs) {
+    error("Not implemented");
+}
+
 triMeshT* createQuad(float width, float height) {
     float half_width = width * 0.5f, half_height = height * 0.5f;
 
