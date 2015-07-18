@@ -261,10 +261,6 @@ triMeshT* createBox(float width, float height, float length) {
     height /= 2.0f;
     length /= 2.0f;
 
-    // A box has eight corners, but every side needs their own normals for flat-
-    // shading to work properly (we don't want interpolated normals). Since each
-    // vertex has its own normal, we need six sides times four vertices. Also,
-    // each of the six sides is made up of two triangles.
     triMeshT* box = newMesh(6*4, 6*2);
 
     // Alias pointers for less code clutter.
@@ -368,10 +364,6 @@ triMeshT* createBox(float width, float height, float length) {
  *   triMeshT* cone = createCone(0.1, 0.2f, 10);
  *------------------------------------*/
 triMeshT* createCone(float radius, float height, int num_sides) {
-    // One center bottom vertex, two vertices for each point around the radius
-    // (because they need separate normals for shading to work properly) and
-    // one separate top point for each face (again, because they need separate
-    // normals).
     triMeshT* cone = newMesh(num_sides*6, num_sides*2);
 
     // Alias pointers for less code clutter.
@@ -424,8 +416,6 @@ triMeshT* createQuad(float width, float height) {
     v[2].p = (vec3) { -half_width, -half_height, 0.0f };
     v[3].p = (vec3) {  half_width, -half_height, 0.0f };
 
-    v[0].n = v[1].n = v[2].n = v[3].n = (vec3) { 0.0f, 0.0f, 1.0f };
-
     v[0].uv = (vec2) { 1.0f, 1.0f };
     v[1].uv = (vec2) { 0.0f, 1.0f };
     v[2].uv = (vec2) { 0.0f, 0.0f };
@@ -434,6 +424,6 @@ triMeshT* createQuad(float width, float height) {
     t[0] = (triT) { 0, 1, 2 };
     t[1] = (triT) { 2, 3, 0 };
 
-    updateMesh(quad);
+    calcNormals(quad);
     return (quad);
 }

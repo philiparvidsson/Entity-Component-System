@@ -35,73 +35,75 @@ typedef struct {
     shaderT* noise_shader;
     float    noise_intensity;
     int      noise_seed;
-} graphicsDataT;
+} graphicsSubsystemDataT;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-static void loadDefaultShader(graphicsDataT* gfx) {
-    gfx->default_shader = createShader();
+static void loadDefaultShader(graphicsSubsystemDataT* gfx_data) {
+    gfx_data->default_shader = createShader();
 
     string* vert_src = readGamePakFile("default.vert");
     string* frag_src = readGamePakFile("default.frag");
 
-    compileVertexShader  (gfx->default_shader, vert_src);
-    compileFragmentShader(gfx->default_shader, frag_src);
+    compileVertexShader  (gfx_data->default_shader, vert_src);
+    compileFragmentShader(gfx_data->default_shader, frag_src);
     
     free(vert_src);
     free(frag_src);
 }
 
-static void loadNormalShader(graphicsDataT* gfx) {
-    gfx->normal_shader = createShader();
+#ifdef DRAW_TRI_NORMALS
+static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
+    gfx_data->normal_shader = createShader();
 
     string* vert_src = readGamePakFile("default.vert");
     string* geom_src = readGamePakFile("normals.geom");
     string* frag_src = readGamePakFile("normals.frag");
 
-    compileVertexShader  (gfx->normal_shader, vert_src);
-    compileGeometryShader(gfx->normal_shader, geom_src);
-    compileFragmentShader(gfx->normal_shader, frag_src);
+    compileVertexShader  (gfx_data->normal_shader, vert_src);
+    compileGeometryShader(gfx_data->normal_shader, geom_src);
+    compileFragmentShader(gfx_data->normal_shader, frag_src);
     
     free(vert_src);
     free(geom_src);
     free(frag_src);
 }
+#endif // DRAW_TRI_NORMALS
 
-static void initPostFX(graphicsDataT* gfx) {
-    gfx->noise_intensity = 0.07f;
-    gfx->noise_seed = 0;
+static void initPostFX(graphicsSubsystemDataT* gfx_data) {
+    gfx_data->noise_intensity = 0.07f;
+    gfx_data->noise_seed = 0;
 
     string* vert_src = readGamePakFile("discard_z.vert");
     string* frag_src = readGamePakFile("noise.frag");
 
-    gfx->noise_shader = createShader();
+    gfx_data->noise_shader = createShader();
 
-    compileVertexShader  (gfx->noise_shader, vert_src);
-    compileFragmentShader(gfx->noise_shader, frag_src);
+    compileVertexShader  (gfx_data->noise_shader, vert_src);
+    compileFragmentShader(gfx_data->noise_shader, frag_src);
 
     free(vert_src);
     free(frag_src);
 }
 
 static void applyPostFX(gameSubsystemT* subsystem) {
-    graphicsDataT* gfx = subsystem->data;
+    graphicsSubsystemDataT* gfx_data = subsystem->data;
 
     // Noise -------------------------------------
 
-    useShader(gfx->noise_shader);
-    setShaderParam("Intensity", &gfx->noise_intensity);
-    setShaderParam("Seed", &gfx->noise_seed);
+    useShader(gfx_data->noise_shader);
+    setShaderParam("Intensity", &gfx_data->noise_intensity);
+    setShaderParam("Seed"     , &gfx_data->noise_seed);
     shaderPostProcess();
 
-    gfx->noise_seed++;
+    gfx_data->noise_seed++;
 
     //--------------------------------------------
 }
 
-static void setupCamera(graphicsDataT* gfx) {
+static void setupCamera(graphicsSubsystemDataT* gfx_data) {
     mat4x4 proj, view;
 
     // @To-do: Camera logic should be here.
@@ -109,7 +111,7 @@ static void setupCamera(graphicsDataT* gfx) {
         &(vec3) { 0.0f, 0.0f, 0.0f },
         &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
 
-    float r = gfx->aspect_ratio;
+    float r = gfx_data->aspect_ratio;
     mat4x4_persp(-0.5f*r, 0.5f*r, -0.5f, 0.5f, -1.5f, -0.01f, &proj);
 
     setShaderParam("Proj", &proj);
@@ -123,27 +125,27 @@ static void drawComponent(gameComponentT* component) {
     // from.
     assert(phys_c != NULL);
 
-    graphicsComponentDataT* gfx  = component->data;
-    physicsComponentDataT*  phys = phys_c->data;
+    graphicsComponentDataT* gfx_component  = component->data;
+    physicsComponentDataT*  phys_component = phys_c->data;
 
     // If there's no mesh to render, we exit the function here.
-    if (!gfx->mesh)
+    if (!gfx_component->mesh)
         return;
 
     mat4x4 model;
     mat_identity(&model);
 
     mat4x4 translation;
-    vec3 pos = bodyGetPosition(phys->body);
+    vec3 pos = bodyGetPosition(phys_component->body);
     mat_transl_xyz(pos.x, pos.y, pos.z, &translation);
 
-    mat_mul(&gfx->transform, &model, &model);
+    mat_mul(&gfx_component->transform, &model, &model);
     mat_mul(&translation   , &model, &model);
 
     setShaderParam("ModelTransform" , &model);
-    setShaderParam("NormalTransform", &gfx->normal_transform);
+    setShaderParam("NormalTransform", &gfx_component->normal_transform);
     
-    drawMesh(gfx->mesh);
+    drawMesh(gfx_component->mesh);
 }
 
 static void drawComponents(arrayT* components) {
@@ -154,21 +156,21 @@ static void drawComponents(arrayT* components) {
 }
 
 static void drawEverything(gameSubsystemT* subsystem, float dt) {
-    graphicsDataT* gfx = subsystem->data;
+    graphicsSubsystemDataT* gfx_data = subsystem->data;
 
     clearDisplay(0.0f, 0.0f, 0.5f);
 
-    useShader (gfx->default_shader);
-    useTexture(gfx->default_texture, 0);
+    useShader (gfx_data->default_shader);
+    useTexture(gfx_data->default_texture, 0);
 
-    setupCamera   (gfx);
+    setupCamera   (gfx_data);
     drawComponents(subsystem->components);
 
 #ifdef DRAW_TRI_NORMALS
-    useShader (gfx->normal_shader);
-    useTexture(gfx->normal_shader, 0);
+    useShader (gfx_data->normal_shader);
+    useTexture(gfx_data->normal_shader, 0);
 
-    setupCamera   (gfx);
+    setupCamera   (gfx_data);
     drawComponents(subsystem->components);
 #endif // DRAW_TRI_NORMALS
 
@@ -177,21 +179,21 @@ static void drawEverything(gameSubsystemT* subsystem, float dt) {
 
 gameSubsystemT* newGraphicsSubsystem(void) {
     gameSubsystemT* subsystem = newSubsystem("graphics");
-    graphicsDataT* gfx = calloc(1, sizeof(graphicsDataT));
+    graphicsSubsystemDataT* gfx_data = calloc(1, sizeof(graphicsSubsystemDataT));
 
-    gfx->aspect_ratio    = screenWidth() / (float)screenHeight();
-    gfx->default_texture = createWhiteTexture();
+    gfx_data->aspect_ratio    = screenWidth() / (float)screenHeight();
+    gfx_data->default_texture = createWhiteTexture();
 
-    loadDefaultShader(gfx);
+    loadDefaultShader(gfx_data);
 
 #ifdef DRAW_TRI_NORMALS
-    loadNormalShader(gfx);
+    loadNormalShader(gfx_data);
 #endif // DRAW_TRI_NORMALS
 
-    subsystem->data = gfx;
+    subsystem->data = gfx_data;
     subsystem->after_update_fn = drawEverything;
 
-    initPostFX(gfx);
+    initPostFX(gfx_data);
 
     return (subsystem);
 }

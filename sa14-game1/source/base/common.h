@@ -46,7 +46,9 @@
  * DEFINES
  *----------------------------------------------*/
 
-#define DRAW_TRI_NORMALS
+#ifdef _DEBUG
+    #define DRAW_TRI_NORMALS
+#endif // _DEBUG
 
 /*------------------------------------------------
  * MACROS

@@ -25,7 +25,7 @@
  *----------------------------------------------*/
 
 typedef struct {
-    float dt;
+    float time_frac;
     worldT* world;
 } physicsSubsystemDataT;
 
@@ -34,37 +34,34 @@ typedef struct {
  *----------------------------------------------*/
 
 static void addBodyToWorld(gameSubsystemT* subsystem, gameComponentT* component) {
-    physicsComponentDataT* component_data = component->data;
-    physicsSubsystemDataT* subsystem_data = subsystem->data;
+    physicsComponentDataT* phys_component = component->data;
+    physicsSubsystemDataT* phys_data = subsystem->data;
 
-    worldAddBody(subsystem_data->world, component_data->body);
+    worldAddBody(phys_data->world, phys_component->body);
 }
 
 static void stepWorld(gameSubsystemT* subsystem, float dt) {
-    physicsSubsystemDataT* data = subsystem->data;
+    physicsSubsystemDataT* phys_data = subsystem->data;
 
-    // We use data->dt to accumulate time so we always simulate exactly as much
-    // as we need to, with a fixed time step.
-
-    dt += data->dt;
+    dt += phys_data->time_frac;
     while (dt >= TimeStep) {
-        worldStep(data->world, TimeStep);
+        worldStep(phys_data->world, TimeStep);
         dt -= TimeStep;
     }
-    data->dt = dt;
+    phys_data->time_frac = dt;
 }
 
 gameSubsystemT* newPhysicsSubsystem(void) {
     gameSubsystemT* subsystem = newSubsystem("physics");
-    physicsSubsystemDataT* data = calloc(1, sizeof(physicsSubsystemDataT));
+    physicsSubsystemDataT* phys_data = calloc(1, sizeof(physicsSubsystemDataT));
 
-    data->world = worldNew();
+    phys_data->world = worldNew();
 
     // The physics subsystem is a bit different because all components are
     // actually updated in the after_update_fn, not in each component's update
     // function. This allows us to do collision etc more efficiently.
 
-    subsystem->data = data;
+    subsystem->data = phys_data;
     subsystem->after_update_fn = stepWorld;
     subsystem->add_component_fn = addBodyToWorld;
 
