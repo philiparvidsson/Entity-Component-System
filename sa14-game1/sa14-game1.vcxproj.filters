@@ -243,6 +243,8 @@
     <None Include="resources\shaders\splashscreen.frag">
       <Filter>Shader Files</Filter>
     </None>
+    <None Include="resources\shaders\normals.geom" />
+    <None Include="resources\shaders\normals.frag" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />

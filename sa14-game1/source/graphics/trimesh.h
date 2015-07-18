@@ -20,18 +20,23 @@
  *------------------------------------*/
 typedef struct {
     union {
-        float x, y, z;
+        struct { float x, y, z; };
         vec3 p;
     };
 
     union {
-        float nx, ny, nz;
+        struct { float nx, ny, nz; };
         vec3 n;
     };
 
     union {
-        float u, v;
+        struct { float u, v; };
         vec2 uv;
+    };
+
+    union {
+        int smoothing_group;
+        int k;
     };
 } vertexT;
 
@@ -42,7 +47,7 @@ typedef struct {
  *   Represents a single triangle (face) with vertex indices in a triangle mesh.
  *------------------------------------*/
 typedef struct {
-    int v0, v1, v2;
+    int v0, v1, v2; // The triangle vertex indicies.
 } triT;
 
 typedef struct triMeshT triMeshT;

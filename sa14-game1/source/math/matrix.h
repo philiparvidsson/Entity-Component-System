@@ -316,7 +316,7 @@ static inline void mat4x4_ortho(float left, float right, float bottom,
     };
 }
 
-static inline void mat4x4_perspective(float left, float right, float bottom,
+static inline void mat4x4_persp(float left, float right, float bottom,
                                         float top, float far, float near, mat4x4 *res)
 {
     float l=left, r=right, b=bottom, t=top, n=near, f=far;

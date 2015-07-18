@@ -61,13 +61,17 @@ static void rotateAsteroid(gameComponentT* component, float dt) {
     mat_mul(&m0, &m, &m);
     mat_mul(&m1, &m, &m);
 
+    graphicsComponentDataT* gfx = getComponent(component->entity, "graphics")->data;
+    
+    gfx->normal_transform = m;
+
     mat4x4 lole;
     mat_scale(asteroid->scale, &lole);
     lole.w.w = 1.0f;
     mat_mul(&lole, &m, &m);
 
-    graphicsComponentDataT* gfx = getComponent(component->entity, "graphics")->data;
     gfx->transform = m;
+
 }
 
 gameEntityT* newAsteroidEntity(void) {

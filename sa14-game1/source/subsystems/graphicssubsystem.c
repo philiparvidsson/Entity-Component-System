@@ -16,6 +16,8 @@
 
 #include <stdlib.h>
 
+#include <GL/glew.h>
+
 /*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
@@ -26,6 +28,10 @@ typedef struct {
     shaderT*  default_shader;
     textureT* default_texture;
 
+#ifdef DRAW_TRI_NORMALS
+    shaderT* normal_shader;
+#endif // DRAW_TRI_NORMALS
+
     shaderT* noise_shader;
     float    noise_intensity;
     int      noise_seed;
@@ -35,10 +41,37 @@ typedef struct {
  * FUNCTIONS
  *----------------------------------------------*/
 
-static void initPostFX(gameSubsystemT* subsystem) {
-    graphicsDataT* gfx = subsystem->data;
+static void loadDefaultShader(graphicsDataT* gfx) {
+    gfx->default_shader = createShader();
 
-    gfx->noise_intensity = 0.11f;
+    string* vert_src = readGamePakFile("default.vert");
+    string* frag_src = readGamePakFile("default.frag");
+
+    compileVertexShader  (gfx->default_shader, vert_src);
+    compileFragmentShader(gfx->default_shader, frag_src);
+    
+    free(vert_src);
+    free(frag_src);
+}
+
+static void loadNormalShader(graphicsDataT* gfx) {
+    gfx->normal_shader = createShader();
+
+    string* vert_src = readGamePakFile("default.vert");
+    string* geom_src = readGamePakFile("normals.geom");
+    string* frag_src = readGamePakFile("normals.frag");
+
+    compileVertexShader  (gfx->normal_shader, vert_src);
+    compileGeometryShader(gfx->normal_shader, geom_src);
+    compileFragmentShader(gfx->normal_shader, frag_src);
+    
+    free(vert_src);
+    free(geom_src);
+    free(frag_src);
+}
+
+static void initPostFX(graphicsDataT* gfx) {
+    gfx->noise_intensity = 0.07f;
     gfx->noise_seed = 0;
 
     string* vert_src = readGamePakFile("discard_z.vert");
@@ -68,28 +101,16 @@ static void applyPostFX(gameSubsystemT* subsystem) {
     //--------------------------------------------
 }
 
-static void beginFrame(gameSubsystemT* subsystem, float dt) {
-    graphicsDataT* gfx = subsystem->data;
-
-    // We begin by clearing the frame buffer to some color...
-    clearDisplay(0.0f, 0.0f, 0.5f);
-
-    // ...then we activate the default shader and texture.
-    useShader (gfx->default_shader);
-    useTexture(gfx->default_texture, 0);
-
-    // We also need to setup the shader by providing it with the projection and
-    // view matrices.
-
+static void setupCamera(graphicsDataT* gfx) {
     mat4x4 proj, view;
 
     // @To-do: Camera logic should be here.
     mat4x4_look_at(&(vec3) { 0.0f, 0.0f, 1.0f },
-                   &(vec3) { 0.0f, 0.0f, 0.0f },
-                   &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
+        &(vec3) { 0.0f, 0.0f, 0.0f },
+        &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
 
     float r = gfx->aspect_ratio;
-    mat4x4_perspective(-0.5f*r, 0.5f*r, -0.5f, 0.5f, -1.5f, -0.01f, &proj);
+    mat4x4_persp(-0.5f*r, 0.5f*r, -0.5f, 0.5f, -1.5f, -0.01f, &proj);
 
     setShaderParam("Proj", &proj);
     setShaderParam("View", &view);
@@ -109,8 +130,6 @@ static void drawComponent(gameComponentT* component) {
     if (!gfx->mesh)
         return;
 
-    // The "Model" uniform variable is used by the vertex shader as the model
-    // transform matrix.
     mat4x4 model;
     mat_identity(&model);
 
@@ -121,19 +140,37 @@ static void drawComponent(gameComponentT* component) {
     mat_mul(&gfx->transform, &model, &model);
     mat_mul(&translation   , &model, &model);
 
-    setShaderParam("Model" , &model);
-    //setShaderParam("Normal", &gfx->normal_transform);
-
+    setShaderParam("ModelTransform" , &model);
+    setShaderParam("NormalTransform", &gfx->normal_transform);
+    
     drawMesh(gfx->mesh);
 }
 
-static void drawEverything(gameSubsystemT* subsystem, float dt) {
-    beginFrame(subsystem, dt);
-
-    for (int i = 0; i < arrayLength(subsystem->components); i++) {
-        gameComponentT* component = *(gameComponentT**)arrayGet(subsystem->components, i);
+static void drawComponents(arrayT* components) {
+    for (int i = 0; i < arrayLength(components); i++) {
+        gameComponentT* component = *(gameComponentT**)arrayGet(components, i);
         drawComponent(component);
     }
+}
+
+static void drawEverything(gameSubsystemT* subsystem, float dt) {
+    graphicsDataT* gfx = subsystem->data;
+
+    clearDisplay(0.0f, 0.0f, 0.5f);
+
+    useShader (gfx->default_shader);
+    useTexture(gfx->default_texture, 0);
+
+    setupCamera   (gfx);
+    drawComponents(subsystem->components);
+
+#ifdef DRAW_TRI_NORMALS
+    useShader (gfx->normal_shader);
+    useTexture(gfx->normal_shader, 0);
+
+    setupCamera   (gfx);
+    drawComponents(subsystem->components);
+#endif // DRAW_TRI_NORMALS
 
     applyPostFX(subsystem);
 }
@@ -143,22 +180,18 @@ gameSubsystemT* newGraphicsSubsystem(void) {
     graphicsDataT* gfx = calloc(1, sizeof(graphicsDataT));
 
     gfx->aspect_ratio    = screenWidth() / (float)screenHeight();
-    gfx->default_shader  = createShader();
     gfx->default_texture = createWhiteTexture();
 
-    string* vert_src = readGamePakFile("default.vert");
-    string* frag_src = readGamePakFile("default.frag");
+    loadDefaultShader(gfx);
 
-    compileVertexShader (gfx->default_shader, vert_src);
-    compileFragmentShader(gfx->default_shader, frag_src);
-
-    free(vert_src);
-    free(frag_src);
+#ifdef DRAW_TRI_NORMALS
+    loadNormalShader(gfx);
+#endif // DRAW_TRI_NORMALS
 
     subsystem->data = gfx;
     subsystem->after_update_fn = drawEverything;
 
-    initPostFX(subsystem);
+    initPostFX(gfx);
 
     return (subsystem);
 }

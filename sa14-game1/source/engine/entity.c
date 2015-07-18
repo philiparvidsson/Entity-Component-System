@@ -10,7 +10,7 @@
 
 gameEntityT* newEntity(void) {
     gameEntityT* entity = calloc(1, sizeof(gameEntityT));
-
+    
     entity->components = arrayNew(sizeof(gameComponentT*));
 
     return (entity);

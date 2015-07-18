@@ -8,6 +8,7 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h> // memset()
 
 #include <GL/glew.h>
 
@@ -22,10 +23,11 @@
  *   Represents a piece of geometry with a vertex mesh etc.
  *------------------------------------*/
 struct triMeshT {
-    vertexT* verts;     // The vertices.
     int      num_verts; // Number of vertices.
-    triT    *tris;      // The triangles (faces).
-    int      num_tris;  // Number of triangles.
+    vertexT* verts;     // The vertices.
+
+    int   num_tris;   // Number of triangles.
+    triT* tris;       // The triangles (faces).
 
     GLuint vbo, // Vertex buffer object.
            ibo; // Index buffer object.
@@ -34,6 +36,19 @@ struct triMeshT {
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
+
+static vec3 calcTriNormal(vertexT* verts, triT* tri) {
+    vertexT* v0 = &verts[tri->v0];
+    vertexT* v1 = &verts[tri->v1];
+    vertexT* v2 = &verts[tri->v2];
+
+    vec3 edge0, edge1, normal;
+    vec_sub(&v1->p, &v0->p, &edge0);
+    vec_sub(&v2->p, &v0->p, &edge1);
+    vec3_cross(&edge0, &edge1, &normal);
+
+    return (normal);
+}
 
 /*--------------------------------------
  * Function: newMesh()
@@ -54,10 +69,10 @@ struct triMeshT {
 triMeshT* newMesh(int num_verts, int num_tris) {
     triMeshT* mesh = malloc(sizeof(triMeshT));
 
-    mesh->num_verts = num_verts;
-    mesh->verts     = malloc(sizeof(vertexT) * mesh->num_verts);
-    mesh->num_tris  = num_tris;
-    mesh->tris      = malloc(sizeof(triT)    * mesh->num_tris);
+    mesh->num_verts  = num_verts;
+    mesh->verts      = calloc(mesh->num_verts, sizeof(vertexT));
+    mesh->num_tris   = num_tris;
+    mesh->tris       = calloc(mesh->num_tris, sizeof(triT));
 
     size_t vb_size = sizeof(vertexT) * mesh->num_verts;
     size_t ib_size = sizeof(triT)    * mesh->num_tris;
@@ -161,6 +176,65 @@ vertexT* meshVertsPtr(triMeshT* mesh) {
     return (mesh->verts);
 }
 
+void calcNormals(triMeshT* mesh) {
+    for (int i = 0; i < mesh->num_tris; i++) {
+        triT* tri = &mesh->tris[i];
+
+        vertexT* v0 = &mesh->verts[tri->v0];
+        vertexT* v1 = &mesh->verts[tri->v1];
+        vertexT* v2 = &mesh->verts[tri->v2];
+
+        vec3 normal = calcTriNormal(mesh->verts, tri);
+        vec_normalize(&normal, &normal);
+        v0->n = v1->n = v2->n = normal;
+    }
+
+    updateMesh(mesh);
+}
+
+void calcSmoothNormals(triMeshT* mesh) {
+    for (int i = 0; i < mesh->num_verts; i++)
+        mesh->verts[i].n = (vec3) { 0.0f, 0.0f, 0.0f };
+
+    for (int i = 0; i < mesh->num_tris; i++) {
+        triT* tri = &mesh->tris[i];
+
+        vertexT* v0 = &mesh->verts[tri->v0];
+        vertexT* v1 = &mesh->verts[tri->v1];
+        vertexT* v2 = &mesh->verts[tri->v2];
+
+        vec3 normal = calcTriNormal(mesh->verts, tri);
+
+        for (int j = 0; j < mesh->num_verts; j++) {
+            vertexT* v = &mesh->verts[j];
+
+            if ((v->smoothing_group==v0->smoothing_group)
+             && (v->x==v0->x) && (v->y==v0->y) && (v->z==v0->z))
+            {
+                vec_add(&normal, &v->n, &v->n);
+            }
+            else if ((v->smoothing_group==v1->smoothing_group)
+             && (v->x==v1->x) && (v->y==v1->y) && (v->z==v1->z))
+            {
+                vec_add(&normal, &v->n, &v->n);
+            }
+            else if ((v->smoothing_group==v2->smoothing_group)
+             && (v->x==v2->x) && (v->y==v2->y) && (v->z==v2->z))
+            {
+                vec_add(&normal, &v->n, &v->n);
+            }
+        }
+    }
+
+    for (int i = 0; i < mesh->num_verts; i++) {
+        vec3* n = &mesh->verts[i].n;
+        vec_normalize(n, n);
+    }
+
+    updateMesh(mesh);
+}
+
+
 /*--------------------------------------
  * Function: createBox()
  * Parameters:
@@ -195,7 +269,7 @@ triMeshT* createBox(float width, float height, float length) {
 
     // Alias pointers for less code clutter.
     vertexT* v = box->verts;
-    triT    *t = box->tris;
+    triT*    t = box->tris;
 
     // Front.
     v[0].p = (vec3) {  width,  height, length };
@@ -203,7 +277,7 @@ triMeshT* createBox(float width, float height, float length) {
     v[2].p = (vec3) { -width, -height, length };
     v[3].p = (vec3) {  width, -height, length };
 
-    v[0].n = v[1].n = v[2].n = v[3].n = (vec3) { 0.0f, 0.0f, 1.0f };
+    v[0].k = v[1].k = v[2].k = v[3].k = 0;
 
     t[0] = (triT) { 0, 1, 2 };
     t[1] = (triT) { 2, 3, 0 };
@@ -214,7 +288,7 @@ triMeshT* createBox(float width, float height, float length) {
     v[6].p = (vec3) { width, -height,  length };
     v[7].p = (vec3) { width, -height, -length };
 
-    v[4].n = v[5].n = v[6].n = v[7].n = (vec3) { 1.0f, 0.0f, 0.0f };
+    v[4].k = v[5].k = v[6].k = v[7].k = 1;
 
     t[2] = (triT) { 4, 5, 6 };
     t[3] = (triT) { 6, 7, 4 };
@@ -225,7 +299,7 @@ triMeshT* createBox(float width, float height, float length) {
     v[10].p = (vec3) {  width, -height, -length };
     v[11].p = (vec3) { -width, -height, -length };
 
-    v[8].n = v[9].n = v[10].n = v[11].n = (vec3) { 0.0f, 0.0f, -1.0f };
+    v[8].k = v[9].k = v[10].k = v[11].k = 2;
 
     t[4] = (triT) { 8,  9, 10 };
     t[5] = (triT) { 10, 11, 8 };
@@ -236,7 +310,7 @@ triMeshT* createBox(float width, float height, float length) {
     v[14].p = (vec3) { -width, -height, -length };
     v[15].p = (vec3) { -width, -height,  length };
 
-    v[12].n = v[13].n = v[14].n = v[15].n = (vec3) { -1.0f, 0.0f, 0.0f };
+    v[12].k = v[13].k = v[14].k = v[15].k = 3;
 
     t[6] = (triT) { 12, 13, 14 };
     t[7] = (triT) { 14, 15, 12 };
@@ -247,31 +321,31 @@ triMeshT* createBox(float width, float height, float length) {
     v[18].p = (vec3) { -width, height,  length };
     v[19].p = (vec3) {  width, height,  length };
 
-    v[16].n = v[17].n = v[18].n = v[19].n = (vec3) { 0.0f, 1.0f, 0.0f };
+    v[16].k = v[17].k = v[18].k = v[19].k = 4;
 
     t[8] = (triT) { 16, 17, 18 };
     t[9] = (triT) { 18, 19, 16 };
 
-    // Bottom
+    // Bottom.
     v[20].p = (vec3) {  width, -height,  length };
     v[21].p = (vec3) { -width, -height,  length };
     v[22].p = (vec3) { -width, -height, -length };
     v[23].p = (vec3) {  width, -height, -length };
 
-    v[20].n = v[21].n = v[22].n = v[23].n = (vec3) { 0.0f, -1.0f, 0.0f };
+    v[20].k = v[21].k = v[22].k = v[23].k = 5;
 
     t[10] = (triT) { 20, 21, 22 };
     t[11] = (triT) { 22, 23, 20 };
 
-
     for (int i = 0; i < 24; i += 4) {
-        v[i+0].uv = (vec2) { 1.0f, 1.0f };
+        v[i  ].uv = (vec2) { 1.0f, 1.0f };
         v[i+1].uv = (vec2) { 0.0f, 1.0f };
         v[i+2].uv = (vec2) { 0.0f, 0.0f };
         v[i+3].uv = (vec2) { 1.0f, 0.0f };
     }
 
-    updateMesh(box);
+    calcSmoothNormals(box);
+
     return (box);
 }
 
@@ -298,59 +372,37 @@ triMeshT* createCone(float radius, float height, int num_sides) {
     // (because they need separate normals for shading to work properly) and
     // one separate top point for each face (again, because they need separate
     // normals).
-    triMeshT* cone = newMesh(1+num_sides*3, num_sides*2);
+    triMeshT* cone = newMesh(num_sides*6, num_sides*2);
 
     // Alias pointers for less code clutter.
     vertexT* v = cone->verts;
     triT    *t = cone->tris;
 
-    v[0].p = (vec3) { 0.0f,  0.0f, 0.0f };
-    v[0].n = (vec3) { 0.0f, -1.0f, 0.0f };
-
-    // Skip the first vertex.
-    v++;
-    
-    float pi = acosf(-1.0f);
+    float r = radius;
+    float f = (2.0f * 3.141592653f) / num_sides;
     for (int i = 0; i < num_sides; i++) {
-        float theta = (i/(float)num_sides)*(2.0f*pi);
+        int j = i*6;
 
-        // Bottom.
-        v[i].p = (vec3) { radius*cosf(theta),  0.0f, radius*sinf(theta) };
-        v[i].n = (vec3) { 0.0f, -1.0f, 0.0f };
+        float a = f*i;
+        float b = f*((i+1) % num_sides);
 
-        t[i] = (triT) { 0, 1+i, 1+((i+1) % num_sides) };
+        v[j  ].p = (vec3) { 0.0f, 0.0f, 0.0f };
+        v[j+1].p = (vec3) { r*cosf(a), 0.0f, r*sinf(a) };
+        v[j+2].p = (vec3) { r*cosf(b), 0.0f, r*sinf(b) };
+        v[j+3].p = v[i*6+1].p;
+        v[j+4].p = v[i*6+2].p;
+        v[j+5].p = (vec3) { 0.0f, height, 0.0f };
 
-        // Sides.
-        v[num_sides  +i].p = v[i].p;
-        v[num_sides*2+i].p = (vec3) { 0.0f, height, 0.0f };
+        v[j  ].k = v[i*6+1].k = v[i*6+2].k = 0;
+        v[j+3].k = v[i*6+4].k = 1;
+        v[j+5].k = 2+i;
 
-        // First, we create a line from the top of the cone to the current
-        // vertex...
-        vec3 diff;
-        vec_sub(&v[i].p, &v[num_sides*2+i].p, &diff);
-
-        // ...then we figure out its perp-vector on the xz-plane.
-        vec3 perp = v[i].p;
-        float perp_x = perp.x;
-        perp.x = -perp.z;
-        perp.z = perp_x;
-
-        // The normal is then the cross product of the perp-vector and the
-        // line between the current vertex and the top of the cone.
-        vec3 normal;
-        vec3_cross(&perp, &diff, &normal);
-
-        vec_normalize(&normal, &normal);
-
-        v[num_sides  +i].n = normal;
-        v[num_sides*2+i].n = normal;
-
-        t[num_sides+i] = (triT) { 1+  num_sides+  i,
-                                  1+2*num_sides+  i,
-                                  1+  num_sides+((i+1) % num_sides) };
+        t[i*2  ] = (triT) {i*6  , i*6+1, i*6+2 };
+        t[i*2+1] = (triT) {i*6+3, i*6+5, i*6+4 };
     }
 
-    updateMesh(cone);
+    calcSmoothNormals(cone);
+
     return (cone);
 }
 

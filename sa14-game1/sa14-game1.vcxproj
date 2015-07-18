@@ -171,6 +171,8 @@
     <None Include="build\pak-tool.exe" />
     <None Include="build\postbuild.bat" />
     <None Include="resources\shaders\noise.frag" />
+    <None Include="resources\shaders\normals.frag" />
+    <None Include="resources\shaders\normals.geom" />
     <None Include="resources\shaders\postfx.frag" />
     <None Include="resources\shaders\discard_z.vert" />
     <None Include="resources\shaders\splashscreen.frag" />

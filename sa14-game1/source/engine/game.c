@@ -14,6 +14,7 @@
 #include "input/mouse.h"
 
 struct gameT {
+    bool done;
     arrayT* paks;
     arrayT* entities;
     arrayT* subsystems;
@@ -23,7 +24,6 @@ struct gameT {
  * GLOBALS
  *----------------------------------------------*/
 
-static bool done = false;
 static gameT* game_inst = NULL;
 
 /*------------------------------------------------
@@ -96,14 +96,15 @@ void initGame(const string* title, int screen_width, int screen_height) {
 }
 
 void exitGame(void) {
-    done = true;
+    if (game_inst)
+        game_inst->done = true;
 }
 
 void gameMain(void (*frame_func)(float dt)) {
-    done = false;
+    game_inst->done = false;
 
     timeT time = getTime();
-    while (!done && windowIsOpen()) {
+    while (!game_inst->done && windowIsOpen()) {
         float dt = elapsedSecsSince(time);
 
         // Pause if we lose focus. The time we pause should not be taken into
@@ -141,15 +142,15 @@ gameSubsystemT* getGameSubsystem(const string* name) {
         if (strcmp(subsystem->name, name)==0)
             return (subsystem);
     }
-
+    
     return (NULL);
 }
 
 void addEntityToGame(gameEntityT* entity) {
     assert(entity->game == NULL);
-
+    
     entity->game = game_inst;
-
+    
     int num_components = arrayLength(entity->components);
     for (int i = 0; i < num_components; i++) {
         gameComponentT* component = *(gameComponentT**)arrayGet(entity->components, i);
