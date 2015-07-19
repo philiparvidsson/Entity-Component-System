@@ -114,6 +114,8 @@
     <ClCompile Include="source\entities\asteroidentity.c" />
     <ClCompile Include="source\entities\playerentity.c" />
     <ClCompile Include="source\graphics\graphics.c" />
+    <ClCompile Include="source\graphics\lightsource.c" />
+    <ClCompile Include="source\graphics\material.c" />
     <ClCompile Include="source\graphics\texture.c" />
     <ClCompile Include="source\graphics\trimesh.c" />
     <ClCompile Include="source\graphics\shader.c" />
@@ -150,6 +152,8 @@
     <ClInclude Include="source\entities\playerentity.h" />
     <ClInclude Include="source\graphics\bmp.h" />
     <ClInclude Include="source\graphics\graphics.h" />
+    <ClInclude Include="source\graphics\lightsource.h" />
+    <ClInclude Include="source\graphics\material.h" />
     <ClInclude Include="source\graphics\texture.h" />
     <ClInclude Include="source\graphics\trimesh.h" />
     <ClInclude Include="source\graphics\shader.h" />
@@ -173,6 +177,7 @@
     <None Include="resources\shaders\noise.frag" />
     <None Include="resources\shaders\normals.frag" />
     <None Include="resources\shaders\normals.geom" />
+    <None Include="resources\shaders\normals.vert" />
     <None Include="resources\shaders\postfx.frag" />
     <None Include="resources\shaders\discard_z.vert" />
     <None Include="resources\shaders\splashscreen.frag" />

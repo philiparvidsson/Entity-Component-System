@@ -37,19 +37,6 @@ struct triMeshT {
  * FUNCTIONS
  *----------------------------------------------*/
 
-static vec3 calcTriNormal(vertexT* verts, triT* tri) {
-    vertexT* v0 = &verts[tri->v0];
-    vertexT* v1 = &verts[tri->v1];
-    vertexT* v2 = &verts[tri->v2];
-
-    vec3 edge0, edge1, normal;
-    vec_sub(&v1->p, &v0->p, &edge0);
-    vec_sub(&v2->p, &v0->p, &edge1);
-    vec3_cross(&edge0, &edge1, &normal);
-
-    return (normal);
-}
-
 /*--------------------------------------
  * Function: newMesh()
  * Parameters:
@@ -176,6 +163,19 @@ vertexT* meshVertsPtr(triMeshT* mesh) {
     return (mesh->verts);
 }
 
+vec3 calcTriNormal(vertexT* verts, triT* tri) {
+    vertexT* v0 = &verts[tri->v0];
+    vertexT* v1 = &verts[tri->v1];
+    vertexT* v2 = &verts[tri->v2];
+
+    vec3 edge0, edge1, normal;
+    vec_sub(&v1->p, &v0->p, &edge0);
+    vec_sub(&v2->p, &v0->p, &edge1);
+    vec3_cross(&edge0, &edge1, &normal);
+
+    return (normal);
+}
+
 void calcNormals(triMeshT* mesh) {
     for (int i = 0; i < mesh->num_tris; i++) {
         triT* tri = &mesh->tris[i];
@@ -267,69 +267,48 @@ triMeshT* createBox(float width, float height, float length) {
     vertexT* v = box->verts;
     triT*    t = box->tris;
 
-    // Front.
-    v[0].p = (vec3) {  width,  height, length };
-    v[1].p = (vec3) { -width,  height, length };
-    v[2].p = (vec3) { -width, -height, length };
-    v[3].p = (vec3) {  width, -height, length };
-
-    v[0].k = v[1].k = v[2].k = v[3].k = 0;
-
-    t[0] = (triT) { 0, 1, 2 };
-    t[1] = (triT) { 2, 3, 0 };
-
-    // Right.
-    v[4].p = (vec3) { width,  height, -length };
-    v[5].p = (vec3) { width,  height,  length };
-    v[6].p = (vec3) { width, -height,  length };
-    v[7].p = (vec3) { width, -height, -length };
-
-    v[4].k = v[5].k = v[6].k = v[7].k = 1;
-
-    t[2] = (triT) { 4, 5, 6 };
-    t[3] = (triT) { 6, 7, 4 };
-
-    // Back.
+    v[ 0].p = (vec3) {  width,  height,  length };
+    v[ 1].p = (vec3) { -width,  height,  length };
+    v[ 2].p = (vec3) { -width, -height,  length };
+    v[ 3].p = (vec3) {  width, -height,  length };
+    v[ 4].p = (vec3) {  width,  height, -length };
+    v[ 5].p = (vec3) {  width,  height,  length };
+    v[ 6].p = (vec3) {  width, -height,  length };
+    v[ 7].p = (vec3) {  width, -height, -length };
     v[ 8].p = (vec3) { -width,  height, -length };
     v[ 9].p = (vec3) {  width,  height, -length };
     v[10].p = (vec3) {  width, -height, -length };
     v[11].p = (vec3) { -width, -height, -length };
-
-    v[8].k = v[9].k = v[10].k = v[11].k = 2;
-
-    t[4] = (triT) { 8,  9, 10 };
-    t[5] = (triT) { 10, 11, 8 };
-
-    // Left.
     v[12].p = (vec3) { -width,  height,  length };
     v[13].p = (vec3) { -width,  height, -length };
     v[14].p = (vec3) { -width, -height, -length };
     v[15].p = (vec3) { -width, -height,  length };
-
-    v[12].k = v[13].k = v[14].k = v[15].k = 3;
-
-    t[6] = (triT) { 12, 13, 14 };
-    t[7] = (triT) { 14, 15, 12 };
-
-    // Top.
-    v[16].p = (vec3) {  width, height, -length };
-    v[17].p = (vec3) { -width, height, -length };
-    v[18].p = (vec3) { -width, height,  length };
-    v[19].p = (vec3) {  width, height,  length };
-
-    v[16].k = v[17].k = v[18].k = v[19].k = 4;
-
-    t[8] = (triT) { 16, 17, 18 };
-    t[9] = (triT) { 18, 19, 16 };
-
-    // Bottom.
+    v[16].p = (vec3) {  width,  height, -length };
+    v[17].p = (vec3) { -width,  height, -length };
+    v[18].p = (vec3) { -width,  height,  length };
+    v[19].p = (vec3) {  width,  height,  length };
     v[20].p = (vec3) {  width, -height,  length };
     v[21].p = (vec3) { -width, -height,  length };
     v[22].p = (vec3) { -width, -height, -length };
     v[23].p = (vec3) {  width, -height, -length };
 
+    v[ 0].k = v[1].k = v[2].k = v[3].k = 0;
+    v[ 4].k = v[5].k = v[6].k = v[7].k = 1;
+    v[ 8].k = v[9].k = v[10].k = v[11].k = 2;
+    v[12].k = v[13].k = v[14].k = v[15].k = 3;
+    v[16].k = v[17].k = v[18].k = v[19].k = 4;
     v[20].k = v[21].k = v[22].k = v[23].k = 5;
 
+    t[ 0] = (triT) {  0,  1,  2 };
+    t[ 1] = (triT) {  2,  3,  0 };
+    t[ 2] = (triT) {  4,  5,  6 };
+    t[ 3] = (triT) {  6,  7,  4 };
+    t[ 4] = (triT) {  8,  9, 10 };
+    t[ 5] = (triT) { 10, 11,  8 };
+    t[ 6] = (triT) { 12, 13, 14 };
+    t[ 7] = (triT) { 14, 15, 12 };
+    t[ 8] = (triT) { 16, 17, 18 };
+    t[ 9] = (triT) { 18, 19, 16 };
     t[10] = (triT) { 20, 21, 22 };
     t[11] = (triT) { 22, 23, 20 };
 
@@ -389,8 +368,8 @@ triMeshT* createCone(float radius, float height, int num_sides) {
         v[j+3].k = v[i*6+4].k = 1;
         v[j+5].k = 2+i;
 
-        t[i*2  ] = (triT) {i*6  , i*6+1, i*6+2 };
-        t[i*2+1] = (triT) {i*6+3, i*6+5, i*6+4 };
+        t[i*2  ] = (triT) {j  , j+1, j+2 };
+        t[i*2+1] = (triT) {j+3, j+5, j+4 };
     }
 
     calcSmoothNormals(cone);
@@ -398,8 +377,54 @@ triMeshT* createCone(float radius, float height, int num_sides) {
     return (cone);
 }
 
+triMeshT* createCylinder(float radius, float height, int num_sides) {
+    height /= 2.0f;
+
+    triMeshT* cylinder = newMesh(num_sides*12, num_sides*4);
+
+    // Alias pointers for less code clutter.
+    vertexT* v = cylinder->verts;
+    triT    *t = cylinder->tris;
+
+    float r = radius;
+    float f = (2.0f * 3.141592653f) / num_sides;
+    for (int i = 0; i < num_sides; i++) {
+        int j = i*12;
+
+        float a = f*i;
+        float b = f*((i+1) % num_sides);
+
+        v[j   ].p = (vec3) {      0.0f, -height,      0.0f };
+        v[j+ 1].p = (vec3) { r*cosf(a), -height, r*sinf(a) };
+        v[j+ 2].p = (vec3) { r*cosf(b), -height, r*sinf(b) };
+        v[j+ 3].p = (vec3) { r*cosf(a), -height, r*sinf(a) };
+        v[j+ 4].p = (vec3) { r*cosf(b),  height, r*sinf(b) };
+        v[j+ 5].p = (vec3) { r*cosf(b), -height, r*sinf(b) };
+        v[j+ 6].p = (vec3) { r*cosf(a), -height, r*sinf(a) };
+        v[j+ 7].p = (vec3) { r*cosf(a),  height, r*sinf(a) };
+        v[j+ 8].p = (vec3) { r*cosf(b),  height, r*sinf(b) };
+        v[j+ 9].p = (vec3) { r*cosf(a),  height, r*sinf(a) };
+        v[j+10].p = (vec3) {      0.0f,  height,      0.0f };
+        v[j+11].p = (vec3) { r*cosf(b),  height, r*sinf(b) };
+
+        v[j  ].k = v[j+ 1].k = v[j+ 2].k = 0;
+        v[j+3].k = v[j+ 4].k = v[j+ 5].k = 1;
+        v[j+6].k = v[j+ 7].k = v[j+ 8].k = 1;
+        v[j+9].k = v[j+10].k = v[j+11].k = 2;
+
+        t[i*4  ] = (triT) { j  , j+ 1, j+ 2 };
+        t[i*4+1] = (triT) { j+3, j+ 4, j+ 5 };
+        t[i*4+2] = (triT) { j+6, j+ 7, j+ 8 };
+        t[i*4+3] = (triT) { j+9, j+10, j+11 };
+    }
+
+    calcSmoothNormals(cylinder);
+
+    return (cylinder);
+}
+
 triMeshT* createGeodesicSphere(float radius, int num_subdivs) {
-    error("Not implemented");
+
 }
 
 triMeshT* createQuad(float width, float height) {

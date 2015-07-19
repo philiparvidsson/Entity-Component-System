@@ -102,6 +102,12 @@
     <ClCompile Include="source\components\graphicscomponent.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\graphics\lightsource.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\material.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -212,6 +218,12 @@
     <ClInclude Include="source\entities\asteroidentity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\graphics\material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\lightsource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="build\postbuild.bat">
@@ -245,6 +257,7 @@
     </None>
     <None Include="resources\shaders\normals.geom" />
     <None Include="resources\shaders\normals.frag" />
+    <None Include="resources\shaders\normals.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />

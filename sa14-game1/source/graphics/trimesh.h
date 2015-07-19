@@ -67,8 +67,13 @@ int meshNumVerts(const triMeshT* mesh);
 triT* meshTrisPtr(triMeshT* mesh);
 vertexT* meshVertsPtr(triMeshT* mesh);
 
+vec3 calcTriNormal(vertexT* verts, triT* tri);
+void calcNormals(triMeshT* mesh);
+void calcSmoothNormals(triMeshT* mesh);
+
 triMeshT* createBox(float width, float height, float length);
 triMeshT* createCone(float radius, float height, int num_sides);
+triMeshT* createCylinder(float radius, float height, int num_sides);
 triMeshT* createQuad(float width, float height);
 
 #endif // trimesh_h_

@@ -46,35 +46,39 @@ static void compileShader(GLenum type, shaderT* shader, const string* source) {
 
     GLuint shader_id = glCreateShader(type);
 
-    glShaderSource (shader_id, 1, &source, NULL);
+    glShaderSource(shader_id, 1, &source, NULL);
     glCompileShader(shader_id);
 
     GLint result;
 
     glGetShaderiv(shader_id, GL_COMPILE_STATUS, &result);
-    if (result == GL_FALSE) {
-        GLint info_log_length;
-        glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
+    GLint info_log_length;
+    glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &info_log_length);
+
+    if (info_log_length > 1) {
         GLchar *log = malloc(sizeof(GLchar) * info_log_length);
         glGetShaderInfoLog(shader_id, info_log_length, NULL, log);
         printf("\n%s", log);
         free(log);
-        error("Shader failed to compile");
     }
+
+    if (result == GL_FALSE)
+        error("Shader failed to compile");
 
     glAttachShader(shader->id, shader_id);
     glLinkProgram (shader->id);
 
     glGetProgramiv(shader->id, GL_LINK_STATUS, &result);
-    if (result == GL_FALSE) {
-        GLint info_log_length;
-        glGetProgramiv(shader->id, GL_INFO_LOG_LENGTH, &info_log_length);
+    glGetProgramiv(shader->id, GL_INFO_LOG_LENGTH, &info_log_length);
+    if (info_log_length > 1) {
         GLchar *log = malloc(sizeof(GLchar) * info_log_length);
         glGetProgramInfoLog(shader->id, info_log_length, NULL, log);
         printf("\n%s", log);
         free(log);
-        error("Shader program failed to link");
     }
+
+    if (result == GL_FALSE)
+        error("Shader program failed to link");
 
     arrayAdd(shader->shaders, &shader_id);
 }
@@ -125,14 +129,15 @@ void compileVertexShader(shaderT* shader, const string* source) {
     compileShader(GL_VERTEX_SHADER, shader, source);
 }
 
-void setShaderParam(const string* name, const void* value) {
+bool setShaderParam(const string* name, const void* value) {
     if (!active_shader)
         error("No shader in use");
 
     GLuint index = (-1);
     glGetUniformIndices(active_shader->id, 1, &name, &index);
 
-    assert((int)index >= 0);
+    if ((int)index == (-1))
+        return (false);
 
     GLint type = 0;
     glGetActiveUniformsiv(active_shader->id, 1, &index, GL_UNIFORM_TYPE, &type);
@@ -150,6 +155,8 @@ void setShaderParam(const string* name, const void* value) {
     case GL_FLOAT_MAT4   : glUniformMatrix4fv(loc, 1, GL_TRUE, value); break;
     default              : error("Unknown uniform type specified");
     }
+
+    return (true);
 }
 
 void shaderPostProcess(void) {

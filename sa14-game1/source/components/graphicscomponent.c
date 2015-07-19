@@ -6,6 +6,7 @@
 
 #include "base/common.h"
 #include "engine/component.h"
+#include "graphics/material.h"
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -27,6 +28,7 @@ gameComponentT* newGraphicsComponent(triMeshT* mesh) {
     gfx->mesh = mesh;
     mat_identity(&gfx->transform);
     mat_identity(&gfx->normal_transform);
+    gfx->material = defaultMaterial();
 
     component->data = gfx;
     component->cleanup_fn = cleanup;

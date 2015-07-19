@@ -4,6 +4,7 @@
 #include "components/graphicscomponent.h"
 #include "components/physicscomponent.h"
 #include "engine/entity.h"
+#include "graphics/material.h"
 #include "graphics/trimesh.h"
 
 #include <stdlib.h>
@@ -23,6 +24,9 @@ static vec3 randomVector(void) {
 static gameComponentT* createGraphicsComponent(void) {
     triMeshT* mesh = createBox(0.03f, 0.03f, 0.03f);
     gameComponentT* component = newGraphicsComponent(mesh);
+    graphicsComponentDataT* gfx_data = component->data;
+
+    gfx_data->material = getNamedMaterial("shiny black");
 
     return (component);
 }

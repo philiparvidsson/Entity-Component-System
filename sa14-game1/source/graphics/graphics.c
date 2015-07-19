@@ -317,6 +317,23 @@ void clearDisplay(float r, float g, float b) {
  *   updateDisplay();
  *------------------------------------*/
 void updateDisplay(void) {
+#ifdef _DEBUG
+    // Checking for errors every frame in debug build mode...
+
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR) {
+        printf("glGetError() reports: %d", error);
+
+        error = glGetError();
+        while (error != GL_NO_ERROR && error != GL_INVALID_OPERATION) {
+            printf(", %d", error);
+            error = glGetError();
+        }
+
+        printf("\n");
+    }
+#endif // _DEBUG
+
     // Swap the buffer into the window if there's a device context handle.
     if (window->hdc)
         SwapBuffers(window->hdc);
@@ -326,7 +343,7 @@ void updateDisplay(void) {
     LARGE_INTEGER perf_count;
     do {
         updateWindow();
-
+        
         // If window is NULL here, the user has closed the window and
         // destroyWindow() has been called by the WindowProc() function,
         // which, in turn, has been invoekd by the DispatchMessageW() function.

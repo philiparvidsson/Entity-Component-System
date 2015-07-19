@@ -1,4 +1,10 @@
 /*------------------------------------------------
+ * DEFINES
+ *----------------------------------------------*/
+
+#define VECTOR_RGB
+
+/*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
 
@@ -10,9 +16,11 @@
 #include "engine/game.h"
 #include "engine/subsystem.h"
 #include "graphics/graphics.h"
+#include "graphics/material.h"
 #include "graphics/shader.h"
 #include "graphics/texture.h"
 #include "math/matrix.h"
+#include "math/vector.h"
 
 #include <stdlib.h>
 
@@ -23,6 +31,7 @@
  *----------------------------------------------*/
 
 typedef struct {
+    vec3 clear_color;
     float aspect_ratio;
 
     shaderT*  default_shader;
@@ -58,7 +67,7 @@ static void loadDefaultShader(graphicsSubsystemDataT* gfx_data) {
 static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
     gfx_data->normal_shader = createShader();
 
-    string* vert_src = readGamePakFile("default.vert");
+    string* vert_src = readGamePakFile("normals.vert");
     string* geom_src = readGamePakFile("normals.geom");
     string* frag_src = readGamePakFile("normals.frag");
 
@@ -73,9 +82,9 @@ static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
 #endif // DRAW_TRI_NORMALS
 
 static void initPostFX(graphicsSubsystemDataT* gfx_data) {
-    gfx_data->noise_intensity = 0.07f;
+    gfx_data->noise_intensity = 0.14f;
     gfx_data->noise_seed = 0;
-
+    
     string* vert_src = readGamePakFile("discard_z.vert");
     string* frag_src = readGamePakFile("noise.frag");
 
@@ -108,8 +117,8 @@ static void setupCamera(graphicsSubsystemDataT* gfx_data) {
 
     // @To-do: Camera logic should be here.
     mat4x4_look_at(&(vec3) { 0.0f, 0.0f, 1.0f },
-        &(vec3) { 0.0f, 0.0f, 0.0f },
-        &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
+                   &(vec3) { 0.0f, 0.0f, 0.0f },
+                   &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
 
     float r = gfx_data->aspect_ratio;
     mat4x4_persp(-0.5f*r, 0.5f*r, -0.5f, 0.5f, -1.5f, -0.01f, &proj);
@@ -118,13 +127,24 @@ static void setupCamera(graphicsSubsystemDataT* gfx_data) {
     setShaderParam("View", &view);
 }
 
+static void setupLights(graphicsSubsystemDataT* gfx_data) {
+    int one = 1;
+    setShaderParam("NumLights", &one);
+
+    vec3 light_pos     = (vec3) { 0.0f, 0.0f, 1.0f };
+    vec3 light_diffuse = (vec3) { 1.0f, 1.0f, 1.0f };
+
+    setShaderParam("Lights[0].pos"      , &light_pos);
+    setShaderParam("Lights[0].intensity", &light_diffuse);
+}
+
 static void drawComponent(gameComponentT* component) {
     gameComponentT* phys_c = getComponent(component->entity, "physics");
-
+    
     // The graphics component needs a physics component to pull the position
     // from.
     assert(phys_c != NULL);
-
+    
     graphicsComponentDataT* gfx_component  = component->data;
     physicsComponentDataT*  phys_component = phys_c->data;
 
@@ -140,12 +160,25 @@ static void drawComponent(gameComponentT* component) {
     mat_transl_xyz(pos.x, pos.y, pos.z, &translation);
 
     mat_mul(&gfx_component->transform, &model, &model);
-    mat_mul(&translation   , &model, &model);
+    mat_mul(&translation             , &model, &model);
 
     setShaderParam("ModelTransform" , &model);
     setShaderParam("NormalTransform", &gfx_component->normal_transform);
+
+    materialT* material = gfx_component->material;
+    setShaderParam("Material.ambient"  , &material->ambient  );
+    setShaderParam("Material.diffuse"  , &material->diffuse  );
+    setShaderParam("Material.specular" , &material->specular );
+    setShaderParam("Material.shininess", &material->shininess);
+    
+    textureT* old_texture = NULL;
+    if (gfx_component->texture)
+        old_texture = useTexture(gfx_component->texture, 0);
     
     drawMesh(gfx_component->mesh);
+
+    if (old_texture)
+        useTexture(old_texture, 0);
 }
 
 static void drawComponents(arrayT* components) {
@@ -158,12 +191,14 @@ static void drawComponents(arrayT* components) {
 static void drawEverything(gameSubsystemT* subsystem, float dt) {
     graphicsSubsystemDataT* gfx_data = subsystem->data;
 
-    clearDisplay(0.0f, 0.0f, 0.5f);
+    vec3* clear_color = &gfx_data->clear_color;
+    clearDisplay(clear_color->r, clear_color->g, clear_color->b);
 
     useShader (gfx_data->default_shader);
     useTexture(gfx_data->default_texture, 0);
 
     setupCamera   (gfx_data);
+    setupLights   (gfx_data);
     drawComponents(subsystem->components);
 
 #ifdef DRAW_TRI_NORMALS
@@ -181,6 +216,7 @@ gameSubsystemT* newGraphicsSubsystem(void) {
     gameSubsystemT* subsystem = newSubsystem("graphics");
     graphicsSubsystemDataT* gfx_data = calloc(1, sizeof(graphicsSubsystemDataT));
 
+    gfx_data->clear_color     = (vec3) { 1.0f, 1.0f, 1.0f };
     gfx_data->aspect_ratio    = screenWidth() / (float)screenHeight();
     gfx_data->default_texture = createWhiteTexture();
 

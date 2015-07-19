@@ -61,7 +61,7 @@ static textureT* loadTextureFromBMP(const void* bmp_data) {
     textureT*      texture     = createTexture();
     textureT*      old_texture = useTexture(texture, 0);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, bitmap->width, bitmap->height, 0, GL_BGR, GL_UNSIGNED_BYTE, bitmap->pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bitmap->width, bitmap->height, 0, GL_BGR, GL_UNSIGNED_BYTE, bitmap->pixels);
 
     useTexture(old_texture, 0);
 
@@ -87,7 +87,7 @@ textureT* createWhiteTexture(void) {
     textureT* texture     = createTexture();
     textureT* old_texture = useTexture(texture, 0);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, 1, 1, 0, GL_RGB, GL_FLOAT, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGB, GL_FLOAT, data);
 
     useTexture(old_texture, 0);
 
@@ -130,6 +130,10 @@ textureT* useTexture(textureT* texture, int index) {
     assert(0 <= index && index < MaxTextures);
 
     textureT* old_texture = active_textures[index];
+
+    if (texture == old_texture)
+        return (old_texture);
+
     active_textures[index] = texture;
 
     glActiveTexture(GL_TEXTURE0 + index);
