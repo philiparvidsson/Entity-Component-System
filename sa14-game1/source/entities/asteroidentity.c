@@ -36,14 +36,14 @@ static gameComponentT* createPhysicsComponent(void) {
 
     physicsComponentDataT* phys = component->data;
     
-    vec3 pos = { 0.0f, 0.0f, 0.0f };
+    vec3 pos = { 0.2f, 0.2f, 0.0f };
     bodySetPosition(((physicsComponentDataT*)phys)->body, pos);
 
     vec3 vel = randomVector();
     vel.z = 0.0f;
     vec_scale(&vel, 0.1f, &vel);
     bodySetVelocity(((physicsComponentDataT*)phys)->body, vel);
-
+    
     return (component);
 }
 

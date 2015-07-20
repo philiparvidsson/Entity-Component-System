@@ -113,10 +113,14 @@ static void showSplashScreen(textureT* splash_tex, float secs) {
 
 static float lol;
 void frameFunc(float dt) {
+    //if (lol < 0)
+    //    return;
     lol += dt;
-    while (lol >= 0.5f) {
+    while (lol >= 0.1f) {
         addEntityToGame(newAsteroidEntity());
-        lol -= 0.5f;
+        lol -= 0.1f;
+        //lol = -1;
+        //break;
     }
 }
 

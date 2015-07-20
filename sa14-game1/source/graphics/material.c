@@ -31,7 +31,7 @@ const materialT* getNamedMaterial(const string* name) {
             1.0f, 0.0f, 1.0f, // ambient
             0.5f, 0.5f, 0.5f, // diffuse
             0.5f, 0.5f, 0.5f, // specular
-            10.0f,             // shininess
+            10.0f,            // shininess
         };
 
         material = &debug_material;

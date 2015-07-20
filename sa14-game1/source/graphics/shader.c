@@ -159,11 +159,18 @@ bool setShaderParam(const string* name, const void* value) {
     return (true);
 }
 
-void shaderPostProcess(void) {
+void shaderPostProcess(textureT* source_texture) {
     if (!active_shader)
         error("No shader in use");
 
-    textureT* texture = createTextureFromScreen();
+    bool created_texture = false;
+
+    if (!source_texture) {
+        source_texture = createTextureFromScreen();
+        created_texture = true;
+    }
+
+    textureT* texture = source_texture;
     triMeshT* quad    = createQuad(2.0f, 2.0f);
 
     clearDisplay(1.0f, 0.0f, 1.0f);
@@ -174,5 +181,7 @@ void shaderPostProcess(void) {
 
     freeMesh(quad);
     useTexture(NULL, 0);
-    freeTexture(texture);
+
+    if (created_texture)
+        freeTexture(texture);
 }

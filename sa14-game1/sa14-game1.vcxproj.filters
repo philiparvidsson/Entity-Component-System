@@ -108,6 +108,9 @@
     <ClCompile Include="source\graphics\material.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\graphics\rendertarget.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -224,6 +227,9 @@
     <ClInclude Include="source\graphics\lightsource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\graphics\rendertarget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="build\postbuild.bat">
@@ -258,6 +264,8 @@
     <None Include="resources\shaders\normals.geom" />
     <None Include="resources\shaders\normals.frag" />
     <None Include="resources\shaders\normals.vert" />
+    <None Include="resources\shaders\motionblur.vert" />
+    <None Include="resources\shaders\motionblur.frag" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />

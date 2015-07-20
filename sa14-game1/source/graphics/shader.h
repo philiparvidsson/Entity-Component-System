@@ -6,6 +6,7 @@
  *----------------------------------------------*/
 
 #include "base/common.h"
+#include "graphics/texture.h"
 
 /*------------------------------------------------
  * TYPES
@@ -33,6 +34,6 @@ void compileVertexShader(shaderT* shader, const string* source);
 bool setShaderParam(const string* name, const void* value);
 shaderT* useShader(const shaderT* shader);
 
-void shaderPostProcess(void);
+void shaderPostProcess(textureT* source_texture);
 
 #endif // shader_h_

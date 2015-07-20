@@ -113,6 +113,7 @@
     <ClCompile Include="source\engine\subsystem.c" />
     <ClCompile Include="source\entities\asteroidentity.c" />
     <ClCompile Include="source\entities\playerentity.c" />
+    <ClCompile Include="source\graphics\rendertarget.c" />
     <ClCompile Include="source\graphics\graphics.c" />
     <ClCompile Include="source\graphics\lightsource.c" />
     <ClCompile Include="source\graphics\material.c" />
@@ -151,6 +152,7 @@
     <ClInclude Include="source\entities\asteroidentity.h" />
     <ClInclude Include="source\entities\playerentity.h" />
     <ClInclude Include="source\graphics\bmp.h" />
+    <ClInclude Include="source\graphics\rendertarget.h" />
     <ClInclude Include="source\graphics\graphics.h" />
     <ClInclude Include="source\graphics\lightsource.h" />
     <ClInclude Include="source\graphics\material.h" />
@@ -174,6 +176,8 @@
     <None Include="bin\glew32.dll" />
     <None Include="build\pak-tool.exe" />
     <None Include="build\postbuild.bat" />
+    <None Include="resources\shaders\motionblur.frag" />
+    <None Include="resources\shaders\motionblur.vert" />
     <None Include="resources\shaders\noise.frag" />
     <None Include="resources\shaders\normals.frag" />
     <None Include="resources\shaders\normals.geom" />

@@ -8,6 +8,7 @@
 #include "base/file_io.h"
 #include "graphics/bmp.h"
 #include "graphics/graphics.h"
+#include "math/vector.h"
 
 #include <stdlib.h>
 
@@ -27,6 +28,9 @@
 struct textureT {
     GLuint id;
     bool repeat;
+
+    int width;
+    int height;
 };
 
 /*------------------------------------------------
@@ -39,7 +43,19 @@ static textureT* active_textures[MaxTextures] = { 0 };
  * FUNCTIONS
  *----------------------------------------------*/
 
-static textureT* createTexture(void) {
+static textureT* loadTextureFromBMP(const void* bmp_data) {
+    bitmapHeaderT* bitmap      = bmp_data;
+    textureT*      texture     = createTexture(bitmap->width, bitmap->height);
+    textureT*      old_texture = useTexture(texture, 0);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bitmap->width, bitmap->height, 0, GL_BGR, GL_UNSIGNED_BYTE, bitmap->pixels);
+
+    useTexture(old_texture, 0);
+
+    return (texture);
+}
+
+textureT* createTexture(int width, int height) {
     textureT* texture = malloc(sizeof(textureT));
 
     glGenTextures(1, &texture->id);
@@ -51,17 +67,7 @@ static textureT* createTexture(void) {
 
     setTextureRepeat(texture, false);
 
-    useTexture(old_texture, 0);
-
-    return (texture);
-}
-
-static textureT* loadTextureFromBMP(const void* bmp_data) {
-    bitmapHeaderT* bitmap      = bmp_data;
-    textureT*      texture     = createTexture();
-    textureT*      old_texture = useTexture(texture, 0);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bitmap->width, bitmap->height, 0, GL_BGR, GL_UNSIGNED_BYTE, bitmap->pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
     useTexture(old_texture, 0);
 
@@ -69,10 +75,10 @@ static textureT* loadTextureFromBMP(const void* bmp_data) {
 }
 
 textureT* createTextureFromScreen(void) {
-    textureT* texture     = createTexture();
+    int width = screenWidth(), height = screenHeight();
+    textureT* texture = createTexture(width, height);
     textureT* old_texture = useTexture(texture, 0);
 
-    int width  = screenWidth(), height = screenHeight();
     glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, width, height, 0);
 
     useTexture(old_texture, 0);
@@ -84,10 +90,10 @@ textureT* createWhiteTexture(void) {
     // Red, green and blue color components. All set to 1.0 to get white color.
     float data[] = { 1.0f, 1.0f, 1.0f };
 
-    textureT* texture     = createTexture();
+    textureT* texture     = createTexture(1, 1);
     textureT* old_texture = useTexture(texture, 0);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGB, GL_FLOAT, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGB, GL_FLOAT, data);
 
     useTexture(old_texture, 0);
 
@@ -159,7 +165,7 @@ void freeTexture(textureT* texture) {
     free(texture);
 }
 
-bool getTextureRepeat(textureT* texture) {
+bool getTextureRepeat(const textureT* texture) {
     return (texture->repeat);
 }
 
@@ -173,4 +179,8 @@ void setTextureRepeat(textureT* texture, bool value) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_param);
 
     useTexture(old_texture, 0);
+}
+
+vec2 getTextureSize(const textureT* texture) {
+    return ((vec2) { texture->width, texture->height });
 }
