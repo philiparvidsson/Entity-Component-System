@@ -394,18 +394,28 @@ triMeshT* createCylinder(float radius, float height, int num_sides) {
         float a = f*i;
         float b = f*((i+1) % num_sides);
 
-        v[j   ].p = (vec3) {      0.0f, -height,      0.0f };
-        v[j+ 1].p = (vec3) { r*cosf(a), -height, r*sinf(a) };
-        v[j+ 2].p = (vec3) { r*cosf(b), -height, r*sinf(b) };
-        v[j+ 3].p = (vec3) { r*cosf(a), -height, r*sinf(a) };
-        v[j+ 4].p = (vec3) { r*cosf(b),  height, r*sinf(b) };
-        v[j+ 5].p = (vec3) { r*cosf(b), -height, r*sinf(b) };
-        v[j+ 6].p = (vec3) { r*cosf(a), -height, r*sinf(a) };
-        v[j+ 7].p = (vec3) { r*cosf(a),  height, r*sinf(a) };
-        v[j+ 8].p = (vec3) { r*cosf(b),  height, r*sinf(b) };
-        v[j+ 9].p = (vec3) { r*cosf(a),  height, r*sinf(a) };
-        v[j+10].p = (vec3) {      0.0f,  height,      0.0f };
-        v[j+11].p = (vec3) { r*cosf(b),  height, r*sinf(b) };
+        float cos_a = cosf(a), sin_a = sinf(a),
+              cos_b = cosf(b), sin_b = sinf(b);
+
+        // Bottom triangle.
+        v[j   ].p = (vec3) {    0.0f, -height,    0.0f };
+        v[j+ 1].p = (vec3) { r*cos_a, -height, r*sin_a };
+        v[j+ 2].p = (vec3) { r*cos_b, -height, r*sin_b };
+
+        // First side triangle.
+        v[j+ 3].p = v[j+1].p;
+        v[j+ 4].p = (vec3) { r*cos_b,  height, r*sin_b };
+        v[j+ 5].p = v[j+2].p;
+
+        // Second side triangle.
+        v[j+ 6].p = v[j+1].p;
+        v[j+ 7].p = (vec3) { r*cos_a,  height, r*sin_a };
+        v[j+ 8].p = v[j+4].p;
+
+        // Top triangle.
+        v[j+ 9].p = v[j+7].p;
+        v[j+10].p = (vec3) { 0.0f,  height, 0.0f };
+        v[j+11].p = v[j+4].p;
 
         v[j  ].k = v[j+ 1].k = v[j+ 2].k = 0;
         v[j+3].k = v[j+ 4].k = v[j+ 5].k = 1;

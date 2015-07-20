@@ -8,7 +8,9 @@ struct fragDataT {
 
 struct lightSourceT {
     vec3 pos;
-    vec3 intensity;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
 };
 
 struct materialT {
@@ -36,11 +38,19 @@ void main() {
     vec3 illum = Material.ambient;
 
     for (int i = 0; i < NumLights; i++) {
-        vec3 l = normalize(Lights[i].pos - frag.pos);
+        lightSourceT light = Lights[i];
+
+        vec3 l = normalize(light.pos - frag.pos);
         vec3 r = reflect(l, n);
 
-        illum += Material.diffuse*max(0.0, dot(l, n))*Lights[i].intensity
-              +  Material.specular*pow(max(0.0, dot(r, v)), Material.shininess)*Lights[i].intensity;
+        float diffuse_factor  = max(0.0, dot(l, n));
+        float specular_factor = pow(max(0.0, dot(r, v)), Material.shininess);
+
+        vec3 ambient  = Material.ambient  * light.ambient;
+        vec3 diffuse  = Material.diffuse  * light.diffuse  * diffuse_factor;
+        vec3 specular = Material.specular * light.specular * specular_factor;
+
+        illum += ambient + diffuse + specular;
     }
 
     color = vec4(illum, 1.0) * texture(Texture, frag.tex_coord);

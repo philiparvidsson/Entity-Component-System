@@ -153,7 +153,7 @@ bool setShaderParam(const string* name, const void* value) {
     case GL_FLOAT_MAT2   : glUniformMatrix2fv(loc, 1, GL_TRUE, value); break;
     case GL_FLOAT_MAT3   : glUniformMatrix3fv(loc, 1, GL_TRUE, value); break;
     case GL_FLOAT_MAT4   : glUniformMatrix4fv(loc, 1, GL_TRUE, value); break;
-    default              : error("Unknown uniform type specified");
+    default              : error("Unknown uniform type");
     }
 
     return (true);

@@ -5,8 +5,10 @@
 #include "math/vector.h"
 
 typedef struct {
-    vec3  position;
-    float intensity;
+    vec3 position;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
 } lightSourceT;
 
 #endif // lightsource_h_

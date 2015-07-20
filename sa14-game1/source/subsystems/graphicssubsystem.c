@@ -128,14 +128,26 @@ static void setupCamera(graphicsSubsystemDataT* gfx_data) {
 }
 
 static void setupLights(graphicsSubsystemDataT* gfx_data) {
-    int one = 1;
+    int one = 2;
     setShaderParam("NumLights", &one);
 
-    vec3 light_pos     = (vec3) { 0.0f, 0.0f, 1.0f };
-    vec3 light_diffuse = (vec3) { 1.0f, 1.0f, 1.0f };
+    vec3 light_pos      = (vec3) { 0.0f, 1.0f, 0.0f };
+    vec3 light_ambient  = (vec3) { 0.0f, 0.0f, 0.0f };
+    vec3 light_diffuse  = (vec3) { 1.0f, 1.0f, 1.0f };
+    vec3 light_specular = (vec3) { 1.0f, 1.0f, 1.0f };
 
-    setShaderParam("Lights[0].pos"      , &light_pos);
-    setShaderParam("Lights[0].intensity", &light_diffuse);
+    setShaderParam("Lights[0].pos"     , &light_pos);
+    setShaderParam("Lights[0].ambient" , &light_ambient);
+    setShaderParam("Lights[0].diffuse" , &light_specular);
+    setShaderParam("Lights[0].specular", &light_diffuse);
+
+    vec_scale(&light_diffuse, 0.3f, &light_diffuse);
+    light_pos.y = -1.0f;
+
+    setShaderParam("Lights[1].pos"     , &light_pos);
+    setShaderParam("Lights[1].ambient" , &light_ambient);
+    setShaderParam("Lights[1].diffuse" , &light_specular);
+    setShaderParam("Lights[1].specular", &light_diffuse);
 }
 
 static void drawComponent(gameComponentT* component) {

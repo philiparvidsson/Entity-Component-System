@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: debug.c
  * Created: June 8, 2015
- * Last changed: July 15, 2015
+ * Last changed: July 20, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -18,6 +18,7 @@
 
 #include "base/common.h"
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -74,11 +75,12 @@ static void printLastErrorWin32(void) {
 #endif // _WIN32
 
 /*--------------------------------------
- * Function: errorExit()
+ * Function: errorExit(msg, func_name, line, ...)
  * Parameters:
- *   msg        The error message to display.
+ *   msg        The error message format to display.
  *   func_name  The name of the function that generated the error.
  *   line       The number of the line that generated the error.
+ *   ...        The error message format arguments.
  *
  * Description:
  *   Displays the specified error message and exits the program. This function
@@ -89,10 +91,17 @@ static void printLastErrorWin32(void) {
  *   errorExit("An error has occurred", "main.c", 42);
  *
  *------------------------------------*/
-void errorExit(const string* msg, const string* func_name, int line) {
+void errorExit(const string* msg, const string* func_name, int line, ...) {
+    va_list ap;
+
+    char s[1024];
+    va_start(ap, line);
+    vsprintf(s, msg, ap);
+    va_end(ap);
+
     printf("\n----------------------------------------\n"
-           "ERROR: %s in %s() on line %d.\n\n"
-           "This program will now exit.\n", msg, func_name, line);
+           "ERROR: %s\n\tin %s() on line %d.\n\n"
+           "This program will now exit.\n", s, func_name, line);
 
     printLastErrorGL();
 
@@ -100,10 +109,13 @@ void errorExit(const string* msg, const string* func_name, int line) {
     printLastErrorWin32();
 #endif // _WIN32
 
-    printf("Press ENTER to continue...");
+#if defined(_DEBUG) && defined(_MSC_VER)
+    printf("Press ENTER to debug...");
     getchar();
-#ifdef _MSC_VER
     __debugbreak();
+#else
+    printf("Press ENTER to exit...");
+    getchar();
 #endif
     exit(EXIT_FAILURE);
 }

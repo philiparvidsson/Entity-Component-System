@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: debug.h
  * Created: June 8, 2015
- * Last changed: June 20, 2015
+ * Last changed: July 20, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -35,7 +35,7 @@
  * Usage:
  *   error("An error has occurred");
  *------------------------------------*/
-#define error(msg) errorExit(msg, __FUNCTION__, __LINE__)
+#define error(msg, ...) errorExit(msg, __FUNCTION__, __LINE__, __VA_ARGS__)
 
 /*--------------------------------------
  * Macro: assert()
@@ -58,11 +58,12 @@
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Function: errorExit()
+ * Function: errorExit(msg, func_name, line, ...)
  * Parameters:
- *   msg        The error message to display.
+ *   msg        The error message format to display.
  *   func_name  The name of the function that generated the error.
  *   line       The number of the line that generated the error.
+ *   ...        The error message format arguments.
  *
  * Description:
  *   Displays the specified error message and exits the program. This function

@@ -184,7 +184,7 @@ char* readGamePakFile(const string* file_name) {
             return (data);
     }
 
-    error("Could not load file");
+    error("Could not find file '%s' in any game pak", file_name);
 }
 
 /*void* delayedFree(void* mem) {

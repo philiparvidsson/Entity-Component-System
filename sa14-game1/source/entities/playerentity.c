@@ -34,7 +34,7 @@ gameEntityT* newPlayerEntity(void) {
 
     entity->data = calloc(1, sizeof(playerEntityDataT));
 
-    triMeshT* mesh = createCylinder(0.02f, 0.04f, 8);
+    triMeshT* mesh = createCylinder(0.01f, 0.06f, 3);
     gameComponentT* gfx = newGraphicsComponent(mesh);
 
     gameComponentT* phys = newPhysicsComponent(1.0f);

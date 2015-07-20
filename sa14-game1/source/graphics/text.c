@@ -38,9 +38,6 @@ static void initTextShader(void) {
     string *vert_src = readGamePakFile("text.vert");
     string *frag_src = readGamePakFile("text.frag");
 
-    if (!vert_src || !frag_src)
-        error("Could not load text shader");
-
     compileVertexShader(text_shader, vert_src);
     compileFragmentShader(text_shader, frag_src);
 

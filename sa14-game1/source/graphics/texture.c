@@ -99,6 +99,9 @@ textureT* loadTextureFromFile(const void* file_name) {
 
     char* data = readFile(file_name);
 
+    if (!data)
+        error("Could not read file '%s'", file_name);
+
     if (data[0]=='B' && data[1]=='M') {
         // Bitmap file. The BMP file header is 14 bytes and not really important
         // for loading it into a texture, so we skip past it.
@@ -108,7 +111,7 @@ textureT* loadTextureFromFile(const void* file_name) {
     free(data);
 
     if (!texture)
-        error("Could not load texture");
+        error("Could not load texture from file '%s'", file_name);
 
     textureT* old_texture = useTexture(texture, 0);
 
