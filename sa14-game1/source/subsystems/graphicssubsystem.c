@@ -48,7 +48,8 @@ typedef struct {
     float    noise_intensity;
     int      noise_seed;
 
-    shaderT* mblur_shader;
+    shaderT*       mblur_shader0;
+    shaderT*       mblur_shader1;
     renderTargetT* mblur_rt;
 
     mat4x4 view_proj;
@@ -58,8 +59,6 @@ typedef struct {
  * FUNCTIONS
  *----------------------------------------------*/
 static void drawComponents(graphicsSubsystemDataT* gfx_data, arrayT* components);
-
-
 
 static void loadDefaultShader(graphicsSubsystemDataT* gfx_data) {
     gfx_data->default_shader = createShader();
@@ -95,25 +94,36 @@ static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
 
 static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     // Motion Blur -------------------------------
-
+    
     string* vert_src = readGamePakFile("motionblur.vert");
-    string* frag_src = readGamePakFile("motionblur.frag");
+    string* frag_src = readGamePakFile("motionblur0.frag");
 
-    gfx_data->mblur_shader = createShader();
-
-    compileVertexShader  (gfx_data->mblur_shader, vert_src);
-    compileFragmentShader(gfx_data->mblur_shader, frag_src);
+    gfx_data->mblur_shader0 = createShader();
+    
+    compileVertexShader  (gfx_data->mblur_shader0, vert_src);
+    compileFragmentShader(gfx_data->mblur_shader0, frag_src);
+    
+    free(vert_src);
+    free(frag_src);
+    
+    vert_src = readGamePakFile("discard_z.vert");
+    frag_src = readGamePakFile("motionblur1.frag");
+    
+    gfx_data->mblur_shader1 = createShader();
+    
+    compileVertexShader  (gfx_data->mblur_shader1, vert_src);
+    compileFragmentShader(gfx_data->mblur_shader1, frag_src);
 
     free(vert_src);
     free(frag_src);
-
-    gfx_data->mblur_rt = createFloatRenderTarget(screenWidth(), screenHeight());
-
+    
+    gfx_data->mblur_rt = createRenderTarget(screenWidth(), screenHeight());
+    
     // Noise -------------------------------------
 
-    gfx_data->noise_intensity = 0.14f;
+    gfx_data->noise_intensity = 0.09f;
     gfx_data->noise_seed      = 0;
-
+    
     vert_src = readGamePakFile("discard_z.vert");
     frag_src = readGamePakFile("noise.frag");
     
@@ -128,25 +138,36 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
 
 static void applyPostFX(gameSubsystemT* subsystem) {
     graphicsSubsystemDataT* gfx_data = subsystem->data;
+    
+    //--------------------------------------------
+    // Motion Blur
+    //--------------------------------------------
 
-    // Motion Blur -------------------------------
+    // 1. Render velocity texture.
 
     renderTargetT* old_rt = useRenderTarget(gfx_data->mblur_rt);
-    useShader(gfx_data->mblur_shader);
+    useShader(gfx_data->mblur_shader0);
     clearDisplay(0.0f, 0.0f, 0.0f);
     drawComponents(subsystem->data, subsystem->components);
-
     useRenderTarget(old_rt);
-    presentRenderTarget(gfx_data->mblur_rt);
 
-    // Noise -------------------------------------
+    // 2. Render to screen.
 
-    /*useShader(gfx_data->noise_shader);
+    useShader(gfx_data->mblur_shader1);
+    textureT* old_tex = useTexture(getRenderTargetColorTexture(gfx_data->mblur_rt), 1);
+    shaderPostProcess(NULL);
+    useTexture(old_tex, 1);
+
+    //--------------------------------------------
+    // Noise
+    //--------------------------------------------
+
+    useShader(gfx_data->noise_shader);
     setShaderParam("Intensity", &gfx_data->noise_intensity);
     setShaderParam("Seed"     , &gfx_data->noise_seed);
     shaderPostProcess(NULL);
 
-    gfx_data->noise_seed++;*/
+    gfx_data->noise_seed++;
 
     //--------------------------------------------
 }
@@ -225,10 +246,8 @@ static void setupTransforms(gameSubsystemT* subsystem) {
 }
 
 static void drawComponent(graphicsSubsystemDataT* gfx_data, gameComponentT* component) {
-    
     graphicsComponentDataT* gfx_component  = component->data;
 
-    // If there's no mesh to render, we exit the function here.
     if (!gfx_component->mesh)
         return;
 
@@ -243,14 +262,7 @@ static void drawComponent(graphicsSubsystemDataT* gfx_data, gameComponentT* comp
     setShaderParam("Material.specular" , &material->specular );
     setShaderParam("Material.shininess", &material->shininess);
     
-    textureT* old_texture = NULL;
-    if (gfx_component->texture)
-        old_texture = useTexture(gfx_component->texture, 0);
-    
     drawMesh(gfx_component->mesh);
-
-    if (old_texture)
-        useTexture(old_texture, 0);
 }
 
 static void drawComponents(graphicsSubsystemDataT* gfx_data, arrayT* components) {
@@ -287,6 +299,7 @@ static void drawEverything(gameSubsystemT* subsystem, float dt) {
 
     useRenderTarget(NULL);
     presentRenderTarget(gfx_data->render_target);
+
     applyPostFX(subsystem);
 }
 

@@ -265,7 +265,8 @@
     <None Include="resources\shaders\normals.frag" />
     <None Include="resources\shaders\normals.vert" />
     <None Include="resources\shaders\motionblur.vert" />
-    <None Include="resources\shaders\motionblur.frag" />
+    <None Include="resources\shaders\motionblur0.frag" />
+    <None Include="resources\shaders\motionblur1.frag" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />

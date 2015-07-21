@@ -32,7 +32,7 @@ float noise(in vec2 v) {
 void main() {
     vec3 color0 = vec3(1.0, 1.0, 1.0) * noise(uv);
     vec3 color1 = texture(Tex, uv).rgb;
-    float a = 1.3 - (color1.r+color1.g+color1.b)/3.3;
+    float a = 1.4 - (color1.r+color1.g+color1.b)/3.8;
     a *= Intensity;
 
     color = vec4(color0*a + color1*(1.0-a), 1.0);

@@ -23,7 +23,7 @@ typedef struct {
     mat4x4     normal_transform; // Normal transform matrix.
     materialT* material;         // Shader material.
     //shaderT*   shader;           // Shader, or NULL to use default.
-    textureT*  texture;          // Texture, or NULL to use default.
+    //textureT*  texture;          // Texture, or NULL to use default.
 
     mat4x4 model_view_proj;      // Current frame MVP matrix.
     mat4x4 prev_model_view_proj; // Last frame MVP matrix.

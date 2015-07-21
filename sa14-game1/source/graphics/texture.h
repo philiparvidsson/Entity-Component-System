@@ -19,7 +19,8 @@ typedef struct textureT textureT;
  * FUNCTIOMS
  *----------------------------------------------*/
 
-textureT* createTexture(int width, int height);
+textureT* createMultisampledTexture(void);
+textureT* createTexture(void);
 textureT* createTextureFromScreen(void);
 textureT* createWhiteTexture(void);
 textureT* loadTextureFromFile(const void* file_name);

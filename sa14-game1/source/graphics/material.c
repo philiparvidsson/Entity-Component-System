@@ -25,18 +25,16 @@ const materialT* getNamedMaterial(const string* name) {
         return (defaultMaterial());
 
     // This is a debug material to visualize objects more clearly.
-#ifdef _DEBUG
     if (strcmp(name, "debug")==0) {
         static const materialT debug_material = {
             1.0f, 0.0f, 1.0f, // ambient
-            0.5f, 0.5f, 0.5f, // diffuse
-            0.5f, 0.5f, 0.5f, // specular
+            0.2f, 0.2f, 0.2f, // diffuse
+            0.2f, 0.2f, 0.2f, // specular
             10.0f,            // shininess
         };
 
         material = &debug_material;
     }
-#endif // _DEBUG
 
     if (strcmp(name, "shiny black")==0) {
         static const materialT shiny_black = {

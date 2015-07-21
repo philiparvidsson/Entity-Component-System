@@ -8,135 +8,117 @@
 
 struct renderTargetT {
     GLuint fbo;
-    GLuint z_buffer;
 
     int width;
     int height;
 
-    GLuint tex_id;
+    textureT* color_tex;
+    textureT* depth_tex;
 };
 
 static renderTargetT* active_render_target = NULL;
 
-renderTargetT* createFloatRenderTarget(int width, int height) {
-    renderTargetT* render_target = malloc(sizeof(renderTargetT));
-
-    render_target->width = width;
-    render_target->height = height;
-
-    glGenFramebuffers(1, &render_target->fbo);
-
-    textureT*      old_texture       = useTexture(NULL, 0);
-    renderTargetT* old_render_target = useRenderTarget(render_target);
-
-    glGenTextures(1, &render_target->tex_id);
-    glBindTexture(GL_TEXTURE_2D, render_target->tex_id);
-    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-
-    glGenRenderbuffers       (1, &render_target->z_buffer);
-    glBindRenderbuffer       (GL_RENDERBUFFER, render_target->z_buffer);
-    glRenderbufferStorage    (GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, render_target->z_buffer);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, render_target->tex_id, 0);
-
-    assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
-
-    useRenderTarget(old_render_target);
-    useTexture     (old_texture, 0);
-
-    return (render_target);
-}
-
 renderTargetT* createMultisampledRenderTarget(int width, int height, int num_samples) {
+    renderTargetT* rt = malloc(sizeof(renderTargetT));
 
-    renderTargetT* render_target = malloc(sizeof(renderTargetT));
+    rt->width  = width;
+    rt->height = height;
+    
+    glGenFramebuffers(1, &rt->fbo);
 
-    render_target->width = width;
-    render_target->height = height;
+    textureT*      old_tex = useTexture(NULL, 0);
+    renderTargetT* old_rt  = useRenderTarget(rt);
 
-    glGenFramebuffers(1, &render_target->fbo);
+    rt->color_tex = createMultisampledTexture();
+    rt->depth_tex = createMultisampledTexture();
 
-    textureT*      old_texture       = useTexture(NULL, 0);
-    renderTargetT* old_render_target = useRenderTarget(render_target);
+    useTexture(rt->color_tex, 0);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, num_samples, GL_RGBA8,
+                            width, height, GL_TRUE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_2D_MULTISAMPLE, *(GLuint*)rt->color_tex,
+                           0);
 
-    glGenTextures(1, &render_target->tex_id);
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, render_target->tex_id);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, num_samples, GL_RGBA8, width, height, GL_TRUE);
-
-    glGenRenderbuffers              (1, &render_target->z_buffer);
-    glBindRenderbuffer              (GL_RENDERBUFFER, render_target->z_buffer);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, num_samples, GL_DEPTH24_STENCIL8, width, height);
-    glFramebufferRenderbuffer       (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, render_target->z_buffer);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, render_target->tex_id, 0);
+    useTexture(rt->depth_tex, 0);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, num_samples,
+                            GL_DEPTH_COMPONENT32, width, height, GL_TRUE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                           GL_TEXTURE_2D_MULTISAMPLE, *(GLuint*)rt->depth_tex,
+                           0);
 
     assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 
-    useRenderTarget(old_render_target);
-    useTexture     (old_texture, 0);
+    useRenderTarget(old_rt);
+    useTexture     (old_tex, 0);
 
-    return (render_target);
+    return (rt);
 }
 
 renderTargetT* createRenderTarget(int width, int height) {
-    renderTargetT* render_target = malloc(sizeof(renderTargetT));
+    renderTargetT* rt = malloc(sizeof(renderTargetT));
 
-    render_target->width = width;
-    render_target->height = height;
+    rt->width  = width;
+    rt->height = height;
+    
+    glGenFramebuffers(1, &rt->fbo);
 
-    glGenFramebuffers(1, &render_target->fbo);
+    textureT*      old_tex = useTexture(NULL, 0);
+    renderTargetT* old_rt  = useRenderTarget(rt);
 
-    textureT*      old_texture       = useTexture(NULL, 0);
-    renderTargetT* old_render_target = useRenderTarget(render_target);
+    rt->color_tex = createTexture();
+    rt->depth_tex = createTexture();
 
-    glGenTextures(1, &render_target->tex_id);
-    glBindTexture(GL_TEXTURE_2D, render_target->tex_id);
-    glTexImage2D (GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    useTexture(rt->color_tex, 0);
 
-    glGenRenderbuffers       (1, &render_target->z_buffer);
-    glBindRenderbuffer       (GL_RENDERBUFFER, render_target->z_buffer);
-    glRenderbufferStorage    (GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, render_target->z_buffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA,
+                 GL_FLOAT, NULL);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                         *(GLuint*)rt->color_tex, 0);
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, render_target->tex_id, 0);
+    useTexture(rt->depth_tex, 0);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0,
+                 GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                         *(GLuint*)rt->depth_tex, 0);
 
     assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 
-    useRenderTarget(old_render_target);
-    useTexture     (old_texture, 0);
+    useRenderTarget(old_rt);
+    useTexture     (old_tex, 0);
 
-    return (render_target);
+    return (rt);
 }
 
-void freeRenderTarget(renderTargetT* render_target) {
-    if (render_target == active_render_target)
+void freeRenderTarget(renderTargetT* rt) {
+    if (rt == active_render_target)
         useRenderTarget(NULL);
 
-    glDeleteTextures(1, &render_target->tex_id);
-    glDeleteRenderbuffers(1, &render_target->z_buffer);
-    glDeleteFramebuffers(1, &render_target->fbo);
-    free(render_target);
+    freeTexture(rt->color_tex);
+    freeTexture(rt->depth_tex);
+
+    glDeleteFramebuffers(1, &rt->fbo);
+    free(rt);
 }
 
-renderTargetT* useRenderTarget(renderTargetT* render_target) {
-    renderTargetT* old_render_target = active_render_target;
+renderTargetT* useRenderTarget(renderTargetT* rt) {
+    renderTargetT* old_rt = active_render_target;
 
-    if (render_target == old_render_target)
-        return (old_render_target);
+    if (rt == old_rt)
+        return (old_rt);
 
-    active_render_target = render_target;
+    active_render_target = rt;
 
-    if (!render_target) {
+    if (!rt) {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, screenWidth(), screenHeight());
-        return (old_render_target);
+        return (old_rt);
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, render_target->fbo);
-    glViewport(0, 0, render_target->width, render_target->height);
+    glBindFramebuffer(GL_FRAMEBUFFER, rt->fbo);
+    glViewport(0, 0, rt->width, rt->height);
 
-    return (old_render_target);
+    return (old_rt);
 }
 
 void presentRenderTarget(renderTargetT* render_target) {
@@ -153,4 +135,12 @@ void presentRenderTarget(renderTargetT* render_target) {
     else {
         useRenderTarget(old_render_target);
     }
+}
+
+textureT* getRenderTargetColorTexture(renderTargetT* rt) {
+    return (rt->color_tex);
+}
+
+textureT* getRenderTargetDepthTexture(renderTargetT* rt) {
+    return (rt->depth_tex);
 }

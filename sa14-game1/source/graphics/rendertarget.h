@@ -12,5 +12,7 @@ renderTargetT* createRenderTarget(int width, int height);
 void freeRenderTarget(renderTargetT* render_target);
 renderTargetT* useRenderTarget(renderTargetT* render_target);
 void presentRenderTarget(renderTargetT* render_target);
+textureT* getRenderTargetColorTexture(renderTargetT* rt);
+textureT* getRenderTargetDepthTexture(renderTargetT* rt);
 
 #endif // rendertarget_h_

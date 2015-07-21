@@ -13,6 +13,7 @@
  * INCLUDES
  *----------------------------------------------*/
 
+#include "base/array.h"
 #include "base/common.h"
 #include "base/pak.h"
 #include "base/time.h"
@@ -111,13 +112,29 @@ static void showSplashScreen(textureT* splash_tex, float secs) {
     deleteShader(splash_shader);
 }
 
+static arrayT* prealloc;
+static int knull;
+
 static float lol;
 void frameFunc(float dt) {
+    if (!prealloc) {
+        prealloc = arrayNew(sizeof(gameEntityT*));
+        for (int i = 0; i < 1000; i++) {
+            gameEntityT* e = newAsteroidEntity();
+            arrayAdd(prealloc, &e);
+        }
+    }
+
     //if (lol < 0)
     //    return;
     lol += dt;
     while (lol >= 0.1f) {
-        addEntityToGame(newAsteroidEntity());
+        //addEntityToGame(newAsteroidEntity());
+        if (knull < 1000) {
+            gameEntityT* e = *(gameEntityT**)arrayGet(prealloc, knull);
+            addEntityToGame(e);
+            knull++;
+        }
         lol -= 0.1f;
         //lol = -1;
         //break;
@@ -136,8 +153,8 @@ int main(void) {
 
     initGame("Asteroids", 1280, 720);
 
-    addGamePak(pakOpenArchive("pak/fonts.pak", PakPassword));
-    addGamePak(pakOpenArchive("pak/images.pak", PakPassword));
+    addGamePak(pakOpenArchive("pak/fonts.pak"  , PakPassword));
+    addGamePak(pakOpenArchive("pak/images.pak" , PakPassword));
     addGamePak(pakOpenArchive("pak/shaders.pak", PakPassword));
 
 #ifndef _DEBUG

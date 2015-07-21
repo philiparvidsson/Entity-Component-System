@@ -117,6 +117,9 @@ void gameMain(void (*frame_func)(float dt)) {
             updateDisplay();
         }
 
+        if (dt > (1.0f/59.0f))
+            printf("warning: frame time %f ms\n", dt*1000.0f);
+
         time = getTime();
 
         if (frame_func)
