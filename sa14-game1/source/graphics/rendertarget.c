@@ -27,7 +27,7 @@ renderTargetT* createMultisampledRenderTarget(int width, int height, int num_sam
     glGenFramebuffers(1, &rt->fbo);
 
     textureT*      old_tex = useTexture(NULL, 0);
-    renderTargetT* old_rt  = useRenderTarget(rt);
+    renderTargetT* old_rt = useRenderTarget(rt);
 
     rt->color_tex = createMultisampledTexture();
     rt->depth_tex = createMultisampledTexture();

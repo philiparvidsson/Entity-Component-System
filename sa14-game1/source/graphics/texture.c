@@ -45,26 +45,9 @@ static textureT* active_textures[MaxTextures] = { 0 };
  * FUNCTIONS
  *----------------------------------------------*/
 
-static textureT* createTex(bool multisample) {
-    textureT* tex = malloc(sizeof(textureT));
-
-    tex->multisample = multisample;
-
-    glGenTextures(1, &tex->id);
-
-    textureT* old_tex = useTexture(tex, 0);
-
-    glTexParameteri(texTarget(tex), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(texTarget(tex), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    setTextureRepeat(tex, false);
-
-    useTexture(old_tex, 0);
-}
-
 static textureT* loadTextureFromBMP(const void* bmp_data) {
     bitmapHeaderT* bitmap      = bmp_data;
-    textureT*      texture     = createTexture(bitmap->width, bitmap->height);
+    textureT*      texture     = createTexture();
     textureT*      old_texture = useTexture(texture, 0);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bitmap->width, bitmap->height, 0, GL_BGR, GL_UNSIGNED_BYTE, bitmap->pixels);
@@ -82,11 +65,31 @@ static inline GLenum texTarget(textureT* tex) {
 }
 
 textureT* createMultisampledTexture(void) {
-    return (createTex(true));
+    textureT* tex = malloc(sizeof(textureT));
+
+    glGenTextures(1, &tex->id);
+    tex->multisample = true;
+    tex->repeat      = false;
+
+    return (tex);
 }
 
 textureT* createTexture(void) {
-    return (createTex(false));
+    textureT* tex = malloc(sizeof(textureT));
+
+    glGenTextures(1, &tex->id);
+    tex->multisample = false;
+
+    textureT* old_tex = useTexture(tex, 0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    setTextureRepeat(tex, false);
+
+    useTexture(old_tex, 0);
+
+    return (tex);
 }
 
 textureT* createTextureFromScreen(void) {
@@ -94,7 +97,7 @@ textureT* createTextureFromScreen(void) {
         height = screenHeight();
 
     renderTargetT* old_rt  = useRenderTarget(NULL);
-    textureT*      tex     = createTexture(width, height);
+    textureT*      tex     = createTexture();
     textureT*      old_tex = useTexture(tex, 0);
 
     glCopyTexImage2D(texTarget(tex), 0, GL_RGBA8, 0, 0, width, height, 0);
@@ -165,7 +168,6 @@ textureT* useTexture(textureT* tex, int index) {
     active_textures[index] = tex;
 
     glActiveTexture(GL_TEXTURE0 + index);
-
     if (tex)
         glBindTexture(texTarget(tex), tex ? tex->id : 0);
     else 

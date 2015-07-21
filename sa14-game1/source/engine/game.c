@@ -112,7 +112,7 @@ void gameMain(void (*frame_func)(float dt)) {
         while (!windowIsFocused()) {
             sleep(100);
             
-            // Doing this twice prevents flickering.
+            // Doing this twice prevents flickering somewhat.
             updateDisplay();
             updateDisplay();
         }

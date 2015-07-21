@@ -70,7 +70,7 @@ typedef struct windowT {
     HDC   hdc;   // Device context (DC) handle.
     HGLRC hglrc; // OpenGL render context.
 
-    LARGE_INTEGER last_update; // Timestap of last graphics update.
+    LARGE_INTEGER last_update; // Timestep of last graphics update.
 } windowT;
 
 /*------------------------------------------------
@@ -351,7 +351,7 @@ void updateDisplay(void) {
             return;
 
         // Give other threads to do some work instead of just spinning the CPU.
-        SwitchToThread();
+        //SwitchToThread();
 
         // We calculate how much time has passed since our latest display
         // update. If enough time has passed, we've displayed this frame exactly

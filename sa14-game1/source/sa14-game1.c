@@ -44,7 +44,6 @@ static void printIntroMessage(void) {
     printf("Full source available @ github.com/philiparvidsson\n\n");
 }
 
-
 /*--------------------------------------
  * Function: showSplashScreen(tex, secs)
  * Parameters:
