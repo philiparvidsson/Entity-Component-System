@@ -22,11 +22,21 @@ static vec3 randomVector(void) {
 }
 
 static gameComponentT* createGraphicsComponent(void) {
-    triMeshT* mesh = createBox(0.03f, 0.03f, 0.03f);
+    static triMeshT* mesh;
+    
+    if (!mesh) {
+        mesh = createGeodesicSphere(0.02f, 0);
+    }
+
+
     gameComponentT* component = newGraphicsComponent(mesh);
     graphicsComponentDataT* gfx_data = component->data;
 
-    gfx_data->material = getNamedMaterial("shiny black");
+    gfx_data->material = getNamedMaterial("blue crystal");
+
+    if ((rand() % 2) == 1) {
+        gfx_data->material = getNamedMaterial("shiny black");
+    }
 
     return (component);
 }
@@ -36,10 +46,54 @@ static gameComponentT* createPhysicsComponent(void) {
 
     physicsComponentDataT* phys = component->data;
     
-    vec3 pos = { 0.2f, 0.2f, 0.0f };
+    vec3 pos;
+    vec3 vel;
+
+    switch (rand() % 4) {
+        
+    case 0: {
+        // Spawn above screen.
+        pos = (vec3) { -0.5f + 1.0f * rand()/(float)RAND_MAX, 0.5f, 0.0f };
+        vel = (vec3) { -1.0f + 2.0f * rand()/(float)RAND_MAX,
+                       -0.2f - 1.0f * rand()/(float)RAND_MAX,
+                        0.0f };
+        break;
+    };
+
+    case 1: {
+        // Spawn to the right of screen.
+        pos = (vec3) {  0.9f, -0.5f + 1.0f * rand()/(float)RAND_MAX, 0.0f };
+        vel = (vec3) { -0.2f - 1.0f * rand() / (float)RAND_MAX,
+                       -1.0f + 2.0f * rand() / (float)RAND_MAX,
+                        0.0f
+        };
+        break;
+    };
+
+    case 2: {
+        // Spawn below screen.
+        pos = (vec3) { -0.5f + 1.0f * rand()/(float)RAND_MAX, -0.5f, 0.0f };
+        vel = (vec3) { -1.0f + 2.0f * rand()/(float)RAND_MAX,
+                        0.2f + 1.0f * rand()/(float)RAND_MAX,
+                        0.0f };
+        break;
+    };
+
+    case 3: {
+        // Spawn to the left of screen.
+        pos = (vec3) { -0.9f, -0.5f + 1.0f * rand()/(float)RAND_MAX, 0.0f };
+        vel = (vec3) {  0.2f + 1.0f * rand() / (float)RAND_MAX,
+                       -1.0f + 2.0f * rand() / (float)RAND_MAX,
+                        0.0f
+        };
+        break;
+    };
+
+    }
+
+    //vec_scale(&pos, 0.1f, &pos);
     bodySetPosition(((physicsComponentDataT*)phys)->body, pos);
 
-    vec3 vel = randomVector();
     vel.z = 0.0f;
     vec_scale(&vel, 0.1f, &vel);
     bodySetVelocity(((physicsComponentDataT*)phys)->body, vel);

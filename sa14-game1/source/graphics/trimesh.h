@@ -75,5 +75,6 @@ triMeshT* createBox(float width, float height, float length);
 triMeshT* createCone(float radius, float height, int num_sides);
 triMeshT* createCylinder(float radius, float height, int num_sides);
 triMeshT* createQuad(float width, float height);
+triMeshT* createGeodesicSphere(float radius, int num_subdivs);
 
 #endif // trimesh_h_

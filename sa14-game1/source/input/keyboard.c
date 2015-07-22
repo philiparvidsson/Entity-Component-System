@@ -25,14 +25,16 @@ void updateKeyboardState(void) {
         VK_UP,
         VK_DOWN,
         VK_LEFT,
-        VK_RIGHT
+        VK_RIGHT,
+        'Q', 'W', 'A', 'S', 'D'
     };
 
     uint8_t map_to[KeyboardNumKeys] = {
         ArrowUp,
         ArrowDown,
         ArrowLeft,
-        ArrowRight
+        ArrowRight,
+        'q', 'w', 'a', 's', 'd'
     };
 
 

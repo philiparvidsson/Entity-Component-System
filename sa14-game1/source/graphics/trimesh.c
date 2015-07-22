@@ -188,8 +188,6 @@ void calcNormals(triMeshT* mesh) {
         vec_normalize(&normal, &normal);
         v0->n = v1->n = v2->n = normal;
     }
-
-    updateMesh(mesh);
 }
 
 void calcSmoothNormals(triMeshT* mesh) {
@@ -230,8 +228,6 @@ void calcSmoothNormals(triMeshT* mesh) {
         vec3* n = &mesh->verts[i].n;
         vec_normalize(n, n);
     }
-
-    updateMesh(mesh);
 }
 
 
@@ -319,7 +315,8 @@ triMeshT* createBox(float width, float height, float length) {
         v[i+3].uv = (vec2) { 1.0f, 0.0f };
     }
 
-    calcSmoothNormals(box);
+    calcNormals(box);
+    updateMesh(box);
 
     return (box);
 }
@@ -373,6 +370,7 @@ triMeshT* createCone(float radius, float height, int num_sides) {
     }
 
     calcSmoothNormals(cone);
+    updateMesh(cone);
 
     return (cone);
 }
@@ -429,12 +427,133 @@ triMeshT* createCylinder(float radius, float height, int num_sides) {
     }
 
     calcSmoothNormals(cylinder);
+    updateMesh(cylinder);
 
     return (cylinder);
 }
 
 triMeshT* createGeodesicSphere(float radius, int num_subdivs) {
+    assert(0 <= num_subdivs && num_subdivs < 5);
 
+    int kw = (int)pow(5, num_subdivs);
+    triMeshT* sphere = newMesh(60*kw, 20*kw);
+
+    // We always start with 60 vertices and 20 triangles, then subdivide.
+    sphere->num_verts = 60;
+    sphere->num_tris =  20;
+
+    // Alias pointers for less code clutter.
+    vertexT* v = sphere->verts;
+    triT    *t = sphere->tris;
+
+    float r = (1.0f + sqrtf(5.0)) / 2.0f;
+
+    v[ 0].p = (vec3) { -1.0f,  r, 0.0f };
+    v[ 5].p = (vec3) {  1.0f,  r, 0.0f };
+    v[10].p = (vec3) { -1.0f, -r, 0.0f };
+    v[15].p = (vec3) {  1.0f, -r, 0.0f };
+    v[20].p = (vec3) { 0.0f, -1.0f,  r };
+    v[25].p = (vec3) { 0.0f,  1.0f,  r };
+    v[30].p = (vec3) { 0.0f, -1.0f, -r };
+    v[35].p = (vec3) { 0.0f,  1.0f, -r };
+    v[40].p = (vec3) {  r, 0.0f, -1.0f };
+    v[45].p = (vec3) {  r, 0.0f,  1.0f };
+    v[50].p = (vec3) { -r, 0.0f, -1.0f };
+    v[55].p = (vec3) { -r, 0.0f,  1.0f };
+
+    for (int i = 0; i < 12; i++) {
+        for (int j = 0; j < 5; j++)
+            v[i*5+j].p = v[i*5].p;
+    }
+
+    t[0] = (triT) { 0, 11,  5 };
+    t[1] = (triT) { 0,  5,  1 };
+    t[2] = (triT) { 0,  1,  7 };
+    t[3] = (triT) { 0,  7, 10 };
+    t[4] = (triT) { 0, 10, 11 };
+
+    t[5] = (triT) {  1,  5, 9 };
+    t[6] = (triT) {  5, 11, 4 };
+    t[7] = (triT) { 11, 10, 2 };
+    t[8] = (triT) { 10,  7, 6 };
+    t[9] = (triT) {  7,  1, 8 };
+
+    t[10] = (triT) { 3, 9, 4 };
+    t[11] = (triT) { 3, 4, 2 };
+    t[12] = (triT) { 3, 2, 6 };
+    t[13] = (triT) { 3, 6, 8 };
+    t[14] = (triT) { 3, 8, 9 };
+
+    t[15] = (triT) { 4, 9,  5 };
+    t[16] = (triT) { 2, 4, 11 };
+    t[17] = (triT) { 6, 2, 10 };
+    t[18] = (triT) { 8, 6,  7 };
+    t[19] = (triT) { 9, 8,  1 };
+
+    int indices[12] = { 0 };
+
+    for (int i = 0; i < sphere->num_tris; i++) {
+        int a = indices[t[i].v0]++;
+        int b = indices[t[i].v1]++;
+        int c = indices[t[i].v2]++;
+
+        t[i].v0 = t[i].v0*5 + a;
+        t[i].v1 = t[i].v1*5 + b;
+        t[i].v2 = t[i].v2*5 + c;
+    }
+
+    for (int i = 0; i < num_subdivs; i++) {
+        int num_tris = sphere->num_tris;
+        for (int j = 0; j < num_tris; j++) {
+            triT* tri = &sphere->tris[j];
+
+            vertexT* v0 = &v[tri->v0];
+            vertexT* v1 = &v[tri->v1];
+            vertexT* v2 = &v[tri->v2];
+
+            vec3 a = v0->p;
+            vec_add  (&a, &v1->p, &a);
+            vec_scale(&a, 0.5f  , &a);
+
+            vec3 b = v1->p;
+            vec_add  (&b, &v2->p, &b);
+            vec_scale(&b, 0.5f  , &b);
+
+            vec3 c = v2->p;
+            vec_add  (&c, &v0->p, &c);
+            vec_scale(&c, 0.5f  , &c);
+
+            int k = sphere->num_verts;
+
+            v[k +  0].p = a;
+            v[k +  1].p = b;
+            v[k +  2].p = c;
+            v[k +  3].p = a;
+            v[k +  4].p = b;
+            v[k +  5].p = c;
+            v[k +  6].p = a;
+            v[k +  7].p = b;
+            v[k +  8].p = c;
+
+            t[sphere->num_tris + 0] = (triT) { tri->v0, k    , k + 2 };
+            t[sphere->num_tris + 1] = (triT) { tri->v1, k + 1, k + 3 };
+            t[sphere->num_tris + 2] = (triT) { tri->v2, k + 5, k + 4 };
+            t[sphere->num_tris + 3] = (triT) { k + 6  , k + 7, k + 8 };
+
+            sphere->num_verts += 9;
+            sphere->num_tris  += 4;
+        }
+    }
+
+    for (int i = 0; i < sphere->num_verts; i++) {
+        vec_normalize(&v[i].p, &v[i].p);
+        vec_scale(&v[i].p, radius, &v[i].p);
+    }
+
+    calcNormals(sphere);
+    updateMesh(sphere);
+
+    return (sphere);
 }
 
 triMeshT* createQuad(float width, float height) {
@@ -460,5 +579,7 @@ triMeshT* createQuad(float width, float height) {
     t[1] = (triT) { 2, 3, 0 };
 
     calcNormals(quad);
+    updateMesh(quad);
+
     return (quad);
 }

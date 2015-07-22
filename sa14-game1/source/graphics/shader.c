@@ -165,11 +165,6 @@ void shaderPostProcess(textureT* source_texture) {
 
     bool created_texture = false;
 
-    if (!source_texture) {
-        source_texture = createTextureFromScreen();
-        created_texture = true;
-    }
-
     textureT* texture = source_texture;
     triMeshT* quad    = createQuad(2.0f, 2.0f);
 
@@ -181,7 +176,4 @@ void shaderPostProcess(textureT* source_texture) {
 
     freeMesh(quad);
     useTexture(NULL, 0);
-
-    if (created_texture)
-        freeTexture(texture);
 }

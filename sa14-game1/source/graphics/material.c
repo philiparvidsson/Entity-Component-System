@@ -36,6 +36,17 @@ const materialT* getNamedMaterial(const string* name) {
         material = &debug_material;
     }
 
+    if (strcmp(name, "blue crystal")==0) {
+        static const materialT blue_crystal = {
+             1.0f,  1.0f, 1.0f, // ambient
+            -1.0f, -0.3f, 0.0f, // diffuse
+            3.0f, 3.0f, 3.0f, // specular
+            30.0f            // shininess
+        };
+        
+        material = &blue_crystal;
+    }
+
     if (strcmp(name, "shiny black")==0) {
         static const materialT shiny_black = {
             0.0f, 0.0f, 0.0f, // ambient

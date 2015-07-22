@@ -119,7 +119,7 @@ void drawText(const string* text, float x, float y) {
     shaderT* old_shader = useShader(text_shader);
 
     setShaderParam("ScreenSize", &(vec2) { (float)screenWidth(), (float)screenHeight() });
-    setShaderParam("TextRect", &(vec4) { (float)x, (float)y, (float)width, (float)height });
+    setShaderParam("TextRect"  , &(vec4) { (float)x, (float)y, (float)width, (float)height });
 
     GLint depth_mask;
     glGetIntegerv(GL_DEPTH_WRITEMASK, &depth_mask);

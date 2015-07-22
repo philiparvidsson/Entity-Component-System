@@ -44,6 +44,8 @@ typedef struct {
     shaderT* normal_shader;
 #endif // DRAW_TRI_NORMALS
 
+    textureT* screen_tex;
+
     shaderT* noise_shader;
     float    noise_intensity;
     int      noise_seed;
@@ -121,7 +123,7 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     
     // Noise -------------------------------------
 
-    gfx_data->noise_intensity = 0.09f;
+    gfx_data->noise_intensity = 0.1f;
     gfx_data->noise_seed      = 0;
     
     vert_src = readGamePakFile("discard_z.vert");
@@ -136,26 +138,66 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     free(frag_src);
 }
 
+static float Fuckah = 2.4;
+int knull = 0;
+bool postit = true;
 static void applyPostFX(gameSubsystemT* subsystem) {
     graphicsSubsystemDataT* gfx_data = subsystem->data;
+
+    knull--;
+    if (knull < 0)
+        knull = 0;
+
+    if (keyIsPressed('a') && knull == 0) {
+        gfx_data->noise_intensity -= 0.01; printf("noise: %f\n", gfx_data->noise_intensity);
+        knull = 10;
+    }
+
+    if (keyIsPressed('s') && knull == 0) {
+        gfx_data->noise_intensity += 0.01; printf("noise: %f\n", gfx_data->noise_intensity);
+        knull = 10;
+    }
+
+    if (keyIsPressed('q') && knull == 0) {
+        Fuckah -= 0.1;
+        printf("blur: %f\n", Fuckah);
+        knull = 10;
+    }
+
+    if (keyIsPressed('w') && knull == 0) {
+        Fuckah += 0.1;
+        printf("blur: %f\n", Fuckah);
+        knull = 10;
+    }
+
+    if (keyIsPressed('d') && knull == 0) {
+        postit = !postit;
+        knull = 10;
+    }
+
+    if (!postit)
+        return;
+
     
     //--------------------------------------------
     // Motion Blur
     //--------------------------------------------
-
+    
     // 1. Render velocity texture.
-
+    
     renderTargetT* old_rt = useRenderTarget(gfx_data->mblur_rt);
     useShader(gfx_data->mblur_shader0);
     clearDisplay(0.0f, 0.0f, 0.0f);
     drawComponents(subsystem->data, subsystem->components);
     useRenderTarget(old_rt);
-
-    // 2. Render to screen.
-
+    
+    // 2. Apply motion blur.
+    
     useShader(gfx_data->mblur_shader1);
+    setShaderParam("VelocityFactor", &Fuckah);
     textureT* old_tex = useTexture(getRenderTargetColorTexture(gfx_data->mblur_rt), 1);
-    shaderPostProcess(NULL);
+    loadTextureFromScreen(gfx_data->screen_tex);
+    shaderPostProcess    (gfx_data->screen_tex);
     useTexture(old_tex, 1);
 
     //--------------------------------------------
@@ -165,7 +207,8 @@ static void applyPostFX(gameSubsystemT* subsystem) {
     useShader(gfx_data->noise_shader);
     setShaderParam("Intensity", &gfx_data->noise_intensity);
     setShaderParam("Seed"     , &gfx_data->noise_seed);
-    shaderPostProcess(NULL);
+    loadTextureFromScreen(gfx_data->screen_tex);
+    shaderPostProcess    (gfx_data->screen_tex);
 
     gfx_data->noise_seed++;
 
@@ -232,10 +275,10 @@ static void setupTransforms(gameSubsystemT* subsystem) {
         mat4x4 translation;
         vec3 pos = bodyGetPosition(phys_component->body);
         mat_transl_xyz(pos.x, pos.y, pos.z, &translation);
-
+        
         mat_mul(&gfx_component->transform, &model, &model);
         mat_mul(&translation             , &model, &model);
-
+        
         gfx_component->prev_model_view_proj = gfx_component->model_view_proj;
 
         mat4x4* mvp = &gfx_component->model_view_proj;
@@ -307,11 +350,11 @@ gameSubsystemT* newGraphicsSubsystem(void) {
     gameSubsystemT* subsystem = newSubsystem("graphics");
     graphicsSubsystemDataT* gfx_data = calloc(1, sizeof(graphicsSubsystemDataT));
 
-    gfx_data->clear_color     = (vec3) { 1.0f, 1.0f, 1.0f };
     gfx_data->aspect_ratio    = screenWidth() / (float)screenHeight();
+    gfx_data->clear_color     = (vec3) { 1.0f, 1.0f, 1.0f };
     gfx_data->default_texture = createWhiteTexture();
     gfx_data->render_target   = createMultisampledRenderTarget(screenWidth(), screenHeight(), 8);
-
+    gfx_data->screen_tex      = createTexture();
     loadDefaultShader(gfx_data);
 
 #ifdef DRAW_TRI_NORMALS

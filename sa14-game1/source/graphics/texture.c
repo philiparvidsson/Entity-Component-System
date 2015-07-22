@@ -92,22 +92,6 @@ textureT* createTexture(void) {
     return (tex);
 }
 
-textureT* createTextureFromScreen(void) {
-    int width  = screenWidth(),
-        height = screenHeight();
-
-    renderTargetT* old_rt  = useRenderTarget(NULL);
-    textureT*      tex     = createTexture();
-    textureT*      old_tex = useTexture(tex, 0);
-
-    glCopyTexImage2D(texTarget(tex), 0, GL_RGBA8, 0, 0, width, height, 0);
-
-    useTexture     (old_tex, 0);
-    useRenderTarget(old_rt);
-
-    return (tex);
-}
-
 textureT* createWhiteTexture(void) {
     // Red, green and blue color components. All set to 1.0 to get white color.
     float data[] = { 1.0f, 1.0f, 1.0f };
@@ -155,6 +139,19 @@ textureT* loadTextureFromMemory(const void* data, int format) {
         return loadTextureFromBMP(data);
 
     return (NULL);
+}
+
+void loadTextureFromScreen(textureT* tex) {
+    int width  = screenWidth(),
+        height = screenHeight();
+
+    renderTargetT* old_rt  = useRenderTarget(NULL);
+    textureT*      old_tex = useTexture(tex, 0);
+
+    glCopyTexImage2D(texTarget(tex), 0, GL_RGBA8, 0, 0, width, height, 0);
+
+    useTexture     (old_tex, 0);
+    useRenderTarget(old_rt);
 }
 
 textureT* useTexture(textureT* tex, int index) {

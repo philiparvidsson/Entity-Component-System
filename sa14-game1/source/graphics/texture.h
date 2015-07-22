@@ -21,10 +21,10 @@ typedef struct textureT textureT;
 
 textureT* createMultisampledTexture(void);
 textureT* createTexture(void);
-textureT* createTextureFromScreen(void);
 textureT* createWhiteTexture(void);
 textureT* loadTextureFromFile(const void* file_name);
 textureT* loadTextureFromMemory(const void* data, int format);
+void loadTextureFromScreen(textureT* tex);
 textureT* useTexture(textureT* texture, int index);
 void freeTexture(textureT* texture);
 bool getTextureRepeat(const textureT* texture);

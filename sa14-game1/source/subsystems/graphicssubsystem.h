@@ -14,7 +14,6 @@
  * FUNCTIONS
  *----------------------------------------------*/
 
-gameComponentT* newGraphicsComponent(triMeshT* mesh);
 gameSubsystemT* newGraphicsSubsystem(void);
 
 #endif // graphicssubsystem_h_

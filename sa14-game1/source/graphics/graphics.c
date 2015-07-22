@@ -186,7 +186,7 @@ static void destroyWindow(void) {
     unregisterWindowClass();
 }
 
-static void updateWindow(void) {
+/* static */ void updateWindow(void) {
     MSG msg;
     while (window && PeekMessageW(&msg, window->hwnd, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
@@ -351,7 +351,7 @@ void updateDisplay(void) {
             return;
 
         // Give other threads to do some work instead of just spinning the CPU.
-        //SwitchToThread();
+        SwitchToThread();
 
         // We calculate how much time has passed since our latest display
         // update. If enough time has passed, we've displayed this frame exactly
