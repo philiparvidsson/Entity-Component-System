@@ -19,6 +19,7 @@
 #include "graphics/material.h"
 #include "graphics/shader.h"
 #include "graphics/rendertarget.h"
+#include "graphics/text.h"
 #include "graphics/texture.h"
 #include "math/matrix.h"
 #include "math/vector.h"
@@ -34,9 +35,6 @@
 typedef struct {
     vec3 clear_color;
     float aspect_ratio;
-
-    shaderT*  default_shader;
-    textureT* default_texture;
 
     renderTargetT* render_target;
 
@@ -62,19 +60,6 @@ typedef struct {
  *----------------------------------------------*/
 static void drawComponents(graphicsSubsystemDataT* gfx_data, arrayT* components);
 
-static void loadDefaultShader(graphicsSubsystemDataT* gfx_data) {
-    gfx_data->default_shader = createShader();
-
-    string* vert_src = readGamePakFile("default.vert");
-    string* frag_src = readGamePakFile("default.frag");
-    
-    compileVertexShader  (gfx_data->default_shader, vert_src);
-    compileFragmentShader(gfx_data->default_shader, frag_src);
-    
-    free(vert_src);
-    free(frag_src);
-}
-
 
 #ifdef DRAW_TRI_NORMALS
 static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
@@ -97,8 +82,8 @@ static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
 static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     // Motion Blur -------------------------------
     
-    string* vert_src = readGamePakFile("motionblur.vert");
-    string* frag_src = readGamePakFile("motionblur0.frag");
+    string* vert_src = readGamePakFile("default.vert");
+    string* frag_src = readGamePakFile("postfx/motionblur0.frag");
 
     gfx_data->mblur_shader0 = createShader();
     
@@ -109,7 +94,7 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     free(frag_src);
     
     vert_src = readGamePakFile("discard_z.vert");
-    frag_src = readGamePakFile("motionblur1.frag");
+    frag_src = readGamePakFile("postfx/motionblur1.frag");
     
     gfx_data->mblur_shader1 = createShader();
     
@@ -127,7 +112,7 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     gfx_data->noise_seed      = 0;
     
     vert_src = readGamePakFile("discard_z.vert");
-    frag_src = readGamePakFile("noise.frag");
+    frag_src = readGamePakFile("postfx/noise.frag");
     
     gfx_data->noise_shader = createShader();
     
@@ -188,7 +173,7 @@ static void applyPostFX(gameSubsystemT* subsystem) {
     renderTargetT* old_rt = useRenderTarget(gfx_data->mblur_rt);
     useShader(gfx_data->mblur_shader0);
     clearDisplay(0.0f, 0.0f, 0.0f);
-    drawComponents(subsystem->data, subsystem->components);
+    drawComponents(subsystem->data, subsystem->components, false);
     useRenderTarget(old_rt);
     
     // 2. Apply motion blur.
@@ -288,30 +273,28 @@ static void setupTransforms(gameSubsystemT* subsystem) {
     }
 }
 
-static void drawComponent(graphicsSubsystemDataT* gfx_data, gameComponentT* component) {
+static void drawComponent(graphicsSubsystemDataT* gfx_data, gameComponentT* component, bool use_material) {
     graphicsComponentDataT* gfx_component  = component->data;
 
     if (!gfx_component->mesh)
         return;
 
+    if (use_material) {
+        useMaterial(gfx_component->material);
+        setupLights(gfx_data);
+    }
+
     setShaderParam("ProjViewModel"    , &gfx_component->model_view_proj);
     setShaderParam("PrevProjViewModel", &gfx_component->prev_model_view_proj);
-
-    setShaderParam("NormalTransform"  , &gfx_component->normal_transform);
-
-    materialT* material = gfx_component->material;
-    setShaderParam("Material.ambient"  , &material->ambient  );
-    setShaderParam("Material.diffuse"  , &material->diffuse  );
-    setShaderParam("Material.specular" , &material->specular );
-    setShaderParam("Material.shininess", &material->shininess);
+    setShaderParam("NormalMatrix"  , &gfx_component->normal_transform);
     
     drawMesh(gfx_component->mesh);
 }
 
-static void drawComponents(graphicsSubsystemDataT* gfx_data, arrayT* components) {
+static void drawComponents(graphicsSubsystemDataT* gfx_data, arrayT* components, bool use_materials) {
     for (int i = 0; i < arrayLength(components); i++) {
         gameComponentT* component = *(gameComponentT**)arrayGet(components, i);
-        drawComponent(gfx_data, component);
+        drawComponent(gfx_data, component, use_materials);
     }
 }
 
@@ -326,11 +309,7 @@ static void drawEverything(gameSubsystemT* subsystem, float dt) {
     vec3* clear_color = &gfx_data->clear_color;
     clearDisplay(clear_color->r, clear_color->g, clear_color->b);
 
-    useShader (gfx_data->default_shader);
-    useTexture(gfx_data->default_texture, 0);
-
-    setupLights(gfx_data);
-    drawComponents(gfx_data, subsystem->components);
+    drawComponents(gfx_data, subsystem->components, true);
 
 #ifdef DRAW_TRI_NORMALS
     useShader (gfx_data->normal_shader);
@@ -344,6 +323,8 @@ static void drawEverything(gameSubsystemT* subsystem, float dt) {
     presentRenderTarget(gfx_data->render_target);
 
     applyPostFX(subsystem);
+
+    drawText("hej", 10.0f, 10.0f);
 }
 
 gameSubsystemT* newGraphicsSubsystem(void) {
@@ -352,10 +333,8 @@ gameSubsystemT* newGraphicsSubsystem(void) {
 
     gfx_data->aspect_ratio    = screenWidth() / (float)screenHeight();
     gfx_data->clear_color     = (vec3) { 1.0f, 1.0f, 1.0f };
-    gfx_data->default_texture = createWhiteTexture();
     gfx_data->render_target   = createMultisampledRenderTarget(screenWidth(), screenHeight(), 8);
     gfx_data->screen_tex      = createTexture();
-    loadDefaultShader(gfx_data);
 
 #ifdef DRAW_TRI_NORMALS
     loadNormalShader(gfx_data);

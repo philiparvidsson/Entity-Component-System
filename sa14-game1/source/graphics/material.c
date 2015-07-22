@@ -2,64 +2,70 @@
 
 #include "base/common.h"
 #include "math/vector.h"
+#include "graphics/materials/adsmaterial.h"
 
 #include <string.h>
 
-// @To-do: Materials should probably be loaded from files.
+materialT* newMaterial(void) {
+    materialT* m = malloc(sizeof(materialT));
 
-const materialT* defaultMaterial(void) {
-    static const materialT default_material = {
-        0.1f, 0.1f, 0.1f, // ambient
-        0.5f, 0.5f, 0.5f, // diffuse
-        0.4f, 0.4f, 0.4f, // specular
-        1.0f              // shininess
-    };
-
-    return (&default_material);
+    return (m);
 }
 
 const materialT* getNamedMaterial(const string* name) {
-    const materialT* material = NULL;
-
-    if (strcmp(name, "default")==0)
-        return (defaultMaterial());
+    materialT* material = NULL;
 
     // This is a debug material to visualize objects more clearly.
-    if (strcmp(name, "debug")==0) {
-        static const materialT debug_material = {
-            1.0f, 0.0f, 1.0f, // ambient
-            0.2f, 0.2f, 0.2f, // diffuse
-            0.2f, 0.2f, 0.2f, // specular
-            10.0f,            // shininess
-        };
+    if (strcmp(name, "debug")==0 || true) {
+        static materialT* debug_material;
 
-        material = &debug_material;
+        if (!debug_material) {
+            debug_material = createADSMaterial(NULL, NULL, NULL,
+                                               (vec3) { 1.0f, 0.0f, 1.0f },
+                                               (vec3) { 0.2f, 0.2f, 0.2f },
+                                               (vec3) { 0.2f, 0.2f, 0.2f },
+                                               10.0f);
+        }
+
+        material = debug_material;
     }
 
     if (strcmp(name, "blue crystal")==0) {
-        static const materialT blue_crystal = {
-             1.0f,  1.0f, 1.0f, // ambient
-            -1.0f, -0.3f, 0.0f, // diffuse
-            3.0f, 3.0f, 3.0f, // specular
-            30.0f            // shininess
-        };
-        
-        material = &blue_crystal;
+        static materialT* blue_crystal;
+
+        if (!blue_crystal) {
+            blue_crystal = createADSMaterial(NULL, NULL, NULL,
+                                             (vec3) {  1.0f,  1.0f, 1.0f },
+                                             (vec3) { -1.0f, -0.3f, 0.0f },
+                                             (vec3) {  3.0f,  3.0f, 3.0f },
+                                             30.0f);
+        }
+
+        material = blue_crystal;
     }
 
     if (strcmp(name, "shiny black")==0) {
-        static const materialT shiny_black = {
-            0.0f, 0.0f, 0.0f, // ambient
-            0.1f, 0.1f, 0.1f, // diffuse
-            1.0f, 1.0f, 1.0f, // specular
-            10.0f             // shininess
-        };
+        static materialT* shiny_black;
 
-        material = &shiny_black;
+        if (!shiny_black) {
+            shiny_black = createADSMaterial(NULL, NULL, NULL,
+                                            (vec3) {  1.0f,  1.0f,  1.0f },
+                                            (vec3) { -1.0f, -1.0f, -1.0f },
+                                            (vec3) {  1.0f,  1.0f,  1.0f },
+                                            10.0f);
+        }
+
+        material = shiny_black;
     }
     
     if (!material)
         error("Unknown material: '%s'", name);
 
     return (material);
+}
+
+void useMaterial(materialT* m) {
+    useShader(m->shader);
+
+    if (m->use_fn) m->use_fn(m);
 }

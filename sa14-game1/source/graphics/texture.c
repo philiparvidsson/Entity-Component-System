@@ -92,20 +92,6 @@ textureT* createTexture(void) {
     return (tex);
 }
 
-textureT* createWhiteTexture(void) {
-    // Red, green and blue color components. All set to 1.0 to get white color.
-    float data[] = { 1.0f, 1.0f, 1.0f };
-
-    textureT* tex     = createTexture(1, 1);
-    textureT* old_tex = useTexture(tex, 0);
-
-    glTexImage2D(texTarget(tex), 0, GL_RGBA8, 1, 1, 0, GL_RGB, GL_FLOAT, data);
-
-    useTexture(old_tex, 0);
-
-    return (tex);
-}
-
 textureT* loadTextureFromFile(const void* file_name) {
     textureT* tex = NULL;
 
@@ -202,4 +188,19 @@ void setTextureRepeat(textureT* tex, bool value) {
 
 vec2 getTextureSize(const textureT* tex) {
     return ((vec2) { tex->width, tex->height });
+}
+
+textureT* whiteTexture(void) {
+    static textureT* white_tex = NULL;
+
+    if (!white_tex) {
+        white_tex = createTexture();
+
+        textureT* old_tex = useTexture(white_tex, 0);
+        float     data[]  = { 1.0f, 1.0f, 1.0f };
+        glTexImage2D(texTarget(white_tex), 0, GL_RGBA8, 1, 1, 0, GL_RGB, GL_FLOAT, data);
+        useTexture(old_tex, 0);
+    }
+
+    return (white_tex);
 }

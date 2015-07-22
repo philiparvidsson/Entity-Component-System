@@ -61,7 +61,7 @@ void drawText(const string* text, float x, float y) {
     int font_height = -MulDiv(font_size, GetDeviceCaps(hdc, LOGPIXELSY), 72);
     HFONT hfont = CreateFontW(font_height, 0, 0, 0, FW_NORMAL, FALSE, FALSE,
                               FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
-                              CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
+                              CLIP_DEFAULT_PRECIS, PROOF_QUALITY,
                               DEFAULT_PITCH, font_face);
 
     free(font_face);
@@ -69,7 +69,7 @@ void drawText(const string* text, float x, float y) {
     SelectObject(hdc, hfont);
 
     SetBkMode(hdc, TRANSPARENT);
-    SetTextColor(hdc, RGB(255, 0, 255));
+    SetTextColor(hdc, RGB(255, 0, 0));
 
     RECT rect = { 0 };
     DrawTextW(hdc, text, -1, &rect, DT_CALCRECT | DT_NOCLIP);
@@ -95,8 +95,14 @@ void drawText(const string* text, float x, float y) {
     DeleteObject(hbitmap);
     DeleteDC(hdc);
 
-    for (int i = 3; i < width*height*4; i += 4)
-        *((uint8_t*)bitmap_data+i) ^= 0xff;
+    for (int i = 3; i < width*height * 4; i += 4)
+        *((uint8_t*)bitmap_data + i) = *((uint8_t*)bitmap_data + i - 1);
+    for (int i = 0; i < width*height * 4; i += 4) {
+        *((uint8_t*)bitmap_data + i) = 0x00;
+        *((uint8_t*)bitmap_data + i+1) = 0x00;
+        *((uint8_t*)bitmap_data + i+2) = 0x00;
+
+    }
 
     GLuint text_tex_id;
     glGenTextures(1, &text_tex_id);
@@ -106,7 +112,7 @@ void drawText(const string* text, float x, float y) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA,
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA,
                  GL_UNSIGNED_BYTE, bitmap_data);
 
     free(bitmap_data);

@@ -111,6 +111,9 @@
     <ClCompile Include="source\graphics\rendertarget.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\graphics\materials\adsmaterial.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -230,23 +233,20 @@
     <ClInclude Include="source\graphics\rendertarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\graphics\materials\adsmaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="build\postbuild.bat">
       <Filter>Source Files</Filter>
     </None>
     <None Include="bin\glew32.dll" />
-    <None Include="resources\shaders\default.frag">
-      <Filter>Shader Files</Filter>
-    </None>
     <None Include="resources\shaders\default.vert">
       <Filter>Shader Files</Filter>
     </None>
     <None Include="build\pak-tool.exe" />
     <None Include="resources\shaders\discard_z.vert">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="resources\shaders\noise.frag">
       <Filter>Shader Files</Filter>
     </None>
     <None Include="resources\shaders\postfx.frag">
@@ -264,9 +264,16 @@
     <None Include="resources\shaders\normals.geom" />
     <None Include="resources\shaders\normals.frag" />
     <None Include="resources\shaders\normals.vert" />
-    <None Include="resources\shaders\motionblur.vert" />
-    <None Include="resources\shaders\motionblur0.frag" />
-    <None Include="resources\shaders\motionblur1.frag" />
+    <None Include="resources\shaders\postfx\motionblur0.frag" />
+    <None Include="resources\shaders\postfx\motionblur1.frag" />
+    <None Include="resources\shaders\postfx\noise.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="resources\shaders\postfx\qqmotionblur.vert" />
+    <None Include="resources\shaders\materials\adsmaterial.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="resources\shaders\materials\testmaterial.vert" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />

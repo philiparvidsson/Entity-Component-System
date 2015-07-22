@@ -27,13 +27,13 @@ static gameComponentT* createGraphicsComponent(void) {
     if (!mesh) {
         mesh = createGeodesicSphere(0.02f, 0);
     }
-
+    
 
     gameComponentT* component = newGraphicsComponent(mesh);
     graphicsComponentDataT* gfx_data = component->data;
 
     gfx_data->material = getNamedMaterial("blue crystal");
-
+    
     if ((rand() % 2) == 1) {
         gfx_data->material = getNamedMaterial("shiny black");
     }

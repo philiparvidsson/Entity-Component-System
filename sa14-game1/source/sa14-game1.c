@@ -20,6 +20,7 @@
 #include "engine/game.h"
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
+#include "graphics/text.h"
 #include "graphics/texture.h"
 #include "graphics/trimesh.h"
 
