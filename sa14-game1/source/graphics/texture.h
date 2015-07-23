@@ -7,8 +7,6 @@
 
 #include "base/common.h"
 
-#define TexFormatBMP (1)
-
 /*------------------------------------------------
  * TYPES
  *----------------------------------------------*/
@@ -22,7 +20,7 @@ typedef struct textureT textureT;
 textureT* createMultisampledTexture(void);
 textureT* createTexture(void);
 textureT* loadTextureFromFile(const void* file_name);
-textureT* loadTextureFromMemory(const void* data, int format);
+textureT* loadTextureFromMemory(const void* data);
 void loadTextureFromScreen(textureT* tex);
 textureT* useTexture(textureT* texture, int index);
 void freeTexture(textureT* texture);

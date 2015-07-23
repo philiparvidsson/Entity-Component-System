@@ -1,12 +1,16 @@
 #ifndef bmp_h_
 #define bmp_h_
 
+#include "graphics/texture.h"
+
 #include <stdint.h>
 
+#pragma pack(1)
 typedef struct {
-    uint8_t r, g, b, reserved;
+    uint8_t r, g, b;
 } bitmapColorT;
 
+#pragma pack(1)
 typedef struct {
     uint32_t num_bytes;
     int width;
@@ -21,5 +25,15 @@ typedef struct {
     uint32_t num_important_colors;
     bitmapColorT pixels[1];
 } bitmapHeaderT;
+
+#pragma pack(1)
+typedef struct {
+    // @To-do: Implement this some day.
+    char reserved[14];
+
+    bitmapHeaderT header;
+} bitmapFileHeaderT;
+
+textureT* loadBMP(const void* data);
 
 #endif // bmp_h_

@@ -45,7 +45,6 @@ typedef struct {
     textureT* screen_tex;
 
     shaderT* noise_shader;
-    float    noise_intensity;
     int      noise_seed;
 
     shaderT*       mblur_shader0;
@@ -108,8 +107,7 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     
     // Noise -------------------------------------
 
-    gfx_data->noise_intensity = 0.1f;
-    gfx_data->noise_seed      = 0;
+    gfx_data->noise_seed = 0;
     
     vert_src = readGamePakFile("discard_z.vert");
     frag_src = readGamePakFile("postfx/noise.frag");
@@ -123,7 +121,7 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     free(frag_src);
 }
 
-static float Fuckah = 2.4;
+static float Fuckah = 2.6;
 int knull = 0;
 bool postit = true;
 static void applyPostFX(gameSubsystemT* subsystem) {
@@ -132,16 +130,6 @@ static void applyPostFX(gameSubsystemT* subsystem) {
     knull--;
     if (knull < 0)
         knull = 0;
-
-    if (keyIsPressed('a') && knull == 0) {
-        gfx_data->noise_intensity -= 0.01; printf("noise: %f\n", gfx_data->noise_intensity);
-        knull = 10;
-    }
-
-    if (keyIsPressed('s') && knull == 0) {
-        gfx_data->noise_intensity += 0.01; printf("noise: %f\n", gfx_data->noise_intensity);
-        knull = 10;
-    }
 
     if (keyIsPressed('q') && knull == 0) {
         Fuckah -= 0.1;
@@ -173,7 +161,7 @@ static void applyPostFX(gameSubsystemT* subsystem) {
     renderTargetT* old_rt = useRenderTarget(gfx_data->mblur_rt);
     useShader(gfx_data->mblur_shader0);
     clearDisplay(0.0f, 0.0f, 0.0f);
-    drawComponents(subsystem->data, subsystem->components, false);
+    drawComponents(subsystem, false);
     useRenderTarget(old_rt);
     
     // 2. Apply motion blur.
@@ -190,8 +178,7 @@ static void applyPostFX(gameSubsystemT* subsystem) {
     //--------------------------------------------
 
     useShader(gfx_data->noise_shader);
-    setShaderParam("Intensity", &gfx_data->noise_intensity);
-    setShaderParam("Seed"     , &gfx_data->noise_seed);
+    setShaderParam("Seed", &gfx_data->noise_seed);
     loadTextureFromScreen(gfx_data->screen_tex);
     shaderPostProcess    (gfx_data->screen_tex);
 
@@ -273,6 +260,7 @@ static void setupTransforms(gameSubsystemT* subsystem) {
     }
 }
 
+static int num_mat_switches = 0;
 static void drawComponent(graphicsSubsystemDataT* gfx_data, gameComponentT* component, bool use_material) {
     graphicsComponentDataT* gfx_component  = component->data;
 
@@ -291,11 +279,37 @@ static void drawComponent(graphicsSubsystemDataT* gfx_data, gameComponentT* comp
     drawMesh(gfx_component->mesh);
 }
 
-static void drawComponents(graphicsSubsystemDataT* gfx_data, arrayT* components, bool use_materials) {
-    for (int i = 0; i < arrayLength(components); i++) {
-        gameComponentT* component = *(gameComponentT**)arrayGet(components, i);
-        drawComponent(gfx_data, component, use_materials);
+static void sortComponentsByMaterial(gameSubsystemT* subsystem) {
+    for (int i = 0; i < arrayLength(subsystem->components); i++) {
+        for (int j = (i+1); j < arrayLength(subsystem->components); j++) {
+            gameComponentT** a_ptr = arrayGet(subsystem->components, i);
+            gameComponentT** b_ptr = arrayGet(subsystem->components, j);
+
+            graphicsComponentDataT* a = (*a_ptr)->data;
+            graphicsComponentDataT* b = (*b_ptr)->data;
+
+            if (a->material->sort_value > b->material->sort_value) {
+                gameComponentT* tmp = *a_ptr;
+                *a_ptr = *b_ptr;
+                *b_ptr = tmp;
+            }
+        }
     }
+}
+
+static void drawComponents(gameSubsystemT* subsystem, bool use_materials) {
+    num_mat_switches = 0;
+
+    if (use_materials)
+        sortComponentsByMaterial(subsystem);
+
+    for (int i = 0; i < arrayLength(subsystem->components); i++) {
+        gameComponentT* component = *(gameComponentT**)arrayGet(subsystem->components, i);
+        drawComponent(subsystem->data, component, use_materials);
+    }
+
+    if (use_materials)
+        useMaterial(NULL);
 }
 
 static void drawEverything(gameSubsystemT* subsystem, float dt) {
@@ -309,7 +323,7 @@ static void drawEverything(gameSubsystemT* subsystem, float dt) {
     vec3* clear_color = &gfx_data->clear_color;
     clearDisplay(clear_color->r, clear_color->g, clear_color->b);
 
-    drawComponents(gfx_data, subsystem->components, true);
+    drawComponents(subsystem, true);
 
 #ifdef DRAW_TRI_NORMALS
     useShader (gfx_data->normal_shader);
@@ -321,10 +335,9 @@ static void drawEverything(gameSubsystemT* subsystem, float dt) {
 
     useRenderTarget(NULL);
     presentRenderTarget(gfx_data->render_target);
-
     applyPostFX(subsystem);
 
-    drawText("hej", 10.0f, 10.0f);
+    drawText("SCORE: 12345\nNOOB WARNING: HIGH", 10.0f, 10.0f, "Sector 034", 10);
 }
 
 gameSubsystemT* newGraphicsSubsystem(void) {

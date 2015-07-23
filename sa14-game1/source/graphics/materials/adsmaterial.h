@@ -2,9 +2,9 @@
 #define adsmaterial_h_
 
 #include "base/common.h"
-#include "math/vector.h"
 #include "graphics/material.h"
 #include "graphics/texture.h"
+#include "math/vector.h"
 
 materialT* createADSMaterial(textureT* ambient_tex,
                              textureT* diffuse_tex,

@@ -188,6 +188,21 @@ char* readGamePakFile(const string* file_name) {
     error("Could not find file '%s' in any game pak", file_name);
 }
 
+int gamePakFileSize(const string* file_name) {
+    for (int i = arrayLength(game_inst->paks)-1; i >= 0; i--) {
+        pakArchiveT* pak = *(pakArchiveT**)arrayGet(game_inst->paks, i);
+
+        pakFileT* pf = pakOpenFile(pak, file_name);
+        if (pf) {
+            int file_size = pakFileSize(pf);
+            pakCloseFile(pf);
+            return (file_size);
+        }
+    }
+
+    error("Could not find file '%s' in any game pak", file_name);
+}
+
 /*void* delayedFree(void* mem) {
     arrayAdd(game_inst->delayed_free, &mem);
     return (mem);

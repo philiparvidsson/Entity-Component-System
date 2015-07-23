@@ -114,6 +114,15 @@
     <ClCompile Include="source\graphics\materials\adsmaterial.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\graphics\materials\refractmaterial.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\io\3ds.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\io\bmp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -215,9 +224,6 @@
     <ClInclude Include="source\graphics\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\graphics\bmp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\base\pak.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -234,6 +240,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\materials\adsmaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\materials\refractmaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\io\bmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\io\3ds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -269,11 +284,10 @@
     <None Include="resources\shaders\postfx\noise.frag">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="resources\shaders\postfx\qqmotionblur.vert" />
     <None Include="resources\shaders\materials\adsmaterial.frag">
       <Filter>Shader Files</Filter>
     </None>
-    <None Include="resources\shaders\materials\testmaterial.vert" />
+    <None Include="resources\shaders\materials\refractmaterial.frag" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />

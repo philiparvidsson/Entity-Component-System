@@ -6,8 +6,8 @@
 
 #include "base/common.h"
 #include "base/file_io.h"
-#include "graphics/bmp.h"
 #include "graphics/graphics.h"
+#include "graphics/io/bmp.h"
 #include "graphics/rendertarget.h"
 #include "math/vector.h"
 
@@ -44,18 +44,6 @@ static textureT* active_textures[MaxTextures] = { 0 };
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
-
-static textureT* loadTextureFromBMP(const void* bmp_data) {
-    bitmapHeaderT* bitmap      = bmp_data;
-    textureT*      texture     = createTexture();
-    textureT*      old_texture = useTexture(texture, 0);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, bitmap->width, bitmap->height, 0, GL_BGR, GL_UNSIGNED_BYTE, bitmap->pixels);
-
-    useTexture(old_texture, 0);
-
-    return (texture);
-}
 
 static inline GLenum texTarget(textureT* tex) {
     if (tex->multisample)
@@ -100,16 +88,24 @@ textureT* loadTextureFromFile(const void* file_name) {
     if (!data)
         error("Could not read file '%s'", file_name);
 
-    if (data[0]=='B' && data[1]=='M') {
-        // Bitmap file. The BMP file header is 14 bytes and not really important
-        // for loading it into a texture, so we skip past it.
-        tex = loadTextureFromBMP(data+14);
-    }
+    loadTextureFromMemory(data);
 
     free(data);
 
     if (!tex)
         error("Could not load texture from file '%s'", file_name);
+
+    return (tex);
+}
+
+textureT* loadTextureFromMemory(const char* data) {
+    textureT* tex = NULL;
+
+    if (data[0]=='B' && data[1]=='M')
+        tex = loadBMP(data);
+
+    if (!tex)
+        return (NULL);
 
     textureT* old_tex = useTexture(tex, 0);
 
@@ -118,13 +114,6 @@ textureT* loadTextureFromFile(const void* file_name) {
     useTexture(old_tex, 0);
 
     return (tex);
-}
-
-textureT* loadTextureFromMemory(const void* data, int format) {
-    if (format == TexFormatBMP)
-        return loadTextureFromBMP(data);
-
-    return (NULL);
 }
 
 void loadTextureFromScreen(textureT* tex) {

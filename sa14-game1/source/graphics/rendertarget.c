@@ -18,7 +18,9 @@ struct renderTargetT {
 
 static renderTargetT* active_render_target = NULL;
 
-renderTargetT* createMultisampledRenderTarget(int width, int height, int num_samples) {
+renderTargetT* createMultisampledRenderTarget(int width, int height,
+                                              int num_samples)
+{
     renderTargetT* rt = malloc(sizeof(renderTargetT));
 
     rt->width  = width;

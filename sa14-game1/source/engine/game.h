@@ -28,6 +28,7 @@ void addSubsystemToGame(gameSubsystemT* subsystem);
 void addEntityToGame(gameEntityT* entity);
 void addGamePak(pakArchiveT* pak);
 char* readGamePakFile(const string* file_name);
+int gamePakFileSize(const string* file_name);
 //void* delayedFree(void* mem);
 
 #endif // game_h_

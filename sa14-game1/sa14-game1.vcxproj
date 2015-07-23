@@ -42,14 +42,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\</OutDir>
-    <IntDir>$(SolutionDir)\bin\obj\</IntDir>
+    <IntDir>$(SolutionDir)\build\obj\</IntDir>
     <IncludePath>$(ProjectDir)\include\;$(ProjectDir)\source\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\</OutDir>
-    <IntDir>$(SolutionDir)\bin\obj\</IntDir>
+    <IntDir>$(SolutionDir)\build\obj\</IntDir>
     <IncludePath>$(ProjectDir)\include\;$(ProjectDir)\source\;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -113,7 +113,10 @@
     <ClCompile Include="source\engine\subsystem.c" />
     <ClCompile Include="source\entities\asteroidentity.c" />
     <ClCompile Include="source\entities\playerentity.c" />
+    <ClCompile Include="source\graphics\io\3ds.c" />
+    <ClCompile Include="source\graphics\io\bmp.c" />
     <ClCompile Include="source\graphics\materials\adsmaterial.c" />
+    <ClCompile Include="source\graphics\materials\refractmaterial.c" />
     <ClCompile Include="source\graphics\rendertarget.c" />
     <ClCompile Include="source\graphics\graphics.c" />
     <ClCompile Include="source\graphics\lightsource.c" />
@@ -152,8 +155,10 @@
     <ClInclude Include="source\engine\subsystem.h" />
     <ClInclude Include="source\entities\asteroidentity.h" />
     <ClInclude Include="source\entities\playerentity.h" />
-    <ClInclude Include="source\graphics\bmp.h" />
+    <ClInclude Include="source\graphics\io\3ds.h" />
+    <ClInclude Include="source\graphics\io\bmp.h" />
     <ClInclude Include="source\graphics\materials\adsmaterial.h" />
+    <ClInclude Include="source\graphics\materials\refractmaterial.h" />
     <ClInclude Include="source\graphics\rendertarget.h" />
     <ClInclude Include="source\graphics\graphics.h" />
     <ClInclude Include="source\graphics\lightsource.h" />
@@ -178,9 +183,8 @@
     <None Include="bin\glew32.dll" />
     <None Include="build\pak-tool.exe" />
     <None Include="build\postbuild.bat" />
-    <None Include="resources\shaders\materials\testmaterial.vert" />
+    <None Include="resources\shaders\materials\refractmaterial.frag" />
     <None Include="resources\shaders\postfx\motionblur0.frag" />
-    <None Include="resources\shaders\postfx\qqmotionblur.vert" />
     <None Include="resources\shaders\postfx\motionblur1.frag" />
     <None Include="resources\shaders\postfx\noise.frag" />
     <None Include="resources\shaders\normals.frag" />

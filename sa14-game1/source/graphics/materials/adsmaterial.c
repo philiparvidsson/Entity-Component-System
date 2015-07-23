@@ -2,10 +2,10 @@
 
 #include "base/common.h"
 #include "engine/game.h"
-#include "math/vector.h"
 #include "graphics/material.h"
 #include "graphics/shader.h"
 #include "graphics/texture.h"
+#include "math/vector.h"
 
 #include <GL/glew.h>
 
@@ -21,9 +21,9 @@ typedef struct {
     float shininess;
 } adsMaterialT;
 
-static void adsUse(materialT* m) {
+static void adsBegin(materialT* m) {
     adsMaterialT* ads = m->data;
-
+    
     setShaderParam("AmbientCoeff" , &ads->ambient_coeff  );
     setShaderParam("DiffuseCoeff" , &ads->diffuse_coeff  );
     setShaderParam("SpecularCoeff", &ads->specular_coeff );
@@ -84,9 +84,12 @@ materialT* createCustomADSMaterial(textureT* ambient_tex,
     materialT*    m   = newMaterial();
     adsMaterialT* ads = malloc(sizeof(adsMaterialT));
 
-    m->data   = ads;
-    m->shader = ads_shader;
-    m->use_fn = adsUse;
+    m->type       = "ads";
+    m->data       = ads;
+    m->sort_value = 1000;
+    m->shader     = ads_shader;
+    m->begin_fn   = adsBegin;
+    m->end_fn     = NULL;
     
     ads->ambient_tex    = ambient_tex;
     ads->diffuse_tex    = diffuse_tex;

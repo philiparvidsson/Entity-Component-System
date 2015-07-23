@@ -26,12 +26,14 @@ static gameComponentT* createGraphicsComponent(void) {
     
     if (!mesh) {
         mesh = createGeodesicSphere(0.02f, 0);
+        //calcSmoothNormals(mesh);
+        //updateMesh(mesh);
     }
     
 
     gameComponentT* component = newGraphicsComponent(mesh);
     graphicsComponentDataT* gfx_data = component->data;
-
+    
     gfx_data->material = getNamedMaterial("blue crystal");
     
     if ((rand() % 2) == 1) {
@@ -43,12 +45,12 @@ static gameComponentT* createGraphicsComponent(void) {
 
 static gameComponentT* createPhysicsComponent(void) {
     gameComponentT* component = newPhysicsComponent(1.0f * Kilogram);
-
+    
     physicsComponentDataT* phys = component->data;
     
     vec3 pos;
     vec3 vel;
-
+    
     switch (rand() % 4) {
         
     case 0: {
@@ -139,14 +141,14 @@ gameEntityT* newAsteroidEntity(void) {
 
     gameComponentT* gfx  = createGraphicsComponent();
     gfx->update_fn = rotateAsteroid;
-
+    
     gameComponentT* phys = createPhysicsComponent();
 
     attachComponent(entity, gfx);
     attachComponent(entity, phys);
-
+    
     asteroidEntityDataT* asteroid = entity->data;
-
+    
     asteroid->a1 = (rand() / (float)RAND_MAX - 0.5f) * 6.0f;
     asteroid->a2 = (rand() / (float)RAND_MAX - 0.5f) * 6.0f;
     asteroid->angle1 = 0.0f;

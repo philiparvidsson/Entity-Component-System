@@ -5,7 +5,7 @@
  *----------------------------------------------*/
 
 uniform int   MaxSamples     = 32;
-uniform float VelocityFactor = 2.4;
+uniform float VelocityFactor = 2.6;
 
 layout(binding = 0) uniform sampler2D ColorTex;
 layout(binding = 1) uniform sampler2D VelocityTex;

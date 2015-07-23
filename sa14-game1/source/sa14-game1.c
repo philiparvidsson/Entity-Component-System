@@ -38,7 +38,7 @@
  *   printIntroMessage();
  *------------------------------------*/
 static void printIntroMessage(void) {
-    printf("sa14-game1 v%s by %s\n\n\n", ProgramVersion, ProgramAuthors);
+    printf("sa14-game1 v%s (build %d) by %s\n\n\n", ProgramVersion, 0, ProgramAuthors);
     printf("Some time in the not too distant future, this program will be a\n"
            "really cool game instead of this crap that does nothing...\n\n");
 
@@ -157,12 +157,15 @@ int main(void) {
     addGamePak(pakOpenArchive("pak/images.pak" , PakPassword));
     addGamePak(pakOpenArchive("pak/shaders.pak", PakPassword));
 
+    char* font_data = readGamePakFile("sector_034.ttf");
+    int num_bytes = gamePakFileSize("sector_034.ttf");
+    loadFontFromMemory(font_data, num_bytes);
+    free(font_data);
+
 #ifndef _DEBUG
-    char* bmp_file = readGamePakFile("splash1.bmp");
-    // The BMP file header is 14 bytes, so we skip past it. It's not needed for
-    // loading the texture anyway.
-    textureT* splash_texture = loadTextureFromMemory(bmp_file+14, TexFormatBMP);
-    free(bmp_file);
+    char* bmp = readGamePakFile("splash1.bmp");
+    textureT* splash_texture = loadTextureFromMemory(bmp);
+    free(bmp);
     showSplashScreen(splash_texture, 3.0f);
     freeTexture(splash_texture);
 #endif // _DEBUG
