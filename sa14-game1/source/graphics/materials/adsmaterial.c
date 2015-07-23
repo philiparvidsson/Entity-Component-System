@@ -67,7 +67,7 @@ materialT* createCustomADSMaterial(textureT* ambient_tex,
 
     }
     else {
-        vert_src = readGamePakFile("default.vert");
+        vert_src = readGamePakFile("shaders/default.vert");
         compileVertexShader(ads_shader, vert_src);
         free(vert_src);
     }
@@ -76,7 +76,7 @@ materialT* createCustomADSMaterial(textureT* ambient_tex,
         compileFragmentShader(ads_shader, frag_src);
     }
     else {
-        frag_src = readGamePakFile("materials/adsmaterial.frag");
+        frag_src = readGamePakFile("shaders/materials/adsmaterial.frag");
         compileFragmentShader(ads_shader, frag_src);
         free(frag_src);
     }

@@ -288,18 +288,20 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="resources\shaders\materials\refractmaterial.frag" />
+    <None Include="resources\meshes\monkey.3ds" />
+    <None Include="resources\meshes\torus.3ds" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\images\splash1.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <Font Include="resources\fonts\sector_034.ttf">
       <Filter>Resource Files</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\textures\splash1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

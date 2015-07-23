@@ -86,14 +86,14 @@ textureT* loadTextureFromFile(const void* file_name) {
     char* data = readFile(file_name);
 
     if (!data)
-        error("Could not read file '%s'", file_name);
+        error("could not read file '%s'", file_name);
 
     loadTextureFromMemory(data);
 
     free(data);
 
     if (!tex)
-        error("Could not load texture from file '%s'", file_name);
+        error("could not load texture from file '%s'", file_name);
 
     return (tex);
 }

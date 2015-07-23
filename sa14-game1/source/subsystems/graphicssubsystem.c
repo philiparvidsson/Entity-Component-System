@@ -64,9 +64,9 @@ static void drawComponents(graphicsSubsystemDataT* gfx_data, arrayT* components)
 static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
     gfx_data->normal_shader = createShader();
 
-    string* vert_src = readGamePakFile("normals.vert");
-    string* geom_src = readGamePakFile("normals.geom");
-    string* frag_src = readGamePakFile("normals.frag");
+    string* vert_src = readGamePakFile("shaders/normals.vert");
+    string* geom_src = readGamePakFile("shaders/normals.geom");
+    string* frag_src = readGamePakFile("shaders/normals.frag");
     
     compileVertexShader  (gfx_data->normal_shader, vert_src);
     compileGeometryShader(gfx_data->normal_shader, geom_src);
@@ -81,8 +81,8 @@ static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
 static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     // Motion Blur -------------------------------
     
-    string* vert_src = readGamePakFile("default.vert");
-    string* frag_src = readGamePakFile("postfx/motionblur0.frag");
+    string* vert_src = readGamePakFile("shaders/default.vert");
+    string* frag_src = readGamePakFile("shaders/postfx/motionblur0.frag");
 
     gfx_data->mblur_shader0 = createShader();
     
@@ -92,8 +92,8 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     free(vert_src);
     free(frag_src);
     
-    vert_src = readGamePakFile("discard_z.vert");
-    frag_src = readGamePakFile("postfx/motionblur1.frag");
+    vert_src = readGamePakFile("shaders/discard_z.vert");
+    frag_src = readGamePakFile("shaders/postfx/motionblur1.frag");
     
     gfx_data->mblur_shader1 = createShader();
     
@@ -109,8 +109,8 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
 
     gfx_data->noise_seed = 0;
     
-    vert_src = readGamePakFile("discard_z.vert");
-    frag_src = readGamePakFile("postfx/noise.frag");
+    vert_src = readGamePakFile("shaders/discard_z.vert");
+    frag_src = readGamePakFile("shaders/postfx/noise.frag");
     
     gfx_data->noise_shader = createShader();
     
@@ -326,11 +326,10 @@ static void drawEverything(gameSubsystemT* subsystem, float dt) {
     drawComponents(subsystem, true);
 
 #ifdef DRAW_TRI_NORMALS
-    useShader (gfx_data->normal_shader);
-    useTexture(gfx_data->normal_shader, 0);
+    useShader(gfx_data->normal_shader);
 
     setupCamera   (gfx_data);
-    drawComponents(gfx_data, subsystem->components);
+    drawComponents(subsystem, false);
 #endif // DRAW_TRI_NORMALS
 
     useRenderTarget(NULL);

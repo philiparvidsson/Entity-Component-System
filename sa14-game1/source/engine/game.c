@@ -106,7 +106,7 @@ void gameMain(void (*frame_func)(float dt)) {
     timeT time = getTime();
     while (!game_inst->done && windowIsOpen()) {
         float dt = elapsedSecsSince(time);
-
+        
         // Pause if we lose focus. The time we pause should not be taken into
         // account, so we put this between elapsedSecsSince() and getTime().
         while (!windowIsFocused()) {
@@ -185,7 +185,7 @@ char* readGamePakFile(const string* file_name) {
             return (data);
     }
 
-    error("Could not find file '%s' in any game pak", file_name);
+    error("couldn't find file '%s' in any game pak", file_name);
 }
 
 int gamePakFileSize(const string* file_name) {
@@ -200,7 +200,7 @@ int gamePakFileSize(const string* file_name) {
         }
     }
 
-    error("Could not find file '%s' in any game pak", file_name);
+    error("couldn't find file '%s' in any game pak", file_name);
 }
 
 /*void* delayedFree(void* mem) {

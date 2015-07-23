@@ -63,7 +63,7 @@ static void compileShader(GLenum type, shaderT* shader, const string* source) {
     }
 
     if (result == GL_FALSE)
-        error("Shader failed to compile");
+        error("shader failed to compile");
 
     glAttachShader(shader->id, shader_id);
     glLinkProgram (shader->id);
@@ -78,7 +78,7 @@ static void compileShader(GLenum type, shaderT* shader, const string* source) {
     }
 
     if (result == GL_FALSE)
-        error("Shader program failed to link");
+        error("shader program failed to link");
 
     arrayAdd(shader->shaders, &shader_id);
 }
@@ -131,7 +131,7 @@ void compileVertexShader(shaderT* shader, const string* source) {
 
 bool setShaderParam(const string* name, const void* value) {
     if (!active_shader)
-        error("No shader in use");
+        error("no shader in use");
 
     GLuint index = (-1);
     glGetUniformIndices(active_shader->id, 1, &name, &index);
@@ -155,7 +155,7 @@ bool setShaderParam(const string* name, const void* value) {
     case GL_FLOAT_MAT2   : glUniformMatrix2fv(loc, 1, GL_TRUE, value); break;
     case GL_FLOAT_MAT3   : glUniformMatrix3fv(loc, 1, GL_TRUE, value); break;
     case GL_FLOAT_MAT4   : glUniformMatrix4fv(loc, 1, GL_TRUE, value); break;
-    default              : error("Unknown uniform type");
+    default              : error("unknown uniform type");
     }
 
     return (true);
@@ -163,7 +163,7 @@ bool setShaderParam(const string* name, const void* value) {
 
 void shaderPostProcess(textureT* source_texture) {
     if (!active_shader)
-        error("No shader in use");
+        error("no shader in use");
 
     bool created_texture = false;
 

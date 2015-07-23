@@ -10,7 +10,7 @@ textureT* loadBMP(const void* data) {
     textureT*          old_tex = useTexture(tex, 0);
 
     if (bmp->reserved[0]!='B' || bmp->reserved[1]!='M')
-        error("Invalid bitmap");
+        error("invalid bitmap");
 
     glTexImage2D(GL_TEXTURE_2D,
                  0,

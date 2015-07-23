@@ -18,6 +18,7 @@
 #include "base/pak.h"
 #include "base/time.h"
 #include "engine/game.h"
+#include "graphics/io/3ds.h"
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
 #include "graphics/text.h"
@@ -58,8 +59,8 @@ static void printIntroMessage(void) {
  *   showSplashScreen(my_tex, 3.0f);
  *------------------------------------*/
 static void showSplashScreen(textureT* splash_tex, float secs) {
-    string* vert_src = readGamePakFile("discard_z.vert");
-    string* frag_src = readGamePakFile("splashscreen.frag");
+    string* vert_src = readGamePakFile("shaders/discard_z.vert");
+    string* frag_src = readGamePakFile("shaders/splashscreen.frag");
 
     shaderT* splash_shader = createShader();
     triMeshT* quad = createQuad(2.0f, 2.0f);
@@ -148,22 +149,19 @@ void frameFunc(float dt) {
  *   Programmets huvudfunktion.
  *------------------------------------*/
 int main(void) {
-
     printIntroMessage();
 
     initGame("Asteroids", 1280, 720);
 
-    addGamePak(pakOpenArchive("pak/fonts.pak"  , PakPassword));
-    addGamePak(pakOpenArchive("pak/images.pak" , PakPassword));
-    addGamePak(pakOpenArchive("pak/shaders.pak", PakPassword));
+    addGamePak(pakOpenArchive("data.pak", PakPassword));
 
-    char* font_data = readGamePakFile("sector_034.ttf");
-    int num_bytes = gamePakFileSize("sector_034.ttf");
+    char* font_data = readGamePakFile("fonts/sector_034.ttf");
+    int   num_bytes = gamePakFileSize("fonts/sector_034.ttf");
     loadFontFromMemory(font_data, num_bytes);
     free(font_data);
 
 #ifndef _DEBUG
-    char* bmp = readGamePakFile("splash1.bmp");
+    char* bmp = readGamePakFile("textures/splash1.bmp");
     textureT* splash_texture = loadTextureFromMemory(bmp);
     free(bmp);
     showSplashScreen(splash_texture, 3.0f);

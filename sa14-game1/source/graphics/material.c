@@ -40,7 +40,7 @@ const materialT* getNamedMaterial(const string* name) {
 
         if (!blue_crystal) {
             blue_crystal = createRefractMaterial((vec3) {  0.0f,  0.7f, 1.0f },
-                                                 51.2f,
+                                                 50.0f,
                                                  0.9f);
 
             blue_crystal->name = "blue crystal";
@@ -65,7 +65,7 @@ const materialT* getNamedMaterial(const string* name) {
     }
     
     if (!material)
-        error("Unknown material: '%s'", name);
+        error("unknown material: '%s'", name);
 
     return (material);
 }

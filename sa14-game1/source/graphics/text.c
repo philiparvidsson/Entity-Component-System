@@ -31,8 +31,8 @@ shaderT* text_shader = NULL;
 static void initTextShader(void) {
     text_shader = createShader();
 
-    string *vert_src = readGamePakFile("text.vert");
-    string *frag_src = readGamePakFile("text.frag");
+    string *vert_src = readGamePakFile("shaders/text.vert");
+    string *frag_src = readGamePakFile("shaders/text.frag");
 
     compileVertexShader(text_shader, vert_src);
     compileFragmentShader(text_shader, frag_src);

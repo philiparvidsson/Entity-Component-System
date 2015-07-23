@@ -28,13 +28,13 @@
  *----------------------------------------------*/
 
 #define mat_check_args_1() { \
-    if (n == (-1)) error("First argument is not a matrix"); \
+    if (n == (-1)) error("first argument is not a matrix"); \
 }
 
 #define mat_check_args_3() { \
-    if (a_n == (-1)) error("First argument is not a matrix");  \
-    if (b_n == (-1)) error("Second argument is not a matrix"); \
-    if (r_n == (-1)) error("Third argument is not a matrix");  \
+    if (a_n == (-1)) error("first argument is not a matrix");  \
+    if (b_n == (-1)) error("second argument is not a matrix"); \
+    if (r_n == (-1)) error("third argument is not a matrix");  \
 }
 
 #define mat_n(v) (((vec_n(v))==16) ? ( 4) \
@@ -120,7 +120,7 @@ static inline void mat_transpose_(float* m, int n) {
 static inline void mat_transl_xy_(float x, float y, float* m, int n) {
     mat_check_args_1();
 
-    if (n < 3) error("Matrix is too small");
+    if (n < 3) error("matrix is too small");
 
     mat_identity_(m, n);
 
@@ -131,7 +131,7 @@ static inline void mat_transl_xy_(float x, float y, float* m, int n) {
 static inline void mat_transl_xyz_(float x, float y, float z, float* m, int n) {
     mat_check_args_1();
 
-    if (n < 4) error("Matrix is too small");
+    if (n < 4) error("matrix is too small");
 
     mat_identity_(m, n);
 
@@ -143,7 +143,7 @@ static inline void mat_transl_xyz_(float x, float y, float z, float* m, int n) {
 static inline void mat_rot_(const vec3* u, float a, float* m, int n) {
     mat_check_args_1();
 
-    if (n < 3) error("Matrix is too small");
+    if (n < 3) error("matrix is too small");
 
     mat_identity_(m, n);
 
@@ -165,7 +165,7 @@ static inline void mat_rot_(const vec3* u, float a, float* m, int n) {
 static inline void mat_rot_x_(float a, float* m, int n) {
     mat_check_args_1();
 
-    if (n < 3) error("Matrix is too small");
+    if (n < 3) error("matrix is too small");
 
     mat_identity_(m, n);
 
@@ -180,7 +180,7 @@ static inline void mat_rot_x_(float a, float* m, int n) {
 static inline void mat_rot_y_(float a, float* m, int n) {
     mat_check_args_1();
 
-    if (n < 3) error("Matrix is too small");
+    if (n < 3) error("matrix is too small");
 
     mat_identity_(m, n);
 

@@ -183,6 +183,8 @@
     <None Include="bin\glew32.dll" />
     <None Include="build\pak-tool.exe" />
     <None Include="build\postbuild.bat" />
+    <None Include="resources\meshes\monkey.3ds" />
+    <None Include="resources\meshes\torus.3ds" />
     <None Include="resources\shaders\materials\refractmaterial.frag" />
     <None Include="resources\shaders\postfx\motionblur0.frag" />
     <None Include="resources\shaders\postfx\motionblur1.frag" />
@@ -205,7 +207,7 @@
     <Font Include="resources\fonts\sector_034.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\images\splash1.bmp" />
+    <Image Include="resources\textures\splash1.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

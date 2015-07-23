@@ -79,7 +79,7 @@ void main() {
     vec2  uv_refract    = uv - n.xy * RefractionMult * texel_size * 1.5;
     vec3  reflect_color = texture(ScreenTex, uv_reflect).rgb;
     vec3  refract_color = texture(ScreenTex, uv_refract).rgb;
-    float a             = 1.0 - 0.6*length(d.xy);
+    float a             = 1.0 - 0.4*length(d.xy);
     vec3  mix_color     = a*reflect_color + (1.0 - a)*refract_color;
 
     color = vec4(mix_color*(ambient+diffuse) + specular, a);

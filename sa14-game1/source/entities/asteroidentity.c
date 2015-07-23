@@ -6,6 +6,7 @@
 #include "engine/entity.h"
 #include "graphics/material.h"
 #include "graphics/trimesh.h"
+#include "graphics/io/3ds.h"
 
 #include <stdlib.h>
 
@@ -25,7 +26,9 @@ static gameComponentT* createGraphicsComponent(void) {
     static triMeshT* mesh;
     
     if (!mesh) {
-        mesh = createGeodesicSphere(0.02f, 0);
+        //mesh = createGeodesicSphere(0.02f, 0);
+        
+        mesh = load3DS(readGamePakFile("meshes/monkey.3ds"));
         //calcSmoothNormals(mesh);
         //updateMesh(mesh);
     }
@@ -153,7 +156,7 @@ gameEntityT* newAsteroidEntity(void) {
     asteroid->a2 = (rand() / (float)RAND_MAX - 0.5f) * 6.0f;
     asteroid->angle1 = 0.0f;
     asteroid->angle2 = 0.0f;
-    asteroid->scale = (0.5f + rand() / (float)RAND_MAX);
+    asteroid->scale = 0.03f * (0.5f + rand() / (float)RAND_MAX);
     asteroid->rot_axis_1 = randomVector();
     asteroid->rot_axis_2 = randomVector();
 

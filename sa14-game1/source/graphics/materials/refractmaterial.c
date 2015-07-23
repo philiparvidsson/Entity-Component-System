@@ -60,7 +60,7 @@ materialT* createCustomRefractMaterial(vec3    color_coeff,
 
     }
     else {
-        vert_src = readGamePakFile("default.vert");
+        vert_src = readGamePakFile("shaders/default.vert");
         compileVertexShader(refract_shader, vert_src);
         free(vert_src);
     }
@@ -69,7 +69,7 @@ materialT* createCustomRefractMaterial(vec3    color_coeff,
         compileFragmentShader(refract_shader, frag_src);
     }
     else {
-        frag_src = readGamePakFile("materials/refractmaterial.frag");
+        frag_src = readGamePakFile("shaders/materials/refractmaterial.frag");
         compileFragmentShader(refract_shader, frag_src);
         free(frag_src);
     }
