@@ -112,8 +112,8 @@ static gameComponentT* createPhysicsComponent(void) {
 
 static void rotateAsteroid(gameComponentT* component, float dt) {
     asteroidEntityDataT* asteroid = component->entity->data;
-    graphicsComponentDataT* gfx = getComponent(component->entity, "graphics")->data;
-    physicsComponentDataT* phys = getComponent(component->entity, "physics")->data;
+    graphicsComponentDataT* gfx  = getComponent(component->entity, "graphics")->data;
+    physicsComponentDataT*  phys = getComponent(component->entity, "physics" )->data;
     
     float o = bodyGetAngle(phys->body);
     vec2 x = bodyGetPosition(phys->body);
