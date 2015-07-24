@@ -2,3 +2,5 @@
 Simple game engine (+ game) developed by a student of Systems Architecture. The goal is to implement a rendering pipeline (using OpenGL), a linear algebra library (specifically for vector and matrix operations), a generalized (though not portable) device input package and a physics simulation.
 
 Everything is implemented in C, although I did not follow the C89 standard, but rather C99 and even some C11 features (by extension since the MSVC++ compiler is not quite there yet).
+
+University of Borås, Sweden
