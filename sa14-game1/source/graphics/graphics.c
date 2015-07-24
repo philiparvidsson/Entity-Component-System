@@ -18,6 +18,7 @@
 
 #include "base/common.h"
 #include "base/debug.h"
+#include "base/time.h"
 
 #include <GL/glew.h>
 
@@ -240,6 +241,11 @@ static void setFrameRate(float fps) {
 }
 
 void initGraphics(const string* title, int width, int height) {
+    // @To-do: Is this a good idea? I'm thinking it makes QPC more accurate.
+    HANDLE thread = GetCurrentThread();
+    assert(SetThreadAffinityMask(thread, 0x00000001));
+    assert(SetThreadPriority    (thread, THREAD_PRIORITY_ABOVE_NORMAL));
+
     createWindow(title, width, height);
     setupPixelFormat();
 
@@ -340,6 +346,7 @@ void updateDisplay(void) {
 
     // We enter a loop and stay in it just long enough to time and synchronize
     // the FPS, so we get a set amount of frames displayed each second.
+    long long time;
     LARGE_INTEGER perf_count;
     do {
         updateWindow();
@@ -358,10 +365,10 @@ void updateDisplay(void) {
         // the amount of time needed to maintain a set frame interval, so we can
         // exit the loop.
         QueryPerformanceCounter(&perf_count);
-        perf_count.QuadPart -= window->last_update.QuadPart;
-    } while (perf_count.QuadPart < window->frame_time);
+        time = perf_count.QuadPart - window->last_update.QuadPart;
+    } while (time < window->frame_time);
 
-    QueryPerformanceCounter(&window->last_update);
+    window->last_update = perf_count;
 }
 
 int screenWidth() {
