@@ -291,6 +291,7 @@
     <None Include="resources\shaders\materials\refractmaterial.frag" />
     <None Include="resources\meshes\monkey.3ds" />
     <None Include="resources\meshes\torus.3ds" />
+    <None Include="bin\msvcr120d.dll" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />
