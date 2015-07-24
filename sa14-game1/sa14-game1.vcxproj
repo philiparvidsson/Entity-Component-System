@@ -134,6 +134,7 @@
     <ClCompile Include="source\subsystems\graphicssubsystem.c" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="doc\ideas.txt" />
     <Text Include="doc\readme.txt" />
     <Text Include="license.txt" />
     <Text Include="doc\sector_034.txt" />

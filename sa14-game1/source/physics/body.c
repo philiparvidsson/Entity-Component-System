@@ -7,13 +7,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-bodyT* bodyAlloc(void) {
+static bodyT* bodyAlloc(void) {
     bodyT* body = malloc(sizeof(bodyT));
 
     return (body);
 }
 
-void bodyInit(bodyT* body, float mass) {
+static void bodyInit(bodyT* body, float mass) {
     memset(body, 0, sizeof(bodyT));
 
     bodySetMass(body, mass);
@@ -32,39 +32,22 @@ void bodyFree(bodyT* body) {
         free(body);
 }
 
-float bodyGetMass(const bodyT* body) {
-    return (body->mass);
-}
+float bodyGetAngle(const bodyT* body)              { return (body->state.o); }
+void  bodySetAngle(      bodyT* body, float angle) { body->state.o = angle;  }
 
-void bodySetMass(bodyT* body, float mass) {
-    body->mass = mass;
-}
+float bodyGetMass(const bodyT* body)             { return (1.0f/body->inv_mass); }
+void  bodySetMass(      bodyT* body, float mass) { body->inv_mass = 1.0f/mass;   }
 
-vec3 bodyGetPosition(const bodyT* body) {
-    return (body->pos);
-}
+vec2 bodyGetPosition(const bodyT* body)           { return (body->state.x); }
+void bodySetPosition(      bodyT* body, vec2 pos) { body->state.x = pos;    }
 
-void bodySetPosition(bodyT* body, vec3 pos) {
-    body->pos = pos;
-}
+bodyTypeT bodyGetType(const bodyT* body)           { return (body->type); }
+void      bodySetType(      bodyT* body, int type) { body->type = type;   }
 
-vec3 bodyGetVelocity(const bodyT* body) {
-    return (body->vel);
-}
+vec2 bodyGetVelocity(const bodyT* body)           { return (body->state.v); }
+void bodySetVelocity(      bodyT* body, vec2 vel) { body->state.v = vel;    }
 
-void bodySetVelocity(bodyT* body, vec3 vel) {
-    body->vel = vel;
-}
-
-bodyTypeT bodyGetType(const bodyT* body) {
-    return (body->type);
-}
-
-void bodySetType(bodyT* body, bodyTypeT type) {
-    body->type = type;
-}
-
-void bodyApplyForce(bodyT* body, vec3 force) {
-    vec_scale(&force, 1.0f / body->mass, &force);
-    vec_add(&body->acc, &force, &body->acc);
+void bodyApplyForce(bodyT* body, vec2 f, vec2 r) {
+    vec_scale(&f, body->inv_mass, &f);
+    vec_add(&body->state.a, &f, &body->state.a);
 }

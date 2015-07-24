@@ -10,18 +10,24 @@ typedef enum {
     StaticBody
 } bodyTypeT;
 
-bodyT* bodyAlloc(void);
-void bodyInit(bodyT* body, float mass);
 bodyT* bodyNew(float mass);
 void bodyFree(bodyT* body);
-float bodyGetMass(const bodyT* body);
-vec3 bodyGetPosition(const bodyT* body);
-void bodySetPosition(bodyT* body, vec3 pos);
-vec3 bodyGetVelocity(const bodyT* body);
-void bodySetVelocity(bodyT* body, vec3 vel);
-void bodySetMass(bodyT* body, float mass);
-bodyTypeT bodyGetType(const bodyT* body);
-void bodySetType(bodyT* body, bodyTypeT type);
-void bodyApplyForce(bodyT* body, vec3 force);
+
+float bodyGetAngle(const bodyT* body);
+void  bodySetAngle(      bodyT* body, float angle);
+
+float bodyGetMass(const bodyT* body            );
+void  bodySetMass(      bodyT* body, float mass);
+
+vec2 bodyGetPosition(const bodyT* body          );
+void bodySetPosition(      bodyT* body, vec2 pos);
+
+bodyTypeT bodyGetType(const bodyT* body          );
+void      bodySetType(      bodyT* body, int type);
+
+vec2 bodyGetVelocity(const bodyT* body          );
+void bodySetVelocity(      bodyT* body, vec2 vel);
+
+void bodyApplyForce(bodyT* body, vec2 f, vec2 r);
 
 #endif

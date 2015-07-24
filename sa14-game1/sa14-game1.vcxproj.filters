@@ -57,9 +57,6 @@
     <ClCompile Include="source\base\array.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\base\common.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\base\debug.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -123,6 +120,9 @@
     <ClCompile Include="source\graphics\io\bmp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\base\common.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -132,6 +132,7 @@
     <Text Include="doc\sector_034.txt">
       <Filter>Documentation Files</Filter>
     </Text>
+    <Text Include="doc\ideas.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GL\glew.h">
@@ -183,9 +184,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\base\array.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\base\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\base\debug.h">
@@ -249,6 +247,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\graphics\io\3ds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\base\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

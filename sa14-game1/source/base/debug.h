@@ -51,7 +51,7 @@
  *------------------------------------*/
 #define assert(expr) if (!(expr)) { error("The assertion '"#expr"' failed"); }
 
-#define trace(s, ...) printf(":"s"\n", __VA_ARGS__);
+#define trace(s, ...) printf(s"\n", __VA_ARGS__);
 
 /*------------------------------------------------
  * FUNCTIONS

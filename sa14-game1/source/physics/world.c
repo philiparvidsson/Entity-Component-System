@@ -42,16 +42,23 @@ void worldAddBody(worldT* world, bodyT* body) {
 
     body->world = world;
 
-    if (world->body_list)
-        world->body_list->prev = body;
+    if (world->bodies)
+        world->bodies->prev = body;
 
-    body->next = world->body_list;
-    world->body_list = body;
+    body->next = world->bodies;
+    world->bodies = body;
 }
 
 void worldStep(worldT* world, float dt) {
-    bodyT* b = world->body_list;
+    bodyT* b = world->bodies;
+    while (b) {
+        bodyT* body = b;
+        b = b->next;
 
+        body->prev_state = body->state;
+    }
+
+    b = world->bodies;
     while (b) {
         bodyT* body = b;
         b = b->next;
@@ -60,39 +67,11 @@ void worldStep(worldT* world, float dt) {
         if (body->type == StaticBody)
             continue;
 
-        body->vel.x += body->acc.x * dt;
-        body->vel.y += body->acc.y * dt;
-        body->vel.z += body->acc.z * dt;
-        body->pos.x += body->vel.x * dt;
-        body->pos.y += body->vel.y * dt;
-        body->pos.z += body->vel.z * dt;
-        body->acc.x = body->acc.y = body->acc.z = 0.0f;
+        body->state.v.x += body->state.a.x * dt;
+        body->state.v.y += body->state.a.y * dt;
+        body->state.x.x += body->state.v.x * dt;
+        body->state.x.y += body->state.v.y * dt;
 
-        /*if (body->pos.x + body->aabb.min.x < world->bounds.min.x) {
-            body->vel.x *= -1.0f;
-            body->pos.x = world->bounds.min.x - body->aabb.min.x;
-        }
-        else if (body->pos.x + body->aabb.max.x > world->bounds.max.x) {
-            body->vel.x *= -1.0f;
-            body->pos.x = world->bounds.max.x - body->aabb.max.x;
-        }
-
-        if (body->pos.y + body->aabb.min.y < world->bounds.min.y) {
-            body->vel.y *= -1.0f;
-            body->pos.y = world->bounds.min.y - body->aabb.min.y;
-        }
-        else if (body->pos.y + body->aabb.max.y > world->bounds.max.y) {
-            body->vel.y *= -1.0f;
-            body->pos.y = world->bounds.max.y - body->aabb.max.y;
-        }
-
-        if (body->pos.z + body->aabb.min.z < world->bounds.min.z) {
-            body->vel.z *= -1.0f;
-            body->pos.z = world->bounds.min.z - body->aabb.min.z;
-        }
-        else if (body->pos.z + body->aabb.max.z > world->bounds.max.z) {
-            body->vel.z *= -1.0f;
-            body->pos.z = world->bounds.max.z - body->aabb.max.z;
-        }*/
+        body->state.a.x = body->state.a.y = 0.0f;
     }
 }

@@ -14,20 +14,30 @@
  *----------------------------------------------*/
 
 struct aabbT {
-    vec3 min;
-    vec3 max;
+    vec2 min;
+    vec2 max;
 };
 
+typedef struct {
+    vec2 x; // Position.
+    vec2 v; // Velocity.
+    vec2 a; // Acceleration.
+
+    float o;  // Orientation.
+    float w;  // Angular velocity.
+    float t;  // Torque.
+
+    float i; // Moment of inertia.
+} bodyStateT;
+
 struct bodyT {
-    aabbT aabb;
+    worldT* world;
 
-    vec3 pos;
-    vec3 vel;
-    vec3 acc;
+    bodyStateT state;
+    bodyStateT prev_state;
 
-    worldT*   world;
     bodyTypeT type;
-    float     mass;
+    float     inv_mass;
 
     bodyT* prev;
     bodyT* next;
@@ -36,7 +46,7 @@ struct bodyT {
 struct worldT {
     aabbT bounds;
 
-    bodyT* body_list;
+    bodyT* bodies;
 };
 
 #endif // physics_p_h_

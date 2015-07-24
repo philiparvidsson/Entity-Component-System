@@ -6,7 +6,7 @@
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
  * Description:
- *   Huvudprogram för spelet. Vad nu det innebär. Det får tiden utvisa. :-)
+ *   Main program file.
  *----------------------------------------------------------------------------*/
 
 /*------------------------------------------------
@@ -18,7 +18,6 @@
 #include "base/pak.h"
 #include "base/time.h"
 #include "engine/game.h"
-#include "graphics/io/3ds.h"
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
 #include "graphics/text.h"
@@ -65,14 +64,14 @@ static void showSplashScreen(textureT* splash_tex, float secs) {
     shaderT* splash_shader = createShader();
     triMeshT* quad = createQuad(2.0f, 2.0f);
 
-    compileVertexShader(splash_shader, vert_src);
+    compileVertexShader  (splash_shader, vert_src);
     compileFragmentShader(splash_shader, frag_src);
-
-    useShader(splash_shader);
-    useTexture(splash_tex, 0);
 
     free(vert_src);
     free(frag_src);
+
+    useShader (splash_shader);
+    useTexture(splash_tex, 0);
 
     timeT time = getTime();
     while (windowIsOpen()) {
@@ -100,16 +99,15 @@ static void showSplashScreen(textureT* splash_tex, float secs) {
         // Invert it to get the correct value.
         fade = 1.0f - fade;
 
-        clearDisplay(1.0f, 0.0f, 1.0f);
+        clearDisplay  (1.0f, 0.0f, 1.0f);
         setShaderParam("Fade", &fade);
-        drawMesh(quad);
-        updateDisplay();
+        drawMesh      (quad);
+        updateDisplay ();
     }
 
-    freeMesh(quad);
-
-    useTexture(NULL, 0);
-    useShader(NULL);
+    freeMesh    (quad);
+    useTexture  (NULL, 0);
+    useShader   (NULL);
     deleteShader(splash_shader);
 }
 
@@ -146,7 +144,10 @@ void frameFunc(float dt) {
  * Function: main()
  *
  * Description:
- *   Programmets huvudfunktion.
+ *   Program entry point.
+ *
+ * Usage:
+ *   Don't call this function. :-)
  *------------------------------------*/
 int main(void) {
     printIntroMessage();

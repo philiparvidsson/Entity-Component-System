@@ -245,8 +245,8 @@ static void setupTransforms(gameSubsystemT* subsystem) {
         mat_identity(&model);
 
         mat4x4 translation;
-        vec3 pos = bodyGetPosition(phys_component->body);
-        mat_transl_xyz(pos.x, pos.y, pos.z, &translation);
+        vec2 pos = bodyGetPosition(phys_component->body);
+        mat_transl_xyz(pos.x, pos.y, 0.0f, &translation);
         
         mat_mul(&gfx_component->transform, &model, &model);
         mat_mul(&translation             , &model, &model);

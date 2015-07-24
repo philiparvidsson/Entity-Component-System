@@ -14,13 +14,13 @@ static void handleInput(gameComponentT* component, float dt) {
     if (keyIsPressed(ArrowRight)) player->angle -= 1.5f * dt;
 
     if (keyIsPressed(ArrowUp)) {
-        vec3 f = { 0 };
+        vec2 f;
 
         f.x = cosf(player->angle) * 0.3f;
         f.y = sinf(player->angle) * 0.3f;
 
         physicsComponentDataT* physics_data = component->data;
-        bodyApplyForce(physics_data->body, f);
+        bodyApplyForce(physics_data->body, f, f);
     }
 
     graphicsComponentDataT* gfx = getComponent(component->entity, "graphics")->data;
