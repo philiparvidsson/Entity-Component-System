@@ -4,7 +4,6 @@ set PakPw=n3m3s1s!
 
 :: We leave the .pak-files unencrypted in debug build mode.
 if %BuildConf%==Debug set PakPw=
-echo %BuildConf%
 
 call :IncrementBuildNum "source\buildnum.h" BuildNum
 call :CopyToBinDir doc
