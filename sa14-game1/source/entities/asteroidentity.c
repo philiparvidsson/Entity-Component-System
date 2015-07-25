@@ -6,7 +6,7 @@
 #include "engine/entity.h"
 #include "graphics/material.h"
 #include "graphics/trimesh.h"
-//#include "graphics/io/3ds.h"
+#include "graphics/io/3ds.h"
 
 #include <stdlib.h>
 
@@ -24,19 +24,22 @@ static vec3 randomVector(void) {
 
 static gameComponentT* createGraphicsComponent(void) {
     static triMeshT* mesh;
-    //static materialT* mat;
+    static materialT* mat;
 
     if (!mesh) {
         //mesh = createGeodesicSphere(0.02f, 0);
-        mesh = createBox(0.03f, 0.03f, 0.03f);
+        //mesh = createBox(0.03f, 0.03f, 0.03f);
         
-        /*a3dsDataT* a3ds = a3dsLoad(readFile("C:\\STEGOSRS.3ds"));
+        //a3dsDataT* a3ds = a3dsLoad(readGamePakFile("meshes/player.3ds"));
+        //getchar();
 
-        mesh = a3dsCreateMesh(a3ds, "stegosrs");
+        //mesh = a3dsCreateMesh(gameResource("mesh:monkey", ResMesh), "Suzanne");
+        //if (!mesh)
+            mesh = createBox(0.2f, 0.2f, 0.2f);
 
-        mat = a3dsCreateMaterial(a3ds, a3dsMaterialName(a3ds, "stegosrs"));*/
+        //mat = a3dsCreateMaterial(a3ds, a3dsGetObjectMaterialName(a3ds, "Box001"));
 
-       // a3dsFree(a3ds);
+        //a3dsFree(a3ds);
         //mesh = load3DS();
         //calcSmoothNormals(mesh);
         //updateMesh(mesh);
@@ -52,7 +55,8 @@ static gameComponentT* createGraphicsComponent(void) {
         gfx_data->material = getNamedMaterial("shiny black");
     }
 
-    //gfx_data->material = mat;
+    if (mat)
+        gfx_data->material = mat;
 
     return (component);
 }
@@ -69,7 +73,7 @@ static gameComponentT* createPhysicsComponent(void) {
         
     case 0: {
         // Spawn above screen.
-        pos = (vec2) { -0.5f + 1.0f * rand()/(float)RAND_MAX, 0.5f };
+        pos = (vec2) { -0.5f + 1.0f * rand()/(float)RAND_MAX, 0.6f };
         vel = (vec2) { -1.0f + 2.0f * rand()/(float)RAND_MAX,
                        -0.2f - 1.0f * rand()/(float)RAND_MAX };
         break;
@@ -77,7 +81,7 @@ static gameComponentT* createPhysicsComponent(void) {
 
     case 1: {
         // Spawn to the right of screen.
-        pos = (vec2) {  0.9f, -0.5f + 1.0f * rand()/(float)RAND_MAX };
+        pos = (vec2) {  1.0f, -0.5f + 1.0f * rand()/(float)RAND_MAX };
         vel = (vec2) { -0.2f - 1.0f * rand() / (float)RAND_MAX,
                        -1.0f + 2.0f * rand() / (float)RAND_MAX };
         break;
@@ -85,7 +89,7 @@ static gameComponentT* createPhysicsComponent(void) {
 
     case 2: {
         // Spawn below screen.
-        pos = (vec2) { -0.5f + 1.0f * rand()/(float)RAND_MAX, -0.5f };
+        pos = (vec2) { -0.5f + 1.0f * rand()/(float)RAND_MAX, -0.6f };
         vel = (vec2) { -1.0f + 2.0f * rand()/(float)RAND_MAX,
                         0.2f + 1.0f * rand()/(float)RAND_MAX };
         break;
@@ -93,7 +97,7 @@ static gameComponentT* createPhysicsComponent(void) {
 
     case 3: {
         // Spawn to the left of screen.
-        pos = (vec2) { -0.9f, -0.5f + 1.0f * rand()/(float)RAND_MAX };
+        pos = (vec2) { -1.0f, -0.5f + 1.0f * rand()/(float)RAND_MAX };
         vel = (vec2) {  0.2f + 1.0f * rand() / (float)RAND_MAX,
                        -1.0f + 2.0f * rand() / (float)RAND_MAX };
         break;
@@ -116,8 +120,7 @@ static void rotateAsteroid(gameComponentT* component, float dt) {
     physicsComponentDataT*  phys = getComponent(component->entity, "physics" )->data;
     
     float o = bodyGetAngle(phys->body);
-    vec2 x = bodyGetPosition(phys->body);
-
+    vec2  x = bodyGetPosition(phys->body);
     
     mat4x4 m, r, t;
 
@@ -151,7 +154,7 @@ gameEntityT* newAsteroidEntity(void) {
     asteroid->a2 = (rand() / (float)RAND_MAX - 0.5f) * 6.0f;
     asteroid->angle1 = 0.0f;
     asteroid->angle2 = 0.0f;
-    asteroid->scale = 1.03f * (0.5f + rand() / (float)RAND_MAX);
+    asteroid->scale = 0.03f * (0.5f + rand() / (float)RAND_MAX);
     asteroid->rot_axis_1 = randomVector();
     asteroid->rot_axis_2 = randomVector();
 

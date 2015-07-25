@@ -166,8 +166,6 @@ static void createWindow(const string* title, int width, int height) {
 
     assert(window->hdc != NULL);
 
-    ShowWindow(window->hwnd, SW_SHOW);
-
     window->width  = width;
     window->height = height;
     window->title  = title;
@@ -240,10 +238,12 @@ static void setFrameRate(float fps) {
 }
 
 void initGraphics(const string* title, int width, int height) {
+#ifndef _DEBUG
     // @To-do: Is this a good idea? I'm thinking it makes QPC more accurate.
     HANDLE thread = GetCurrentThread();
     assert(SetThreadAffinityMask(thread, 0x00000001));
     assert(SetThreadPriority    (thread, THREAD_PRIORITY_ABOVE_NORMAL));
+#endif // !_DEBUG
 
     createWindow(title, width, height);
     setupPixelFormat();
@@ -327,10 +327,10 @@ void updateDisplay(void) {
 
     GLenum error = glGetError();
     if (error != GL_NO_ERROR) {
-        printf("glGetError() reports: %d", error);
+        printf("GL error: %d", error);
 
         error = glGetError();
-        while (error != GL_NO_ERROR && error != GL_INVALID_OPERATION) {
+        while (error != GL_NO_ERROR) {
             printf(", %d", error);
             error = glGetError();
         }
@@ -356,7 +356,8 @@ void updateDisplay(void) {
         if (!window)
             return;
 
-        // Give other threads to do some work instead of just spinning the CPU.
+        // Give other threads a chance to do some work instead of just spinning
+        // the CPU.
         SwitchToThread();
 
         // We calculate how much time has passed since our latest display
@@ -368,6 +369,14 @@ void updateDisplay(void) {
     } while (time < window->frame_time);
 
     window->last_update = perf_count;
+}
+
+void hideWindow(void) {
+    ShowWindow(window->hwnd, SW_HIDE);
+}
+
+void showWindow(void) {
+    ShowWindow(window->hwnd, SW_SHOW);
 }
 
 int screenWidth() {

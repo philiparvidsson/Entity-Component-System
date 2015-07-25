@@ -27,6 +27,9 @@ void exitGraphics(void);
 void clearDisplay(float r, float g, float b);
 void updateDisplay(void);
 
+void hideWindow(void);
+void showWindow(void);
+
 int screenWidth(void);
 int screenHeight(void);
 

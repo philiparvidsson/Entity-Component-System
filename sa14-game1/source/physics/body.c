@@ -49,5 +49,5 @@ void bodySetVelocity(      bodyT* body, vec2 vel) { body->state.v = vel;    }
 
 void bodyApplyForce(bodyT* body, vec2 f, vec2 r) {
     vec_scale(&f, body->inv_mass, &f);
-    vec_add(&body->state.a, &f, &body->state.a);
+    vec_add  (&body->state.a, &f, &body->state.a);
 }

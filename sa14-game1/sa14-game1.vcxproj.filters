@@ -60,9 +60,6 @@
     <ClCompile Include="source\base\debug.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\base\file_io.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\base\log.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -123,6 +120,15 @@
     <ClCompile Include="source\base\common.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\math\shape.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\resources.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\base\fileio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -159,9 +165,6 @@
     <ClInclude Include="source\physics\physics_p.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\physics\aabb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\physics\physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -187,9 +190,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\base\debug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\base\file_io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\base\log.h">
@@ -252,6 +252,21 @@
     <ClInclude Include="source\base\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\math\shape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\aabb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\base\buildnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\base\fileio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="build\postbuild.bat">
@@ -292,6 +307,7 @@
     <None Include="resources\meshes\monkey.3ds" />
     <None Include="resources\meshes\torus.3ds" />
     <None Include="bin\msvcr120d.dll" />
+    <None Include="resources\meshes\player.3ds" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />
@@ -302,7 +318,7 @@
     </Font>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\textures\splash1.bmp">
+    <Image Include="resources\textures\splashscreen0.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

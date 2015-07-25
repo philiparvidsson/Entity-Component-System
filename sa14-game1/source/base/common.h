@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
  * File: common.h
  * Created: June 7, 2015
- * Last changed: June 16, 2015
+ * Last changed: July 24, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -46,19 +46,20 @@
  * DEFINES
  *----------------------------------------------*/
 
-#ifdef _DEBUG
-    #define DRAW_TRI_NORMALS
-#endif // _DEBUG
+// Uncomment below to render geometry normals.
+//#define DRAW_TRI_NORMALS
 
 /*------------------------------------------------
  * MACROS
  *----------------------------------------------*/
 
 #ifdef _MSC_VER
+
 // The inline keyword was introduced in C99 so MSVC++ doesn't support it.
 // However, it supports the __inline keyword which exactly the same, so we can
 // just alias it on MSVC++.
 #define inline __inline
+
 #endif // _MSC_VER
 
 /*--------------------------------------
@@ -86,6 +87,8 @@
  *----------------------------------------------*/
 
 #ifdef _DEBUG
+    // The .pak-files are only encrypted in release mode, so specify no password
+    // in debug mode.
     #define PakPassword ((void*)0)
 #else
     #define PakPassword ("n3m3s1s!")
@@ -104,7 +107,13 @@
  * Description:
  *   The program version.
  *------------------------------------*/
-#define ProgramVersion ("0.01b")
+#define ProgramVersion ("0.07b")
+
+#define ResBinary  (0x01)
+#define ResString  (0x02)
+#define ResShader  (0x04)
+#define ResMesh    (0x08)
+#define ResTexture (0x10)
 
 /*------------------------------------------------
  * TYPES

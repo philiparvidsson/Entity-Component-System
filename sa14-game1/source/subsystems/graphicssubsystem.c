@@ -59,66 +59,23 @@ typedef struct {
  *----------------------------------------------*/
 static void drawComponents(graphicsSubsystemDataT* gfx_data, arrayT* components);
 
-
 #ifdef DRAW_TRI_NORMALS
 static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
-    gfx_data->normal_shader = createShader();
-
-    string* vert_src = readGamePakFile("shaders/normals.vert");
-    string* geom_src = readGamePakFile("shaders/normals.geom");
-    string* frag_src = readGamePakFile("shaders/normals.frag");
-    
-    compileVertexShader  (gfx_data->normal_shader, vert_src);
-    compileGeometryShader(gfx_data->normal_shader, geom_src);
-    compileFragmentShader(gfx_data->normal_shader, frag_src);
-    
-    free(vert_src);
-    free(geom_src);
-    free(frag_src);
+    gfx_data->normal_shader = gameResource("shader:normals", ResShader)
 }
 #endif // DRAW_TRI_NORMALS
 
 static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     // Motion Blur -------------------------------
     
-    string* vert_src = readGamePakFile("shaders/default.vert");
-    string* frag_src = readGamePakFile("shaders/postfx/motionblur0.frag");
-
-    gfx_data->mblur_shader0 = createShader();
-    
-    compileVertexShader  (gfx_data->mblur_shader0, vert_src);
-    compileFragmentShader(gfx_data->mblur_shader0, frag_src);
-    
-    free(vert_src);
-    free(frag_src);
-    
-    vert_src = readGamePakFile("shaders/discard_z.vert");
-    frag_src = readGamePakFile("shaders/postfx/motionblur1.frag");
-    
-    gfx_data->mblur_shader1 = createShader();
-    
-    compileVertexShader  (gfx_data->mblur_shader1, vert_src);
-    compileFragmentShader(gfx_data->mblur_shader1, frag_src);
-
-    free(vert_src);
-    free(frag_src);
-    
+    gfx_data->mblur_shader0 = gameResource("shader:mblur0", ResShader);
+    gfx_data->mblur_shader1 = gameResource("shader:mblur1", ResShader);
     gfx_data->mblur_rt = createRenderTarget(screenWidth(), screenHeight());
     
     // Noise -------------------------------------
 
     gfx_data->noise_seed = 0;
-    
-    vert_src = readGamePakFile("shaders/discard_z.vert");
-    frag_src = readGamePakFile("shaders/postfx/noise.frag");
-    
-    gfx_data->noise_shader = createShader();
-    
-    compileVertexShader  (gfx_data->noise_shader, vert_src);
-    compileFragmentShader(gfx_data->noise_shader, frag_src);
-    
-    free(vert_src);
-    free(frag_src);
+    gfx_data->noise_shader = gameResource("shader:noise", ResShader);
 }
 
 static float Fuckah = 2.6;
@@ -191,12 +148,12 @@ static void setupCamera(graphicsSubsystemDataT* gfx_data) {
     mat4x4 proj, view;
 
     // @To-do: Camera logic should be here.
-    mat4x4_look_at(&(vec3) { 0.0f, 0.0f, 1.0f },
+    mat4x4_look_at(&(vec3) { 0.0f, 0.0f, 2.0f },
                    &(vec3) { 0.0f, 0.0f, 0.0f },
                    &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
 
     float r = gfx_data->aspect_ratio;
-    mat4x4_persp(-0.5f*r, 0.5f*r, -0.5f, 0.5f, -1.5f, -0.01f, &proj);
+    mat4x4_persp(-5.0f*r, 5.0f*r, -5.0f, 5.0f, -10.0f, -0.01f, &proj);
 
     mat4x4* vp = &gfx_data->view_proj;
 

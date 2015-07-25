@@ -13,11 +13,6 @@
  * TYPES
  *----------------------------------------------*/
 
-struct aabbT {
-    vec2 min;
-    vec2 max;
-};
-
 typedef struct {
     vec2 x; // Position.
     vec2 v; // Velocity.
@@ -44,8 +39,6 @@ struct bodyT {
 };
 
 struct worldT {
-    aabbT bounds;
-
     bodyT* bodies;
 };
 

@@ -5,4 +5,9 @@
  * TYPES
  *----------------------------------------------*/
 
+typedef struct {
+    vec2 min;
+    vec2 max;
+} aabbT;
+
 #endif

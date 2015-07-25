@@ -29,16 +29,7 @@ shaderT* text_shader = NULL;
  *----------------------------------------------*/
 
 static void initTextShader(void) {
-    text_shader = createShader();
-
-    string *vert_src = readGamePakFile("shaders/text.vert");
-    string *frag_src = readGamePakFile("shaders/text.frag");
-
-    compileVertexShader(text_shader, vert_src);
-    compileFragmentShader(text_shader, frag_src);
-
-    free(vert_src);
-    free(frag_src);
+    text_shader = gameResource("shader:text", ResShader);
 }
 
 void drawText(const string* text, float x, float y, const string* font_name, int font_size) {

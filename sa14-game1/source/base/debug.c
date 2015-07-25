@@ -17,6 +17,7 @@
 #include "debug.h"
 
 #include "base/common.h"
+#include "graphics/graphics.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -93,6 +94,8 @@ static void printLastErrorWin32(void) {
  *------------------------------------*/
 void errorExit(const string* msg, const string* func_name, int line, ...) {
     va_list ap;
+
+    hideWindow();
 
     char s[1024];
     va_start(ap, line);

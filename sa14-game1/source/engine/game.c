@@ -13,9 +13,25 @@
 #include "input/keyboard.h"
 #include "input/mouse.h"
 
+/*------------------------------------------------
+ * TYPES
+ *----------------------------------------------*/
+
+typedef struct gameResourceT {
+    string* name;
+    int     type;
+    void*   data;
+
+    struct gameResourceT* next;
+} gameResourceT;
+
 struct gameT {
     bool done;
+
     arrayT* paks;
+
+    gameResourceT* resources;
+
     arrayT* entities;
     arrayT* subsystems;
 };
@@ -90,8 +106,10 @@ void initGame(const string* title, int screen_width, int screen_height) {
 
     game_inst = malloc(sizeof(gameT));
 
-    game_inst->paks = arrayNew(sizeof(pakArchiveT*));
-    game_inst->entities = arrayNew(sizeof(gameEntityT*));
+    game_inst->resources = NULL;
+
+    game_inst->paks       = arrayNew(sizeof(pakArchiveT*));
+    game_inst->entities   = arrayNew(sizeof(gameEntityT*));
     game_inst->subsystems = arrayNew(sizeof(gameSubsystemT*));
 }
 
@@ -115,8 +133,11 @@ void gameMain(void (*frame_func)(float dt)) {
             updateWindow();
         }
 
-        if (dt > (1.0f/59.0f))
+#ifndef _DEBUG
+        // @To-do: Don't hardcore FPS.
+        if ((dt > (1.0f/59.0f)) || (dt < (1.0f/61.0f)))
             printf("warning: frame time %f ms\n", dt*1000.0f);
+#endif // !_DEBUG
 
         time = getTime();
 
@@ -201,6 +222,31 @@ int gamePakFileSize(const string* file_name) {
     }
 
     error("couldn't find file '%s' in any game pak", file_name);
+}
+
+void* gameAddResource(const string* name, void* data, int type) {
+    gameResourceT* res = malloc(sizeof(gameResourceT));
+
+    res->data = data;
+    res->name = strdup(name);
+    res->type = type;
+    res->next = game_inst->resources;
+
+    game_inst->resources = res;
+}
+
+void* gameResource(const string* name, int type) {
+    assert((name != NULL) && (strlen(name) > 0));
+
+    gameResourceT* res = game_inst->resources;
+    while (res) {
+        if ((res->type == type) && (strcmp(name, res->name) == 0))
+            return (res->data);
+
+        res = res->next;
+    }
+
+    return (NULL);
 }
 
 /*void* delayedFree(void* mem) {

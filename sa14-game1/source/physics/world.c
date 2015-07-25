@@ -74,4 +74,19 @@ void worldStep(worldT* world, float dt) {
 
         body->state.a.x = body->state.a.y = 0.0f;
     }
+
+    b = world->bodies;
+    while (b) {
+        bodyT* a = world->bodies;
+        while (a) {
+            if (a == b) {
+                a = a->next;
+                continue;
+            }
+
+            a = a->next;
+        }
+
+        b = b->next;
+    }
 }

@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
- * File: file_io.c
+ * File: fileio.c
  * Created: June 11, 2015
- * Last changed: June 20, 2015
+ * Last changed: July 25, 2015
  *
  * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
  *
@@ -13,20 +13,30 @@
  * INCLUDES
  *----------------------------------------------*/
 
-#include "file_io.h"
+#include "fileio.h"
 
 #include "base/common.h"
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
+const string* ioFileExt(const string* file_name) {
+    int i = strlen(file_name)-1;
+
+    while ((i >= 0) && (file_name[i] != '.'))
+        i--;
+
+    return (file_name+i);
+}
+
 /*--------------------------------------
- * Function: fileSize()
+ * Function: ioFileSize(file_name)
  * Parameters:
  *   file_name  The name of the file to retrieve the file size for.
  *
@@ -37,9 +47,9 @@
  *   Returns the size, in bytes, of the file with the specified name.
  *
  * Usage:
- *   long num_bytes = fileSize("foo.bin");
+ *   long num_bytes = ioFileSize("foo.bin");
  *------------------------------------*/
-long fileSize(const string* file_name) {
+long ioFileSize(const string* file_name) {
     FILE* fp = fopen(file_name, "rb");
 
     if (!fp)
@@ -53,7 +63,7 @@ long fileSize(const string* file_name) {
 }
 
 /*--------------------------------------
- * Function: readFile()
+ * Function: ioReadFile(file_name)
  * Parameters:
  *   file_name  The name of the file to read into a buffer.
  *
@@ -67,9 +77,9 @@ long fileSize(const string* file_name) {
  *   free() function on the returned pointer.
  *
  * Usage:
- *   uint8_t *data = readFile("foo.bin");
+ *   uint8_t *data = ioReadFile("foo.bin");
  *------------------------------------*/
-uint8_t *readFile(const string* file_name) {
+uint8_t *ioReadFile(const string* file_name) {
     FILE* fp = fopen(file_name, "rb");
 
     if (!fp)

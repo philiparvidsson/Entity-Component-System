@@ -60,25 +60,21 @@ materialT* createCustomADSMaterial(textureT* ambient_tex,
                                    string*   vert_src,
                                    string*   frag_src)
 {
-    shaderT* ads_shader = createShader();
+    shaderT* ads_shader;
 
-    if (vert_src) {
-        compileVertexShader(ads_shader, vert_src);
-
+    if (!vert_src && !frag_src) {
+        ads_shader = gameResource("shader:adsmaterial", ResShader);
     }
     else {
-        vert_src = readGamePakFile("shaders/default.vert");
-        compileVertexShader(ads_shader, vert_src);
-        free(vert_src);
-    }
+        if (!vert_src)
+            vert_src = gameResource("shaders/default.vert", ResString);
 
-    if (frag_src) {
+        if (!frag_src)
+            frag_src = gameResource("shaders/materials/adsmaterial.frag", ResString);
+
+        ads_shader = createShader();
+        compileVertexShader  (ads_shader, vert_src);
         compileFragmentShader(ads_shader, frag_src);
-    }
-    else {
-        frag_src = readGamePakFile("shaders/materials/adsmaterial.frag");
-        compileFragmentShader(ads_shader, frag_src);
-        free(frag_src);
     }
 
     materialT*    m   = newMaterial();

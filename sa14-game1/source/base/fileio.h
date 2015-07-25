@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
- * File: file_io.h
+ * File: fileio.h
  * Created: June 11, 2015
  * Last changed: June 20, 2015
  *
@@ -9,8 +9,8 @@
  *   Functions for doing file I/O operations.
  *----------------------------------------------------------------------------*/
 
-#ifndef file_io_h_
-#define file_io_h_
+#ifndef fileio_h_
+#define fileio_h_
 
 /*------------------------------------------------
  * INCLUDES
@@ -24,8 +24,10 @@
  * FUNCTIONS
  *----------------------------------------------*/
 
+const string* ioFileExt(const string* file_name);
+
 /*--------------------------------------
- * Function: fileSize()
+ * Function: ioFileSize(file_name)
  * Parameters:
  *   file_name  The name of the file to retrieve the file size for.
  *
@@ -36,12 +38,12 @@
  *   Returns the size, in bytes, of the file with the specified name.
  *
  * Usage:
- *   long num_bytes = fileSize("foo.bin");
+ *   long num_bytes = ioFileSize("foo.bin");
  *------------------------------------*/
-long fileSize(const string* file_name);
+long ioFileSize(const string* file_name);
 
 /*--------------------------------------
- * Function: readFile()
+ * Function: ioReadFile(file_name)
  * Parameters:
  *   file_name  The name of the file to read into a buffer.
  *
@@ -55,8 +57,8 @@ long fileSize(const string* file_name);
  *   free() function on the returned pointer.
  *
  * Usage:
- *   string data = readFile("foo.bin");
+ *   uint8_t *data = ioReadFile("foo.bin");
  *------------------------------------*/
-uint8_t *readFile(const string* file_name);
+uint8_t *ioReadFile(const string* file_name);
 
-#endif // file_io_h_
+#endif // fileio_h_

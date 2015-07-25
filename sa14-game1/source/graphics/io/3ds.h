@@ -59,7 +59,8 @@ typedef struct {
     struct { float u, v; }*    vert_uv;
 
     int num_tris;
-    struct { short v0, v1, v2, flags; }* tris;
+    struct { uint16_t v0, v1, v2, flags; }* tris;
+    uint32_t* smoothing_groups;
 
     string* material;
 } a3dsMeshDataT;
@@ -77,13 +78,17 @@ typedef struct {
 a3dsDataT* a3dsLoad(const uint8_t* ptr);
 void a3dsFree(a3dsDataT* a3ds);
 
-const string* a3dsMaterialName(const a3dsDataT* a3ds, const string* obj_name);
+const string* a3dsGetObjectMaterialName(const a3dsDataT* a3ds,
+                                        const string* object_name);
 
-const a3dsMaterialDataT* a3dsMaterial(const a3dsDataT* a3ds,
-                                      const string* name);
-const a3dsObjectDataT* a3dsObject(const a3dsDataT* a3ds, const string* name);
+const a3dsMaterialDataT* a3dsGetMaterialData(const a3dsDataT* a3ds,
+                                             const string* material_name);
+const a3dsObjectDataT* a3dsGetObjectData(const a3dsDataT* a3ds,
+                                         const string* object_name);
 
-materialT* a3dsCreateMaterial(const a3dsDataT* a3ds, const string* mat_name);
-triMeshT* a3dsCreateMesh(const a3dsDataT* a3ds, const string* obj_name);
+materialT* a3dsCreateMaterial(const a3dsDataT* a3ds,
+                              const string* material_name);
+triMeshT* a3dsCreateMesh(const a3dsDataT* a3ds,
+                         const string* object_name);
 
 #endif // a3ds_h_

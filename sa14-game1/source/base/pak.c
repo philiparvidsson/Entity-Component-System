@@ -1,7 +1,9 @@
 #include "pak.h"
 
+#include "base/array.h"
 #include "base/common.h"
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -20,6 +22,8 @@ struct pakArchiveT {
     pakArchiveHeaderT header;
     FILE* fp;
     string* password;
+
+    string** file_names;
 };
 
 #pragma pack(1)
@@ -56,9 +60,9 @@ static bool isValidPakArchiveHeader(const pakArchiveHeaderT* pak) {
     return (true);
 }
 
-static bool readPakArchiveHeader(FILE* fp, pakArchiveT* pak) {
-    if (fread(&pak->header, sizeof(pakArchiveHeaderT), 1, fp) != 1) {
-        fclose(fp);
+static bool readPakArchiveHeader(pakArchiveT* pak) {
+    if (fread(&pak->header, sizeof(pakArchiveHeaderT), 1, pak->fp) != 1) {
+        fclose(pak->fp);
         return (false);
     }
 
@@ -66,7 +70,7 @@ static bool readPakArchiveHeader(FILE* fp, pakArchiveT* pak) {
         decrypt(&pak->header, sizeof(pakArchiveHeaderT), pak->password, 0);
 
     if (!isValidPakArchiveHeader(pak)) {
-        fclose(fp);
+        fclose(pak->fp);
         return (false);
     }
 
@@ -85,14 +89,49 @@ pakArchiveT* pakOpenArchive(const string* file_name, const string* password) {
 
     pak->password = password;
 
-    assert(readPakArchiveHeader(pak->fp, pak));
+    assert(readPakArchiveHeader(pak));
+
+    pak->file_names = malloc(sizeof(string*) * pak->header.num_files);
+
+    int i = 0;
+    while (!feof(pak->fp)) {
+        pakFileHeaderT pak_file;
+        if (fread(&pak_file, sizeof(pakFileHeaderT), 1, pak->fp) != 1) {
+            // Premature EOF.
+            break;
+        }
+
+        if (pak->password)
+            decrypt(&pak_file, sizeof(pakFileHeaderT), pak->password, 0);
+
+        pak->file_names[i++] = strdup(pak_file.name);
+
+        fseek(pak->fp, pak_file.size, SEEK_CUR);
+    }
+
+    assert(i == pak->header.num_files);
 
     return (pak);
 }
 
 void pakCloseArchive(pakArchiveT* pak) {
     fclose(pak->fp);
+
+    for (int i = 0; i < pak->header.num_files; i++)
+        free(pak->file_names[i]);
+
+    free(pak->file_names);
     free(pak);
+}
+
+int pakNumFiles(pakArchiveT* pak) {
+    return (pak->header.num_files);
+}
+
+const string* pakGetFilename(pakArchiveT* pak, int i) {
+    assert(0 <= i && i < pak->header.num_files);
+
+    return (pak->file_names[i]);
 }
 
 pakFileT* pakOpenFile(pakArchiveT* pak, const string* file_name) {
@@ -169,13 +208,15 @@ int pakRead(pakFileT* pak_file, char* buf, size_t count) {
     return (count);
 }
 
-char* pakReadFile(pakArchiveT* pak, const string* file_name) {
+uint8_t* pakReadFile(pakArchiveT* pak, const string* file_name) {
     pakFileT* pf = pakOpenFile(pak, file_name);
 
     if (!pf)
         return (NULL);
 
-    char* buf = malloc(pf->size + 1);
+    // +1 because we append a null-char just in case it's a text file we're
+    // reading. It doesn't affect binary formats anyway.
+    char* buf = malloc(pf->size+1);
     if (!buf) {
         pakCloseFile(pf);
         return (NULL);

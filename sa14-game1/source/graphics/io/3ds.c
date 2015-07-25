@@ -24,86 +24,94 @@
 #include <stdint.h>
 #include <string.h>
 
-
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
-static void readMeshMaterial(const uint8_t* ptr, a3dsMeshDataT* mesh_data) {
+static void readMeshSmoothingGroups(const uint8_t* ptr, a3dsMeshDataT* mesh) {
+    chunkT* chunk = (chunkT*)ptr;
+
+    assert(chunk->id == 0x4150);
+    mesh->smoothing_groups = (uint32_t*)chunk->data;
+}
+
+static void readMeshMaterial(const uint8_t* ptr, a3dsMeshDataT* mesh) {
     chunkT* chunk = (chunkT*)ptr;
 
     assert(chunk->id == 0x4130);
 
-    mesh_data->material = (string*)chunk->data;
+    mesh->material = (string*)chunk->data;
 }
 
-static void readTexCoords(const uint8_t* ptr, a3dsMeshDataT* mesh_data) {
+static void readTexCoords(const uint8_t* ptr, a3dsMeshDataT* mesh) {
     chunkT* chunk = (chunkT*)ptr;
 
     assert(chunk->id == 0x4140);
 
-    int num_verts = *(short*)chunk->data;
-    if (mesh_data->num_verts == (-1)) mesh_data->num_verts = num_verts;
-    else assert(mesh_data->num_verts == num_verts);
+    int num_verts = *(uint16_t*)chunk->data;
+    if (mesh->num_verts == (-1)) mesh->num_verts = num_verts;
+    else assert(mesh->num_verts == num_verts);
 
-    mesh_data->vert_uv = chunk->data + sizeof(short);
+    mesh->vert_uv = chunk->data + sizeof(uint16_t);
 }
 
-static void readTriIndices(const uint8_t* ptr, a3dsMeshDataT* mesh_data) {
+static void readTriIndices(const uint8_t* ptr, a3dsMeshDataT* mesh) {
     chunkT* chunk = (chunkT*)ptr;
 
     assert(chunk->id == 0x4120);
 
-    mesh_data->num_tris = *(short*)chunk->data;
-    mesh_data->tris = chunk->data + sizeof(short);
+    mesh->num_tris = *(uint16_t*)chunk->data;
+    mesh->tris     = chunk->data + sizeof(uint16_t);
 
     ptr = (uint8_t*)chunk->data;
-    ptr += sizeof(short) + sizeof(short)*4*mesh_data->num_tris;
+    ptr += sizeof(uint16_t) + sizeof(uint16_t)*4*mesh->num_tris;
 
     void* chunk_end = (uint8_t*)chunk + chunk->length;
     while (ptr < chunk_end) {
         chunk = (chunkT*)ptr;
 
-        if (chunk->id == 0x4130) readMeshMaterial(ptr, mesh_data);
+             if (chunk->id == 0x4130) readMeshMaterial       (ptr, mesh);
+        else if (chunk->id == 0x4150) readMeshSmoothingGroups(ptr, mesh);
 
         ptr = (uint8_t*)chunk + chunk->length;
     }
 }
 
-static void readVertCoords(const uint8_t* ptr, a3dsMeshDataT* mesh_data) {
+static void readVertCoords(const uint8_t* ptr, a3dsMeshDataT* mesh) {
     chunkT* chunk = (chunkT*)ptr;
 
     assert(chunk->id == 0x4110);
 
-    int num_verts = *(short*)chunk->data;
-    if (mesh_data->num_verts == (-1)) mesh_data->num_verts = num_verts;
-    else assert(mesh_data->num_verts == num_verts);
+    int num_verts = *(uint16_t*)chunk->data;
+    if (mesh->num_verts == (-1)) mesh->num_verts = num_verts;
+    else assert(mesh->num_verts == num_verts);
 
-    mesh_data->vert_pos = chunk->data + sizeof(short);
+    mesh->vert_pos = chunk->data + sizeof(uint16_t);
 }
 
-static void readTrimesh(const uint8_t* ptr, a3dsObjectDataT* obj_data) {
+static void readTrimesh(const uint8_t* ptr, a3dsObjectDataT* obj) {
     chunkT* chunk = (chunkT*)ptr;
     ptr = chunk->data;
 
     assert(chunk->id == 0x4100);
 
-    obj_data->mesh = calloc(1, sizeof(a3dsMeshDataT));
-    obj_data->mesh->num_verts = (-1);
+    assert(obj->mesh == NULL);
+    obj->mesh = calloc(1, sizeof(a3dsMeshDataT));
+    obj->mesh->num_verts = (-1);
 
     void* chunk_end = (uint8_t*)chunk + chunk->length;
     while (ptr < chunk_end) {
         chunk = (chunkT*)ptr;
 
-             if (chunk->id == 0x4110) readVertCoords(ptr, obj_data->mesh);
-        else if (chunk->id == 0x4120) readTriIndices(ptr, obj_data->mesh);
-        else if (chunk->id == 0x4140) readTexCoords (ptr, obj_data->mesh);
+             if (chunk->id == 0x4110) readVertCoords(ptr, obj->mesh);
+        else if (chunk->id == 0x4120) readTriIndices(ptr, obj->mesh);
+        else if (chunk->id == 0x4140) readTexCoords (ptr, obj->mesh);
 
         ptr = (uint8_t*)chunk + chunk->length;
     }
 }
 
-static void readMaterialTexture(const uint8_t* ptr, a3dsMaterialDataT* material_data) {
+static void readMaterialTexture(const uint8_t* ptr, a3dsMaterialDataT* material) {
     chunkT* chunk = (chunkT*)ptr;
     ptr = chunk->data;
 
@@ -116,70 +124,32 @@ static void readMaterialTexture(const uint8_t* ptr, a3dsMaterialDataT* material_
         chunk = (chunkT*)ptr;
 
         if (chunk->id == 0xa300)
-            material_data->texture = chunk->data;
+            material->texture = chunk->data;
 
         ptr = (uint8_t*)chunk + chunk->length;
     }
 }
 
-static void readMaterialSpecular(const uint8_t* ptr, a3dsMaterialDataT* material_data) {
+static float readPercentageChunk(const uint8_t* ptr) {
     chunkT* chunk = (chunkT*)ptr;
-    ptr = chunk->data;
 
-    assert(chunk->id == 0xa030);
+    assert(chunk->id == 0x30);
 
-    chunk = (chunkT*)ptr;
+    uint16_t percent = *(uint16_t*)chunk->data;
+
+    return ((float)percent);
+}
+
+static vec3 readColorChunk(const uint8_t* ptr) {
+    chunkT* chunk = (chunkT*)ptr;
 
     assert(chunk->id == 0x0011);
 
-    uint8_t r = chunk->data[0];
-    uint8_t g = chunk->data[1];
-    uint8_t b = chunk->data[2];
+    uint8_t r = chunk->data[0],
+            g = chunk->data[1],
+            b = chunk->data[2];
 
-    material_data->specular = (vec3) { r/255.0f, g/255.0f, b/255.0f };
-}
-
-static void readMaterialDiffuse(const uint8_t* ptr, a3dsMaterialDataT* material_data) {
-    chunkT* chunk = (chunkT*)ptr;
-    ptr = chunk->data;
-
-    assert(chunk->id == 0xa020);
-
-    chunk = (chunkT*)ptr;
-
-    assert(chunk->id == 0x0011);
-
-    uint8_t r = chunk->data[0];
-    uint8_t g = chunk->data[1];
-    uint8_t b = chunk->data[2];
-
-    material_data->diffuse = (vec3) { r/255.0f, g/255.0f, b/255.0f };
-}
-
-static void readMaterialAmbient(const uint8_t* ptr, a3dsMaterialDataT* material_data) {
-    chunkT* chunk = (chunkT*)ptr;
-    ptr = chunk->data;
-
-    assert(chunk->id == 0xa010);
-
-    chunk = (chunkT*)ptr;
-
-    assert(chunk->id == 0x0011);
-
-    uint8_t r = chunk->data[0];
-    uint8_t g = chunk->data[1];
-    uint8_t b = chunk->data[2];
-
-    material_data->ambient = (vec3) { r/255.0f, g/255.0f, b/255.0f };
-}
-
-static void readMaterialName(const uint8_t* ptr, a3dsMaterialDataT* material_data) {
-    chunkT* chunk = (chunkT*)ptr;
-    ptr = chunk->data;
-
-    assert(chunk->id == 0xa000);
-
-    material_data->name = (string*)chunk->data;
+    return ((vec3) { r/255.0f, g/255.0f, b/255.0f });
 }
 
 static void readMaterial(const uint8_t* ptr, a3dsDataT* a3ds) {
@@ -188,23 +158,30 @@ static void readMaterial(const uint8_t* ptr, a3dsDataT* a3ds) {
 
     assert(chunk->id == 0xafff);
 
-    a3dsMaterialDataT* material_data = calloc(1, sizeof(a3dsMaterialDataT));
-    arrayAdd(a3ds->materials, &material_data);
+    a3dsMaterialDataT* material = calloc(1, sizeof(a3dsMaterialDataT));
+    arrayAdd(a3ds->materials, &material);
 
-    material_data->ambient   = (vec3) { 0.0f, 0.0f, 0.0f };
-    material_data->diffuse   = (vec3) { 0.5f, 0.5f, 0.5f };
-    material_data->specular  = (vec3) { 1.0f, 1.0f, 1.0f };
-    material_data->shininess = 10.0f;
+    material->ambient   = (vec3) { 0.0f, 0.0f, 0.0f };
+    material->diffuse   = (vec3) { 0.5f, 0.5f, 0.5f };
+    material->specular  = (vec3) { 1.0f, 1.0f, 1.0f };
+    material->shininess = 10.0f;
 
     void* chunk_end = (uint8_t*)chunk + chunk->length;
     while (ptr < chunk_end) {
         chunk = (chunkT*)ptr;
 
-             if (chunk->id == 0xa000) readMaterialName    (ptr, material_data);
-        else if (chunk->id == 0xa010) readMaterialAmbient (ptr, material_data);
-        else if (chunk->id == 0xa020) readMaterialDiffuse (ptr, material_data);
-        else if (chunk->id == 0xa030) readMaterialSpecular(ptr, material_data);
-        else if (chunk->id == 0xa200) readMaterialTexture (ptr, material_data);
+        if (chunk->id == 0xa000)
+            material->name = (string*)chunk->data;
+        else if (chunk->id == 0xa010)
+            material->ambient = readColorChunk((uint8_t*)chunk->data);
+        else if (chunk->id == 0xa020)
+            material->diffuse = readColorChunk((uint8_t*)chunk->data);
+        else if (chunk->id == 0xa030)
+            material->specular = readColorChunk((uint8_t*)chunk->data);
+        else if (chunk->id == 0xa040)
+            material->shininess = readPercentageChunk((uint8_t*)chunk->data);
+        else if (chunk->id == 0xa200)
+            readMaterialTexture(ptr, material);
 
         ptr = (uint8_t*)chunk + chunk->length;
     }
@@ -282,16 +259,15 @@ a3dsDataT* a3dsLoad(const uint8_t* ptr) {
     if (a3ds->version != 3)
         error("unsupported 3ds version");
 
-    trace("loaded 3ds");
-
-    trace("  materials: %d", arrayLength(a3ds->materials));
+/*    trace("  materials: %d", arrayLength(a3ds->materials));
     for (int i = 0; i < arrayLength(a3ds->materials); i++) {
         a3dsMaterialDataT* material_data = *(a3dsMaterialDataT**)arrayGet(a3ds->materials, i);
         trace("    name: %s", material_data->name);
-        trace("      texture:  %s", material_data->texture);
-        trace("      ambient:  %4.2f %4.2f %4.2f", material_data->ambient.x, material_data->ambient.y, material_data->ambient.z);
-        trace("      diffuse:  %4.2f %4.2f %4.2f", material_data->diffuse.x, material_data->diffuse.y, material_data->diffuse.z);
-        trace("      specular: %4.2f %4.2f %4.2f", material_data->specular.x, material_data->specular.y, material_data->specular.z);
+        trace("      texture:   %s", material_data->texture);
+        trace("      ambient:   %4.2f %4.2f %4.2f", material_data->ambient.x, material_data->ambient.y, material_data->ambient.z);
+        trace("      diffuse:   %4.2f %4.2f %4.2f", material_data->diffuse.x, material_data->diffuse.y, material_data->diffuse.z);
+        trace("      specular:  %4.2f %4.2f %4.2f", material_data->specular.x, material_data->specular.y, material_data->specular.z);
+        trace("      shininess: %4.2f", material_data->shininess);
     }
     
     for (int i = 0; i < arrayLength(a3ds->objects); i++) {
@@ -305,7 +281,7 @@ a3dsDataT* a3dsLoad(const uint8_t* ptr) {
         trace("    material: %s", obj_data->mesh->material);
         trace("    num verts: %d", obj_data->mesh->num_verts);
         trace("    num tris:  %d", obj_data->mesh->num_tris);
-    }
+    }*/
 
     return (a3ds);
 }
@@ -331,104 +307,104 @@ void a3dsFree(a3dsDataT* a3ds) {
     free(a3ds);
 }
 
-const string* a3dsMaterialName(const a3dsDataT* a3ds, const string* obj_name) {
-    for (int i = 0; i < arrayLength(a3ds->objects); i++) {
-        a3dsObjectDataT* obj = *(a3dsObjectDataT**)arrayGet(a3ds->objects, i);
-
-        if (obj->mesh && strcmp(obj_name, obj->name)==0)
-            return (obj->mesh->material);
-    }
-}
-
-const a3dsMaterialDataT* a3dsMaterial(const a3dsDataT* a3ds,
-                                      const string* name)
+const string* a3dsGetObjectMaterialName(const a3dsDataT* a3ds,
+                                        const string* object_name)
 {
-    for (int i = 0; i < arrayLength(a3ds->materials); i++) {
-        a3dsMaterialDataT* mat = *(a3dsMaterialDataT**)arrayGet(a3ds->materials, i);
-
-        if (strcmp(name, mat->name) == 0)
-            return (mat);
-    }
-
-    return (NULL);
-}
-
-const a3dsObjectDataT* a3dsObject(const a3dsDataT* a3ds, const string* name) {
     for (int i = 0; i < arrayLength(a3ds->objects); i++) {
-        a3dsObjectDataT* obj = *(a3dsObjectDataT**)arrayGet(a3ds->objects, i);
-
-        if (strcmp(name, obj->name)==0)
-            return (obj);
+        a3dsObjectDataT** o = arrayGet(a3ds->objects, i);
+        if ((*o)->mesh && strcmp(object_name, (*o)->name) == 0)
+            return ((*o)->mesh->material);
     }
 
     return (NULL);
 }
 
-materialT* a3dsCreateMaterial(const a3dsDataT* a3ds, const string* mat_name) {
-    a3dsMaterialDataT* m = a3dsMaterial(a3ds, mat_name);
+const a3dsMaterialDataT* a3dsGetMaterialData(const a3dsDataT* a3ds,
+                                             const string* material_name)
+{
+    if (!material_name)
+        return (NULL);
 
+    for (int i = 0; i < arrayLength(a3ds->materials); i++) {
+        a3dsMaterialDataT** m = arrayGet(a3ds->materials, i);
+        if (strcmp(material_name, (*m)->name) == 0)
+            return (*m);
+    }
+
+    return (NULL);
+}
+
+const a3dsObjectDataT* a3dsGetObjectData(const a3dsDataT* a3ds,
+                                         const string* object_name)
+{
+    if (!object_name)
+        return (NULL);
+
+    for (int i = 0; i < arrayLength(a3ds->objects); i++) {
+        a3dsObjectDataT** o = arrayGet(a3ds->objects, i);
+        if (strcmp(object_name, (*o)->name) == 0)
+            return (*o);
+    }
+
+    return (NULL);
+}
+
+materialT* a3dsCreateMaterial(const a3dsDataT* a3ds,
+                              const string* material_name)
+{
+    a3dsMaterialDataT* m = a3dsGetMaterialData(a3ds, material_name);
+
+    if (!m)
+        return (NULL);
+
+    // @To-do: Load textures for ambient, diffuse and specular maps.
     materialT* mat = createADSMaterial(
             NULL, NULL, NULL,
-            (vec3) {0.0f, 0.0f, 0.0f },
+            m->ambient,
             m->diffuse,
             m->specular,
             m->shininess);
 
+    // @To-do: strduping here will probably leak, so just null it for now.
+    mat->name = NULL;
+
     return (mat);
 }
 
-triMeshT* a3dsCreateMesh(const a3dsDataT* a3ds, const string* obj_name) {
-    a3dsObjectDataT* obj = a3dsObject(a3ds, obj_name);
+triMeshT* a3dsCreateMesh(const a3dsDataT* a3ds, const string* object_name) {
+    a3dsObjectDataT* o = a3dsGetObjectData(a3ds, object_name);
 
-    if (!obj || !obj->mesh)
+    if (!o || !o->mesh)
         return (NULL);
 
-    triMeshT* mesh = newMesh(obj->mesh->num_tris*3, obj->mesh->num_tris);
+    triMeshT* mesh = newMesh(o->mesh->num_tris*3, o->mesh->num_tris);
 
-    triT*    tris  = meshTrisPtr(mesh);
+    triT*    tris  = meshTrisPtr (mesh);
     vertexT* verts = meshVertsPtr(mesh);
 
     // We separate the triangles so that none of them share the same vertices.
-    /*for (int i = 0; i < obj->mesh->num_tris; i++) {
+    for (int i = 0; i < o->mesh->num_tris; i++) {
         tris[i] = (triT) { i*3, i*3+1, i*3+2 };
         
         float* pos;
         float* uv;
 
-        int v0 = obj->mesh->tris[i].v0,
-            v1 = obj->mesh->tris[i].v1,
-            v2 = obj->mesh->tris[i].v2;
+        int v0 = o->mesh->tris[i].v0,
+            v1 = o->mesh->tris[i].v1,
+            v2 = o->mesh->tris[i].v2;
 
-        pos = (float*)&obj->mesh->vert_pos[v0];
-        if (obj->mesh->vert_uv) {
-            float* uv = (float*)&obj->mesh->vert_uv[v0];
-            verts->uv = *(vec2*)uv;
-        }
-        (verts++)->p = *(vec3*)pos;
+        if (o->mesh->smoothing_groups) verts->k = o->mesh->smoothing_groups[i];
+        if (o->mesh->vert_uv) verts->uv = *(vec2*)&o->mesh->vert_uv[v0];
+        (verts++)->p = *(vec3*)&o->mesh->vert_pos[v0];
 
-        pos = (float*)&obj->mesh->vert_pos[v1];
-        if (obj->mesh->vert_uv) {
-            float* uv = (float*)&obj->mesh->vert_uv[v1];
-            verts->uv = *(vec2*)uv;
-        }
-        (verts++)->p = *(vec3*)pos;
+        if (o->mesh->smoothing_groups) verts->k = o->mesh->smoothing_groups[i];
+        if (o->mesh->vert_uv) verts->uv = *(vec2*)&o->mesh->vert_uv[v1];
+        (verts++)->p = *(vec3*)&o->mesh->vert_pos[v1];
 
-        pos = (float*)&obj->mesh->vert_pos[v2];
-        if (obj->mesh->vert_uv) {
-            float* uv = (float*)&obj->mesh->vert_uv[v2];
-            verts->uv = *(vec2*)uv;
-        }
-        (verts++)->p = *(vec3*)pos;
-    }*/
-
-    for (int i = 0; i < obj->mesh->num_tris; i++) {
-        tris[i] = (triT) { obj->mesh->tris[i].v0,
-                           obj->mesh->tris[i].v1,
-                           obj->mesh->tris[i].v2 };
+        if (o->mesh->smoothing_groups) verts->k = o->mesh->smoothing_groups[i];
+        if (o->mesh->vert_uv) verts->uv = *(vec2*)&o->mesh->vert_uv[v2];
+        (verts++)->p = *(vec3*)&o->mesh->vert_pos[v2];
     }
-
-    for (int i = 0; i < obj->mesh->num_verts; i++)
-        verts[i].p = *(vec3*)&obj->mesh->vert_pos[i];
 
     calcSmoothNormals(mesh);
     updateMesh(mesh);

@@ -13,6 +13,8 @@
  * INCLUDES
  *----------------------------------------------*/
 
+#include "resources.h"
+
 #include "base/array.h"
 #include "base/common.h"
 #include "base/pak.h"
@@ -23,6 +25,7 @@
 #include "graphics/text.h"
 #include "graphics/texture.h"
 #include "graphics/trimesh.h"
+#include "graphics/io/3ds.h"
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -58,17 +61,8 @@ static void printIntroMessage(void) {
  *   showSplashScreen(my_tex, 3.0f);
  *------------------------------------*/
 static void showSplashScreen(textureT* splash_tex, float secs) {
-    string* vert_src = readGamePakFile("shaders/discard_z.vert");
-    string* frag_src = readGamePakFile("shaders/splashscreen.frag");
-
-    shaderT* splash_shader = createShader();
+    shaderT* splash_shader = gameResource("shader:splashscreen", ResShader);
     triMeshT* quad = createQuad(2.0f, 2.0f);
-
-    compileVertexShader  (splash_shader, vert_src);
-    compileFragmentShader(splash_shader, frag_src);
-
-    free(vert_src);
-    free(frag_src);
 
     useShader (splash_shader);
     useTexture(splash_tex, 0);
@@ -127,7 +121,7 @@ void frameFunc(float dt) {
     //if (lol < 0)
     //    return;
     lol += dt;
-    while (lol >= 0.1f) {
+    while (lol >= 0.5f) {
         //addEntityToGame(newAsteroidEntity());
         if (knull < 1000) {
             gameEntityT* e = *(gameEntityT**)arrayGet(prealloc, knull);
@@ -150,9 +144,11 @@ void frameFunc(float dt) {
  *   Don't call this function. :-)
  *------------------------------------*/
 int main(void) {
-    printIntroMessage();
-
     initGame("Asteroids", 1280, 720);
+
+    loadResources();
+
+    printIntroMessage();
 
     addGamePak(pakOpenArchive("data.pak", PakPassword));
 
@@ -161,13 +157,13 @@ int main(void) {
     loadFontFromMemory(font_data, num_bytes);
     free(font_data);
 
+    showWindow();
+
 #ifndef _DEBUG
-    char* bmp = readGamePakFile("textures/splash1.bmp");
-    textureT* splash_texture = loadTextureFromMemory(bmp);
-    free(bmp);
-    showSplashScreen(splash_texture, 3.0f);
-    freeTexture(splash_texture);
-#endif // _DEBUG
+    textureT* splash_tex = gameResource("texture:splashscreen0", ResTexture);
+    showSplashScreen(splash_tex, 3.0f);
+    freeTexture(splash_tex);
+#endif // !_DEBUG
 
     addSubsystemToGame(newPhysicsSubsystem());
     addSubsystemToGame(newGraphicsSubsystem());

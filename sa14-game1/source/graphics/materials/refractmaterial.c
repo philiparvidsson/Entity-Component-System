@@ -53,25 +53,21 @@ materialT* createCustomRefractMaterial(vec3    color_coeff,
                                        string* vert_src,
                                        string* frag_src)
 {
-    shaderT* refract_shader = createShader();
+    shaderT* refract_shader;
 
-    if (vert_src) {
-        compileVertexShader(refract_shader, vert_src);
-
+    if (!vert_src && !frag_src) {
+        refract_shader = gameResource("shader:refractmaterial", ResShader);
     }
     else {
-        vert_src = readGamePakFile("shaders/default.vert");
-        compileVertexShader(refract_shader, vert_src);
-        free(vert_src);
-    }
+        if (!vert_src)
+            vert_src = gameResource("shaders/default.vert", ResString);
 
-    if (frag_src) {
+        if (!frag_src)
+            frag_src = gameResource("shaders/materials/refractmaterial.frag", ResString);
+
+        refract_shader = createShader();
+        compileVertexShader  (refract_shader, vert_src);
         compileFragmentShader(refract_shader, frag_src);
-    }
-    else {
-        frag_src = readGamePakFile("shaders/materials/refractmaterial.frag");
-        compileFragmentShader(refract_shader, frag_src);
-        free(frag_src);
     }
 
     materialT*        m       = newMaterial();

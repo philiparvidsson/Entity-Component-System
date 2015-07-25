@@ -5,7 +5,7 @@
 #include "texture.h"
 
 #include "base/common.h"
-#include "base/file_io.h"
+#include "base/fileio.h"
 #include "graphics/graphics.h"
 #include "graphics/io/bmp.h"
 #include "graphics/rendertarget.h"
@@ -83,7 +83,7 @@ textureT* createTexture(void) {
 textureT* loadTextureFromFile(const void* file_name) {
     textureT* tex = NULL;
 
-    char* data = readFile(file_name);
+    char* data = ioReadFile(file_name);
 
     if (!data)
         error("could not read file '%s'", file_name);
