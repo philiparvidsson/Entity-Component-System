@@ -6,10 +6,10 @@
 
 #pragma pack(1)
 typedef struct {
-    short magic_number;
+    uint16_t magic_number;
 
     // @To-do: Implement this some day.
-    char reserved[12];
+    uint8_t reserved[12];
 
     uint32_t num_bytes;
     int      width;
@@ -26,9 +26,9 @@ typedef struct {
 } bitmapHeaderT;
 
 textureT* loadBMP(const void* data) {
-    bitmapHeaderT* bmp     = data;
-    textureT*      tex     = createTexture();
-    textureT*      old_tex = useTexture(tex, 0);
+    const bitmapHeaderT* bmp     = data;
+          textureT*      tex     = createTexture();
+          textureT*      old_tex = useTexture(tex, 0);
 
     if (bmp->magic_number != 0x4d42)
         error("invalid bitmap data");

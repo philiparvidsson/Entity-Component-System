@@ -60,9 +60,6 @@
     <ClCompile Include="source\base\debug.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\base\log.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\base\time.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -192,9 +189,6 @@
     <ClInclude Include="source\base\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\base\log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\base\time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -258,13 +252,13 @@
     <ClInclude Include="source\math\aabb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\base\buildnum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\base\fileio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\buildnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

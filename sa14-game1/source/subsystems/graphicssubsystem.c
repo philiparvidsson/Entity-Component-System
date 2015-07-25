@@ -78,31 +78,18 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     gfx_data->noise_shader = gameResource("shader:noise", ResShader);
 }
 
-static float Fuckah = 2.6;
-int knull = 0;
 bool postit = true;
+int frame_counter;
 static void applyPostFX(gameSubsystemT* subsystem) {
     graphicsSubsystemDataT* gfx_data = subsystem->data;
 
-    knull--;
-    if (knull < 0)
-        knull = 0;
+    frame_counter--;
+    if (frame_counter < 0)
+        frame_counter = 0;
 
-    if (keyIsPressed('q') && knull == 0) {
-        Fuckah -= 0.1;
-        printf("blur: %f\n", Fuckah);
-        knull = 10;
-    }
-
-    if (keyIsPressed('w') && knull == 0) {
-        Fuckah += 0.1;
-        printf("blur: %f\n", Fuckah);
-        knull = 10;
-    }
-
-    if (keyIsPressed('d') && knull == 0) {
+    if (keyIsPressed('d') && frame_counter == 0) {
         postit = !postit;
-        knull = 10;
+        frame_counter = 10;
     }
 
     if (!postit)
@@ -124,7 +111,6 @@ static void applyPostFX(gameSubsystemT* subsystem) {
     // 2. Apply motion blur.
     
     useShader(gfx_data->mblur_shader1);
-    setShaderParam("VelocityFactor", &Fuckah);
     textureT* old_tex = useTexture(getRenderTargetColorTexture(gfx_data->mblur_rt), 1);
     loadTextureFromScreen(gfx_data->screen_tex);
     shaderPostProcess    (gfx_data->screen_tex);

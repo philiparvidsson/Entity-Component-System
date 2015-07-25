@@ -75,8 +75,34 @@ static void printLastErrorWin32(void) {
 }
 #endif // _WIN32
 
+static void setTextColor(const string* color) {
+#ifdef _WIN32
+    HANDLE std_out = GetStdHandle(STD_OUTPUT_HANDLE);
+    WORD   attr    = 0;
+
+    if (!color)
+        color = "";
+
+    if (strcmp(color, "red") == 0) {
+        attr = FOREGROUND_RED | FOREGROUND_INTENSITY;
+    }
+    else if (strcmp(color, "white") == 0) {
+        attr = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE
+             | FOREGROUND_INTENSITY;
+    }
+    else if (strcmp(color, "yellow") == 0) {
+        attr = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+    }
+    else {
+        attr = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+    }
+
+    SetConsoleTextAttribute(std_out, attr);
+#endif // _WIN32
+}
+
 /*--------------------------------------
- * Function: errorExit(msg, func_name, line, ...)
+ * Function: errorFunc(msg, func_name, line, ...)
  * Parameters:
  *   msg        The error message format to display.
  *   func_name  The name of the function that generated the error.
@@ -89,22 +115,27 @@ static void printLastErrorWin32(void) {
  *   not call it directly.
  *
  * Usage:
- *   errorExit("An error has occurred", "main.c", 42);
+ *   errorFunc("An error has occurred", "main.c", 42);
  *
  *------------------------------------*/
-void errorExit(const string* msg, const string* func_name, int line, ...) {
+void errorFunc(const string* msg, const string* func_name, int line, ...) {
     va_list ap;
 
+#ifdef _WIN32
+    ShowWindow(GetConsoleWindow(), SW_SHOW);
+#endif // _WIN32
     hideWindow();
 
-    char s[1024];
+    string s[1024];
     va_start(ap, line);
     vsprintf(s, msg, ap);
     va_end(ap);
 
-    printf("\n----------------------------------------\n"
-           "ERROR: %s\n\tin %s() on line %d.\n\n"
-           "This program will now exit.\n", s, func_name, line);
+    printf("\n----------------------------------------\n");
+    setTextColor("red");
+    printf("error: %s\n\tin %s() on line %d.\n\n", s, func_name, line);
+    setTextColor(NULL);
+    printf("This program will now exit.\n");
 
     printLastErrorGL();
 
@@ -121,4 +152,29 @@ void errorExit(const string* msg, const string* func_name, int line, ...) {
     getchar();
 #endif
     exit(EXIT_FAILURE);
+}
+
+void traceFunc(const string* msg, ...) {
+    va_list ap;
+
+    string s[1024];
+    va_start(ap, msg);
+    vsprintf(s, msg, ap);
+    va_end(ap);
+
+    setTextColor(NULL);
+    printf("%s\n", s);
+}
+
+void warnFunc(const string* msg, ...) {
+    va_list ap;
+
+    string s[1024];
+    va_start(ap, msg);
+    vsprintf(s, msg, ap);
+    va_end(ap);
+
+    setTextColor("yellow");
+    printf("warning: %s\n", s);
+    setTextColor(NULL);
 }

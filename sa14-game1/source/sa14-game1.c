@@ -27,6 +27,8 @@
 #include "graphics/trimesh.h"
 #include "graphics/io/3ds.h"
 
+#include <windows.h>
+
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
@@ -80,12 +82,12 @@ static void showSplashScreen(textureT* splash_tex, float secs) {
 
         // Fade in the first second...
         if (elapsed < 1.0f)
-            fade = sin(0.5f*elapsed*3.141592653);
+            fade = sinf(0.5f*elapsed*3.141592653);
 
         // ...and fade out the last 0.5 seconds.
         float time_left = secs - elapsed;
         if (time_left < 0.5f)
-            fade = sin(time_left*3.141592653);
+            fade = sinf(time_left*3.141592653);
 
         // We multiply the fade value by itself to get sin(x)^2.
         fade *= fade;
@@ -158,6 +160,9 @@ int main(void) {
     free(font_data);
 
     showWindow();
+#ifndef _DEBUG
+    ShowWindow(GetConsoleWindow(), SW_HIDE);
+#endif // !_DEBUG
 
 #ifndef _DEBUG
     textureT* splash_tex = gameResource("texture:splashscreen0", ResTexture);

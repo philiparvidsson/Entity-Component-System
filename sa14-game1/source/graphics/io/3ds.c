@@ -16,6 +16,7 @@
 #include "3ds.h"
 
 #include "base/common.h"
+#include "engine/game.h" // gameResource()
 #include "graphics/material.h"
 #include "graphics/trimesh.h"
 #include "graphics/materials/adsmaterial.h"
@@ -117,14 +118,12 @@ static void readMaterialTexture(const uint8_t* ptr, a3dsMaterialDataT* material)
 
     assert(chunk->id == 0xa200);
 
-    chunk = (chunkT*)ptr;
-
     void* chunk_end = (uint8_t*)chunk + chunk->length;
     while (ptr < chunk_end) {
         chunk = (chunkT*)ptr;
 
         if (chunk->id == 0xa300)
-            material->texture = chunk->data;
+            material->texture = (string*)chunk->data;
 
         ptr = (uint8_t*)chunk + chunk->length;
     }
@@ -242,24 +241,24 @@ static void read3DS(const uint8_t* ptr, a3dsDataT* a3ds) {
     while (ptr < chunk_end) {
         chunk = (chunkT*)ptr;
 
-        if (chunk->id = 0x3d3d) readData(ptr, a3ds);
+        if (chunk->id == 0x3d3d) readData(ptr, a3ds);
 
         ptr = (uint8_t*)chunk + chunk->length;
     }
 }
 
 a3dsDataT* a3dsLoad(const uint8_t* ptr) {
-    a3dsDataT* a3ds = malloc(sizeof(a3dsDataT));
+    a3dsDataT* a3ds = calloc(1, sizeof(a3dsDataT));
 
     a3ds->materials = arrayNew(sizeof(a3dsMaterialDataT*));
-    a3ds->objects = arrayNew(sizeof(a3dsObjectDataT*));
+    a3ds->objects  = arrayNew(sizeof(a3dsObjectDataT*));
 
     read3DS(ptr, a3ds);
 
     if (a3ds->version != 3)
         error("unsupported 3ds version");
 
-/*    trace("  materials: %d", arrayLength(a3ds->materials));
+    /*trace("  materials: %d", arrayLength(a3ds->materials));
     for (int i = 0; i < arrayLength(a3ds->materials); i++) {
         a3dsMaterialDataT* material_data = *(a3dsMaterialDataT**)arrayGet(a3ds->materials, i);
         trace("    name: %s", material_data->name);
@@ -352,14 +351,26 @@ const a3dsObjectDataT* a3dsGetObjectData(const a3dsDataT* a3ds,
 materialT* a3dsCreateMaterial(const a3dsDataT* a3ds,
                               const string* material_name)
 {
-    a3dsMaterialDataT* m = a3dsGetMaterialData(a3ds, material_name);
+    const a3dsMaterialDataT* m = a3dsGetMaterialData(a3ds, material_name);
 
     if (!m)
         return (NULL);
 
-    // @To-do: Load textures for ambient, diffuse and specular maps.
+    // @To-do: Allow client to specify texture loading function instead.
+
+    textureT* diffuse_tex = NULL;
+    if (m->texture) {
+        string tex_name[1024];
+        sprintf(tex_name, "texture:%s", m->texture);
+        diffuse_tex = gameResource(tex_name, ResTexture);
+        if (!diffuse_tex)
+            warn("couldn't load texture '%s'", m->texture);
+    }
+
     materialT* mat = createADSMaterial(
-            NULL, NULL, NULL,
+            NULL,
+            diffuse_tex,
+            NULL,
             m->ambient,
             m->diffuse,
             m->specular,
@@ -372,7 +383,7 @@ materialT* a3dsCreateMaterial(const a3dsDataT* a3ds,
 }
 
 triMeshT* a3dsCreateMesh(const a3dsDataT* a3ds, const string* object_name) {
-    a3dsObjectDataT* o = a3dsGetObjectData(a3ds, object_name);
+    const a3dsObjectDataT* o = a3dsGetObjectData(a3ds, object_name);
 
     if (!o || !o->mesh)
         return (NULL);
@@ -386,9 +397,6 @@ triMeshT* a3dsCreateMesh(const a3dsDataT* a3ds, const string* object_name) {
     for (int i = 0; i < o->mesh->num_tris; i++) {
         tris[i] = (triT) { i*3, i*3+1, i*3+2 };
         
-        float* pos;
-        float* uv;
-
         int v0 = o->mesh->tris[i].v0,
             v1 = o->mesh->tris[i].v1,
             v2 = o->mesh->tris[i].v2;

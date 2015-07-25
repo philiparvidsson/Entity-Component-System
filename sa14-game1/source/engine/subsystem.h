@@ -9,7 +9,7 @@ typedef struct gameSubsystemT gameSubsystemT;
 #include "engine/component.h"
 
 struct gameSubsystemT {
-    string* name;
+    const string* name;
     arrayT* components;
 
     void (*before_update_fn)(gameSubsystemT*, float);

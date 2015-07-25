@@ -23,11 +23,11 @@ static vec3 randomVector(void) {
 }
 
 static gameComponentT* createGraphicsComponent(void) {
-    static triMeshT* mesh;
-    static materialT* mat;
+    static triMeshT* mesh = NULL;
+    static materialT* mat = NULL;
 
     if (!mesh) {
-        //mesh = createGeodesicSphere(0.02f, 0);
+        mesh = createGeodesicSphere(0.1f, 0);
         //mesh = createBox(0.03f, 0.03f, 0.03f);
         
         //a3dsDataT* a3ds = a3dsLoad(readGamePakFile("meshes/player.3ds"));
@@ -35,7 +35,7 @@ static gameComponentT* createGraphicsComponent(void) {
 
         //mesh = a3dsCreateMesh(gameResource("mesh:monkey", ResMesh), "Suzanne");
         //if (!mesh)
-            mesh = createBox(0.2f, 0.2f, 0.2f);
+            //mesh = createBox(0.2f, 0.2f, 0.2f);
 
         //mat = a3dsCreateMaterial(a3ds, a3dsGetObjectMaterialName(a3ds, "Box001"));
 
@@ -49,10 +49,10 @@ static gameComponentT* createGraphicsComponent(void) {
     gameComponentT* component = newGraphicsComponent(mesh);
     graphicsComponentDataT* gfx_data = component->data;
     
-    gfx_data->material = getNamedMaterial("blue crystal");
+    gfx_data->material = getNamedMaterial("shiny black");
     
     if ((rand() % 2) == 1) {
-        gfx_data->material = getNamedMaterial("shiny black");
+        gfx_data->material = getNamedMaterial("blue crystal");
     }
 
     if (mat)
@@ -128,6 +128,11 @@ static void rotateAsteroid(gameComponentT* component, float dt) {
     mat_rot_z    (o, &r);
     mat_transl_xy(x.x, x.y, &t);
     mat_mul      (&r, &m, &m);
+
+    asteroid->angle1 += dt * asteroid->a1;
+    mat4x4 lol;
+    mat_rot(&asteroid->rot_axis_1, asteroid->angle1, &lol);
+    mat_mul(&lol, &m, &m);
 
     gfx->normal_transform = m;
 

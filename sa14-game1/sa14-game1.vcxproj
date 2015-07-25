@@ -102,7 +102,6 @@
     <ClCompile Include="source\base\common.c" />
     <ClCompile Include="source\base\debug.c" />
     <ClCompile Include="source\base\fileio.c" />
-    <ClCompile Include="source\base\log.c" />
     <ClCompile Include="source\base\pak.c" />
     <ClCompile Include="source\base\time.c" />
     <ClCompile Include="source\components\graphicscomponent.c" />
@@ -144,11 +143,10 @@
   <ItemGroup>
     <ClInclude Include="include\GL\glew.h" />
     <ClInclude Include="source\base\array.h" />
-    <ClInclude Include="source\base\buildnum.h" />
+    <ClInclude Include="source\buildnum.h" />
     <ClInclude Include="source\base\common.h" />
     <ClInclude Include="source\base\debug.h" />
     <ClInclude Include="source\base\fileio.h" />
-    <ClInclude Include="source\base\log.h" />
     <ClInclude Include="source\base\pak.h" />
     <ClInclude Include="source\base\time.h" />
     <ClInclude Include="source\components\physicscomponent.h" />

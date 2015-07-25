@@ -14,7 +14,6 @@ typedef struct {
 
     vec3  color_coeff;
     float refraction;
-    float transparency;
 } refractMaterialT;
 
 static void refractBegin(materialT* m) {
@@ -23,7 +22,6 @@ static void refractBegin(materialT* m) {
     loadTextureFromScreen(refract->screen_tex);
 
     setShaderParam("ColorCoeff"    , &refract->color_coeff);
-    setShaderParam("Transparency"  , &refract->transparency);
     setShaderParam("RefractionMult", &refract->refraction);
 
     useTexture(refract->screen_tex, 0);
@@ -37,19 +35,15 @@ static void refractEnd(materialT* m) {
     glPopAttrib();
 }
 
-materialT* createRefractMaterial(vec3  color_coeff,
-                                 float refraction,
-                                 float transparency)
-{
-    materialT* m = createCustomRefractMaterial(color_coeff, refraction,
-                                               transparency, NULL, NULL);
+materialT* createRefractMaterial(vec3 color_coeff, float refraction) {
+    materialT* m = createCustomRefractMaterial(color_coeff, refraction, NULL,
+                                               NULL);
 
     return (m);
 }
 
 materialT* createCustomRefractMaterial(vec3    color_coeff,
                                        float   refraction,
-                                       float   transparency,
                                        string* vert_src,
                                        string* frag_src)
 {
@@ -84,7 +78,6 @@ materialT* createCustomRefractMaterial(vec3    color_coeff,
 
     refract->color_coeff  = color_coeff;
     refract->refraction   = refraction;
-    refract->transparency = transparency;
 
     return (m);
 }

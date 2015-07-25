@@ -35,7 +35,7 @@ struct shaderT {
  * GLOBALS
  *----------------------------------------------*/
 
-shaderT* active_shader = NULL;
+static const shaderT* active_shader = NULL;
 
 /*------------------------------------------------
  * FUNCTIONS
@@ -58,7 +58,7 @@ static void compileShader(GLenum type, shaderT* shader, const string* source) {
     if (info_log_length > 1) {
         GLchar *log = malloc(sizeof(GLchar) * info_log_length);
         glGetShaderInfoLog(shader_id, info_log_length, NULL, log);
-        printf("\n%s", log);
+        warn("\n%s", log);
         free(log);
     }
 
@@ -73,7 +73,7 @@ static void compileShader(GLenum type, shaderT* shader, const string* source) {
     if (info_log_length > 1) {
         GLchar *log = malloc(sizeof(GLchar) * info_log_length);
         glGetProgramInfoLog(shader->id, info_log_length, NULL, log);
-        printf("\n%s", log);
+        warn("\n%s", log);
         free(log);
     }
 
@@ -133,11 +133,11 @@ bool setShaderParam(const string* name, const void* value) {
     if (!active_shader)
         error("no shader in use");
 
-    GLuint index = (-1);
+    GLuint index = (GLuint)(-1);
     glGetUniformIndices(active_shader->id, 1, &name, &index);
 
     if ((int)index == (-1)) {
-        //printf("warning: could not set shader uniform '%s'\n", name);
+        //warn("couldn't set shader uniform '%s'", name);
         return (false);
     }
 
@@ -164,8 +164,6 @@ bool setShaderParam(const string* name, const void* value) {
 void shaderPostProcess(textureT* source_texture) {
     if (!active_shader)
         error("no shader in use");
-
-    bool created_texture = false;
 
     textureT* texture = source_texture;
     triMeshT* quad    = createQuad(2.0f, 2.0f);

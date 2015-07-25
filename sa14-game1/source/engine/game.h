@@ -31,7 +31,7 @@ char* readGamePakFile(const string* file_name);
 int gamePakFileSize(const string* file_name);
 //void* delayedFree(void* mem);
 
-void* gameAddResource(const string* name, void* data, int type);
+void gameAddResource(const string* name, void* data, int type);
 void* gameResource(const string* name, int type);
 
 #endif // game_h_

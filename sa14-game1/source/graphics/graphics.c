@@ -133,11 +133,14 @@ static void createWindow(const string* title, int width, int height) {
     if (window)
         error("createWindow() was called twice");
 
-    RECT  rect  = { 0 };
-    rect.right  = width;
-    rect.bottom = height;
+    RECT window_rect  = { 0 };
+    window_rect.right  = width;
+    window_rect.bottom = height;
 
-    assert(AdjustWindowRectEx(&rect, WindowStyle, FALSE, WindowStyleEx));
+    assert(AdjustWindowRectEx(&window_rect, WindowStyle, FALSE, WindowStyleEx));
+
+    int window_width  = window_rect.right  - window_rect.left;
+    int window_height = window_rect.bottom - window_rect.top;
 
     registerWindowClass();
 
@@ -151,8 +154,8 @@ static void createWindow(const string* title, int width, int height) {
                                    WindowStyle,
                                    CW_USEDEFAULT,
                                    CW_USEDEFAULT,
-                                   rect.right - rect.left,
-                                   rect.bottom - rect.top,
+                                   window_width,
+                                   window_height,
                                    HWND_DESKTOP,
                                    NULL,
                                    GetModuleHandleW(NULL),
@@ -161,6 +164,16 @@ static void createWindow(const string* title, int width, int height) {
     free(window_name);
 
     assert(window->hwnd != NULL);
+
+    RECT desktop_rect;
+    GetClientRect(GetDesktopWindow(), &desktop_rect);
+
+    MoveWindow(window->hwnd,
+               (desktop_rect.right  - desktop_rect.left - window_width ) / 2,
+               (desktop_rect.bottom - desktop_rect.top  - window_height) / 2,
+               window_width,
+               window_height,
+               FALSE);
 
     window->hdc = GetDC(window->hwnd);
 
@@ -372,10 +385,13 @@ void updateDisplay(void) {
 }
 
 void hideWindow(void) {
-    ShowWindow(window->hwnd, SW_HIDE);
+    if (window)
+        ShowWindow(window->hwnd, SW_HIDE);
 }
 
 void showWindow(void) {
+    assert(window != NULL);
+
     ShowWindow(window->hwnd, SW_SHOW);
 }
 

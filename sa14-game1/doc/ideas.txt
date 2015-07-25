@@ -1,1 +1,6 @@
 names: Cometoids
+
+powerups:
+    Repulsion. Either as a usable powerup that pushes close asteroids away from
+    the player, or as a passive powerup that continously adds force to nearby
+    asteroids, pusing them away slowly.

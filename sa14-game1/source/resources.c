@@ -7,16 +7,13 @@
 #include "graphics/shader.h"
 #include "graphics/io/3ds.h"
 
+#include <string.h>
+
 // @To-do: This file should ultimately be a run-time loaded script, not a
 //         hardcoded set of instructions.
 
 static void compileShader(const string* name, const string* vs, const string* gs, const string* fs) {
-    string* frag_src;
-    string* geom_src;
-    string* vert_src;
-    shaderT* shader;
-
-    shader = createShader();
+    shaderT* shader = createShader();
 
     if (vs) compileVertexShader  (shader, gameResource(vs, ResString));
     if (gs) compileGeometryShader(shader, gameResource(gs, ResString));
@@ -90,6 +87,10 @@ static void compileShaders(void) {
 
 static void loadTexture(const string* name, const string* res_name) {
     textureT* tex = loadTextureFromMemory(gameResource(res_name, ResBinary));
+    
+    // For proper tiling.
+    setTextureRepeat(tex, true);
+
     string buf[256];
     sprintf(buf, "texture:%s", name);
     gameAddResource(buf, tex, ResTexture);
@@ -101,13 +102,16 @@ static void loadTextures(void) {
 
     loadTexture("splashscreen0",
                     "textures/splashscreen0.bmp");
+
+    loadTexture("CHECKER.BMP",
+                    "textures/CHECKER.BMP");
 }
 
 static void loadMesh(const string* name, const string* res_name) {
     a3dsDataT* a3ds = a3dsLoad(gameResource(res_name, ResBinary));
     string buf[256];
     sprintf(buf, "mesh:%s", name);
-    gameAddResource(buf, name, ResMesh);
+    gameAddResource(buf, a3ds, ResMesh);
     trace("  loaded mesh: %s", name);
 }
 

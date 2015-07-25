@@ -26,14 +26,14 @@ typedef struct gameResourceT {
 } gameResourceT;
 
 struct gameT {
-    bool done;
-
     arrayT* paks;
 
     gameResourceT* resources;
 
     arrayT* entities;
     arrayT* subsystems;
+
+    bool done;
 };
 
 /*------------------------------------------------
@@ -133,11 +133,9 @@ void gameMain(void (*frame_func)(float dt)) {
             updateWindow();
         }
 
-#ifndef _DEBUG
-        // @To-do: Don't hardcore FPS.
+        // @To-do: Don't hardcode FPS measurements here.
         if ((dt > (1.0f/59.0f)) || (dt < (1.0f/61.0f)))
-            printf("warning: frame time %f ms\n", dt*1000.0f);
-#endif // !_DEBUG
+            warn("frame time %6.4f ms", dt*1000.0f);
 
         time = getTime();
 
@@ -197,16 +195,17 @@ void addGamePak(pakArchiveT* pak) {
     arrayAdd(game_inst->paks, &pak);
 }
 
-char* readGamePakFile(const string* file_name) {
+uint8_t* readGamePakFile(const string* file_name) {
     for (int i = arrayLength(game_inst->paks)-1; i >= 0; i--) {
         pakArchiveT* pak = *(pakArchiveT**)arrayGet(game_inst->paks, i);
 
-        char* data = pakReadFile(pak, file_name);
+        uint8_t* data = pakReadFile(pak, file_name);
         if (data)
             return (data);
     }
 
     error("couldn't find file '%s' in any game pak", file_name);
+    return (NULL);
 }
 
 int gamePakFileSize(const string* file_name) {
@@ -222,9 +221,10 @@ int gamePakFileSize(const string* file_name) {
     }
 
     error("couldn't find file '%s' in any game pak", file_name);
+    return (NULL);
 }
 
-void* gameAddResource(const string* name, void* data, int type) {
+void gameAddResource(const string* name, void* data, int type) {
     gameResourceT* res = malloc(sizeof(gameResourceT));
 
     res->data = data;

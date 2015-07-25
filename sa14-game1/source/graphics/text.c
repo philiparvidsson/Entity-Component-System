@@ -33,7 +33,7 @@ static void initTextShader(void) {
 }
 
 void drawText(const string* text, float x, float y, const string* font_name, int font_size) {
-    text = wstrdup(text);
+    text = (string*)wstrdup(text);
 
     HDC hdc = CreateCompatibleDC(0);
 
@@ -126,7 +126,7 @@ void drawText(const string* text, float x, float y, const string* font_name, int
 
 void loadFontFromFile(const string* file_name) {
     string* s = wstrdup(file_name);
-    assert(AddFontResourceExW(s, FR_PRIVATE, NULL) > 0);
+    assert(AddFontResourceExW((LPCWSTR*)s, FR_PRIVATE, NULL) > 0);
     free(s);
 }
 

@@ -11,11 +11,11 @@
 
 #pragma pack(1)
 typedef struct {
-    int   magic_number;
-    short version;
-    int   time;
-    char  name[16];
-    int   num_files;
+    int    magic_number;
+    short  version;
+    int    time;
+    string name[16];
+    int    num_files;
 } pakArchiveHeaderT;
 
 struct pakArchiveT {
@@ -28,9 +28,9 @@ struct pakArchiveT {
 
 #pragma pack(1)
 typedef struct {
-    char name[64];
-    int size;
-    int crc32;
+    string name[64];
+    int    size;
+    int    crc32;
 } pakFileHeaderT;
 
 struct pakFileT {

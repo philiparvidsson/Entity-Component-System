@@ -35,7 +35,7 @@
  * Usage:
  *   error("An error has occurred");
  *------------------------------------*/
-#define error(msg, ...) errorExit(msg, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define error(msg, ...) errorFunc(msg, __FUNCTION__, __LINE__, __VA_ARGS__)
 
 /*--------------------------------------
  * Macro: assert()
@@ -51,14 +51,16 @@
  *------------------------------------*/
 #define assert(expr) if (!(expr)) { error("The assertion '"#expr"' failed"); }
 
-#define trace(s, ...) printf(s"\n", __VA_ARGS__);
+#define trace(s, ...) traceFunc(s, __VA_ARGS__);
+
+#define warn(s, ...) warnFunc(s, __VA_ARGS__);
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
 /*--------------------------------------
- * Function: errorExit(msg, func_name, line, ...)
+ * Function: errorFunc(msg, func_name, line, ...)
  * Parameters:
  *   msg        The error message format to display.
  *   func_name  The name of the function that generated the error.
@@ -71,9 +73,13 @@
  *   not call it directly.
  *
  * Usage:
- *   errorExit("An error has occurred", "main.c", 42);
+ *   errorFunc("An error has occurred", "main.c", 42);
  *
  *------------------------------------*/
-void errorExit(const string* msg, const string* func_name, int line);
+void errorFunc(const string* msg, const string* func_name, int line, ...);
+
+void traceFunc(const string* msg, ...);
+
+void warnFunc(const string* msg, ...);
 
 #endif // debug_h_

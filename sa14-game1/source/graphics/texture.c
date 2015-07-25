@@ -83,7 +83,7 @@ textureT* createTexture(void) {
 textureT* loadTextureFromFile(const void* file_name) {
     textureT* tex = NULL;
 
-    char* data = ioReadFile(file_name);
+    uint8_t* data = ioReadFile(file_name);
 
     if (!data)
         error("could not read file '%s'", file_name);

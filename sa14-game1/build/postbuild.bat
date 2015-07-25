@@ -1,40 +1,43 @@
-set build_conf=%1
+set BuildConf=%1
+set BinDir=bin\
+set PakPw=n3m3s1s!
 
-set bin_dir=bin\
+:: We leave the .pak-files unencrypted in debug build mode.
+if %BuildConf%==Debug set PakPw=
+echo %BuildConf%
 
-set build_num_file=source\base\buildnum.h
-set build_num_constant=BuildNum
-
-set pak_pw=n3m3s1s!
-if %build_conf%==Debug set pak_pw=
-
-call :incrementBuildNum
-
-call :copyToBinDir doc
-
-build\pak-tool -p -k "%pak_pw%" "resources" "%bin_dir%data.pak"
+call :IncrementBuildNum "source\buildnum.h" BuildNum
+call :CopyToBinDir doc
+call :CreatePak "%PakPw%" "resources" "%BinDir%data.pak"
 
 goto :eof
 
 :: -----------------------------------------------
-:copyToBinDir
+:IncrementBuildNum
+    set /p DefBuildNum=<%1
+    for /f "tokens=3" %%a in ("%DefBuildNum%") do set BuildNum=%%a
+    set /a BuildNum+=1
+    set DefBuildNum=#define %2 %BuildNum%
+    (echo %DefBuildNum%)>%1
+    (echo // do not modify! managed by build/postbuild.bat)>>%1
+    exit /b
+:: -----------------------------------------------
+
+:: -----------------------------------------------
+:CopyToBinDir
     if exist %1\nul (
-        xcopy "%1" "%bin_dir%\%1\" /c /e /y
+        xcopy "%1" "%BinDir%\%1\" /c /e /y
     ) else (
-        copy "%1" "%bin_dir%"
+        copy "%1" "%BinDir%"
     )
     exit /b
 :: -----------------------------------------------
 
-
-:: Increment build number in file 'buildnum.h'.
 :: -----------------------------------------------
-:incrementBuildNum
-    set /p def_build_num=<%build_num_file%
-    for /f "tokens=3" %%a in ("%def_build_num%") do set build_num=%%a
-    set /a build_num+=1
-    set def_build_num=#define %build_num_constant% %build_num%
-    (echo %def_build_num%)>%build_num_file%
-    (echo // do not modify! managed by build/postbuild.bat)>>%build_num_file%
+:CreatePak
+echo %1
+echo %2
+echo %3
+    build\pak-tool -p -k %1 %2 %3
+:: -----------------------------------------------
     exit /b
-:: -----------------------------------------------

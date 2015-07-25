@@ -21,8 +21,6 @@ void freeEntity(gameEntityT* entity) {
         arrayFree(entity->components);
         entity->components = NULL;
     }
-
-    return (entity);
 }
 
 void attachComponent(gameEntityT* entity, gameComponentT* component) {
