@@ -1,5 +1,5 @@
 set BuildConf=%1
-set BinDir=bin\
+set BinDir=bin
 set PakPw=n3m3s1s!
 
 :: We leave the .pak-files unencrypted in debug build mode.
@@ -7,7 +7,7 @@ if %BuildConf%==Debug set PakPw=
 
 call :IncrementBuildNum "source\buildnum.h" BuildNum
 call :CopyToBinDir doc
-call :CreatePak "%PakPw%" "resources" "%BinDir%data.pak"
+call :CreatePak "%PakPw%" "resources" "%BinDir%\data.pak"
 
 goto :eof
 
@@ -27,16 +27,13 @@ goto :eof
     if exist %1\nul (
         xcopy "%1" "%BinDir%\%1\" /c /e /y
     ) else (
-        copy "%1" "%BinDir%"
+        copy "%1" "%BinDir%\"
     )
     exit /b
 :: -----------------------------------------------
 
 :: -----------------------------------------------
 :CreatePak
-echo %1
-echo %2
-echo %3
     build\pak-tool -p -k %1 %2 %3
 :: -----------------------------------------------
     exit /b
