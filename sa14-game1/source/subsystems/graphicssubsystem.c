@@ -134,12 +134,12 @@ static void setupCamera(graphicsSubsystemDataT* gfx_data) {
     mat4x4 proj, view;
 
     // @To-do: Camera logic should be here.
-    mat4x4_look_at(&(vec3) { 0.0f, 0.0f, 2.0f },
+    mat4x4_look_at(&(vec3) { 0.0f, 0.0f, 10.0f },
                    &(vec3) { 0.0f, 0.0f, 0.0f },
                    &(vec3) { 0.0f, 1.0f, 0.0f }, &view);
 
     float r = gfx_data->aspect_ratio;
-    mat4x4_persp(-5.0f*r, 5.0f*r, -5.0f, 5.0f, -10.0f, -0.01f, &proj);
+    mat4x4_persp(-10.0f*r, 10.0f*r, -10.0f, 10.0f, -20.0f, -0.01f, &proj);
 
     mat4x4* vp = &gfx_data->view_proj;
 
