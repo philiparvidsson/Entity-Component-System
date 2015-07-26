@@ -9,7 +9,7 @@
 
 #define PakMagicNumber (0xa2c5f1b4)
 
-#pragma pack(1)
+#pragma pack(push, 1)
 typedef struct {
     int    magic_number;
     short  version;
@@ -17,6 +17,7 @@ typedef struct {
     string name[16];
     int    num_files;
 } pakArchiveHeaderT;
+#pragma pack(pop)
 
 struct pakArchiveT {
     pakArchiveHeaderT header;
@@ -27,12 +28,13 @@ struct pakArchiveT {
     string* password;
 };
 
-#pragma pack(1)
+#pragma pack(push, 1)
 typedef struct {
     string name[64];
     int    size;
     int    crc32;
 } pakFileHeaderT;
+#pragma pack(pop)
 
 struct pakFileT {
     pakArchiveT* pak;

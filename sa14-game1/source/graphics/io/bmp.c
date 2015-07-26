@@ -4,7 +4,8 @@
 
 #include <GL/glew.h>
 
-#pragma pack(1)
+
+#pragma pack(push, 1)
 typedef struct {
     uint16_t magic_number;
 
@@ -24,6 +25,7 @@ typedef struct {
     uint32_t num_important_colors;
     struct { uint8_t r, g, b; } pixels[1];
 } bitmapHeaderT;
+#pragma pack(pop)
 
 textureT* loadBMP(const void* data) {
     const bitmapHeaderT* bmp     = data;

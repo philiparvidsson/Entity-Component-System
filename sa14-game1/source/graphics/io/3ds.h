@@ -35,12 +35,13 @@ typedef struct {
     arrayT* objects;
 } a3dsDataT;
 
-#pragma pack(1)
+#pragma pack(push, 1)
 typedef struct {
     uint16_t id;
     uint32_t length;
     uint8_t  data[1];
 } chunkT;
+#pragma pack(pop)
 
 typedef struct {
     string* name;
