@@ -96,6 +96,7 @@
 #else
     #define PakPassword ("n3m3s1s!")
 #endif // _DEBUG
+
 /*--------------------------------------
  * Constant: ProgramAuthors
  *

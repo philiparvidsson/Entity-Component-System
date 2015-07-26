@@ -22,7 +22,7 @@ typedef struct {
 struct pakArchiveT {
     pakArchiveHeaderT header;
 
-    const string** file_names;
+    string** file_names;
 
     FILE* fp;
     string* password;
@@ -72,7 +72,7 @@ static bool readPakArchiveHeader(pakArchiveT* pak) {
     if (pak->password)
         decrypt(&pak->header, sizeof(pakArchiveHeaderT), pak->password, 0);
 
-    if (!isValidPakArchiveHeader(pak)) {
+    if (!isValidPakArchiveHeader(&pak->header)) {
         fclose(pak->fp);
         return (false);
     }
@@ -220,7 +220,7 @@ uint8_t* pakReadFile(pakArchiveT* pak, const string* file_name) {
 
     // +1 because we append a null-char just in case it's a text file we're
     // reading. It doesn't affect binary formats anyway.
-    char* buf = malloc(pf->size+1);
+    uint8_t* buf = malloc(pf->size+1);
     if (!buf) {
         pakCloseFile(pf);
         return (NULL);

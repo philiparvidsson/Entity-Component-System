@@ -63,7 +63,7 @@ static void printIntroMessage(void) {
  *   showSplashScreen(my_tex, 3.0f);
  *------------------------------------*/
 static void showSplashScreen(textureT* splash_tex, float secs) {
-    shaderT* splash_shader = gameResource("shader:splashscreen", ResShader);
+    const shaderT* splash_shader = gameResource("shader:splashscreen", ResShader);
     triMeshT* quad = createQuad(2.0f, 2.0f);
 
     useShader (splash_shader);
