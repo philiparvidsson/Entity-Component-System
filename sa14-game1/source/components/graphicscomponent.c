@@ -21,16 +21,17 @@ static void cleanup(gameComponentT* component, gameSubsystemT* subsystem) {
     }
 }
 
-gameComponentT* newGraphicsComponent(triMeshT* mesh) {
-    gameComponentT* component = newComponent("graphics");
-    graphicsComponentDataT* gfx = calloc(1, sizeof(graphicsComponentDataT));
+gameComponentT* newGraphicsComponent(triMeshT* mesh, materialT* material) {
+    gameComponentT*         component = newComponent("graphics");
+    graphicsComponentDataT* gfx_data  = calloc(1, sizeof(graphicsComponentDataT));
 
-    gfx->mesh = mesh;
-    mat_identity(&gfx->transform);
-    mat_identity(&gfx->normal_transform);
-    gfx->material = getNamedMaterial("debug");
+    gfx_data->mesh     = mesh;
+    gfx_data->material = material ? material : getNamedMaterial("debug");
 
-    component->data = gfx;
+    mat_identity(&gfx_data->transform);
+    mat_identity(&gfx_data->normal_transform);
+
+    component->data       = gfx_data;
     component->cleanup_fn = cleanup;
 
     return (component);

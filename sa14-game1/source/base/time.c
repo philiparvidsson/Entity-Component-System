@@ -18,6 +18,8 @@
 
 #include "time.h"
 
+#include "base/common.h"
+
 #include <stdint.h>
 
 #include <windows.h>
@@ -39,7 +41,7 @@ timeT getTime(void) {
     return ((timeT)count.QuadPart);
 }
 
-int elapsedMicrosecsSince(timeT time) {
+long long elapsedMicrosecsSince(timeT time) {
     LARGE_INTEGER count;
     QueryPerformanceCounter(&count);
 
@@ -55,7 +57,7 @@ int elapsedMicrosecsSince(timeT time) {
 }
 
 int elapsedMillisecsSince(timeT time) {
-    return (elapsedMicrosecsSince(time) / 1000);
+    return (int)(elapsedMicrosecsSince(time) / 1000);
 }
 
 float elapsedSecsSince(timeT time) {

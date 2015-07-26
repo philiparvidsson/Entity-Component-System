@@ -205,7 +205,6 @@ uint8_t* readGamePakFile(const string* file_name) {
     }
 
     error("couldn't find file '%s' in any game pak", file_name);
-    return (NULL);
 }
 
 int gamePakFileSize(const string* file_name) {
@@ -221,7 +220,6 @@ int gamePakFileSize(const string* file_name) {
     }
 
     error("couldn't find file '%s' in any game pak", file_name);
-    return (NULL);
 }
 
 void gameAddResource(const string* name, void* data, int type) {
@@ -235,7 +233,7 @@ void gameAddResource(const string* name, void* data, int type) {
     game_inst->resources = res;
 }
 
-void* gameResource(const string* name, int type) {
+const void* gameResource(const string* name, int type) {
     assert((name != NULL) && (strlen(name) > 0));
 
     gameResourceT* res = game_inst->resources;

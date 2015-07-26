@@ -31,7 +31,7 @@ typedef uint64_t timeT;
 
 timeT getTime(void);
 
-int elapsedMicrosecsSince(timeT time);
+long long elapsedMicrosecsSince(timeT time);
 
 int elapsedMillisecsSince(timeT time);
 

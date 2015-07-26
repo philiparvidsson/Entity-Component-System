@@ -76,7 +76,7 @@
  *   errorFunc("An error has occurred", "main.c", 42);
  *
  *------------------------------------*/
-void errorFunc(const string* msg, const string* func_name, int line, ...);
+_Noreturn void errorFunc(const string* msg, const string* func_name, int line, ...);
 
 void traceFunc(const string* msg, ...);
 

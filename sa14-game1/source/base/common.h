@@ -60,6 +60,9 @@
 // just alias it on MSVC++.
 #define inline __inline
 
+// The _Noreturn keyword was introduced in C11.
+#define _Noreturn  __declspec(noreturn)
+
 #endif // _MSC_VER
 
 /*--------------------------------------

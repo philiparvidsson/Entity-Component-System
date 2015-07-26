@@ -35,11 +35,16 @@ gameEntityT* newPlayerEntity(void) {
 
     entity->data = calloc(1, sizeof(playerEntityDataT));
     
-    triMeshT* mesh = a3dsCreateMesh(gameResource("mesh:player", ResMesh), "Teapot001");//createCylinder(0.04f, 0.2f, 10);
+    a3dsDataT* a3ds = gameResource      ("mesh:player", ResMesh);
+    triMeshT*  mesh = a3dsCreateMesh    (a3ds, "Teapot001");
+    materialT* mat  = a3dsCreateMaterial(a3ds, "Material #25");
+
     assert(mesh != NULL);
-    gameComponentT* gfx = newGraphicsComponent(mesh);
+    assert(mat  != NULL);
+
+    gameComponentT* gfx = newGraphicsComponent(mesh, mat);
     graphicsComponentDataT* gfx_data = gfx->data;
-    gfx_data->material = a3dsCreateMaterial(gameResource("mesh:player", ResMesh), "Material #25");
+    assert(gfx_data->material != NULL);
 
     gameComponentT* phys = newPhysicsComponent(1.0f);
     phys->update_fn = handleInput;

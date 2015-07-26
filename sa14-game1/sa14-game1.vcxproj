@@ -137,6 +137,7 @@
   <ItemGroup>
     <Text Include="doc\ideas.txt" />
     <Text Include="doc\readme.txt" />
+    <Text Include="doc\todo.txt" />
     <Text Include="license.txt" />
     <Text Include="doc\sector_034.txt" />
   </ItemGroup>

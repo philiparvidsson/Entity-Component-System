@@ -20,10 +20,11 @@ typedef struct {
 
 struct pakArchiveT {
     pakArchiveHeaderT header;
+
+    const string** file_names;
+
     FILE* fp;
     string* password;
-
-    string** file_names;
 };
 
 #pragma pack(1)
@@ -42,15 +43,15 @@ struct pakFileT {
     int pos;
 };
 
-static void decrypt(char* data, size_t count, const string* password, int n) {
+static void decrypt(void* data, size_t count, const string* password, int n) {
     int pw_len = strlen(password);
 
     int pw = 0;
     for (int i = 0; i < pw_len; i++)
         pw += password[i]*(i+1)*251;
 
-    for (int i = 0; i < count; i++)
-        data[i] ^= (pw_len+pw*983 + password[(i+n) % pw_len] + (((i+n)+1)*3163)) & 0xff;
+    for (int i = 0; i < (int)count; i++)
+        ((uint8_t*)data)[i] ^= (pw_len+pw*983 + password[(i+n) % pw_len] + (((i+n)+1)*3163)) & 0xff;
 }
 
 static bool isValidPakArchiveHeader(const pakArchiveHeaderT* pak) {
@@ -87,7 +88,7 @@ pakArchiveT* pakOpenArchive(const string* file_name, const string* password) {
         return (NULL);
     }
 
-    pak->password = password;
+    pak->password = strdup(password);
 
     assert(readPakArchiveHeader(pak));
 
@@ -121,6 +122,7 @@ void pakCloseArchive(pakArchiveT* pak) {
         free(pak->file_names[i]);
 
     free(pak->file_names);
+    free(pak->password);
     free(pak);
 }
 

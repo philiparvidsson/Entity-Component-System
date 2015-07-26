@@ -11,6 +11,8 @@
  *   second row.
  *----------------------------------------------------------------------------*/
 
+// @To-do: Implement using SSE/SIMD.
+
 #ifndef matrix_h_
 #define matrix_h_
 
@@ -22,20 +24,11 @@
 #include "math/vector.h"
 
 #include <math.h>
+#include <string.h>
 
 /*------------------------------------------------
  * MACROS
  *----------------------------------------------*/
-
-#define mat_check_args_1() { \
-    if (n == (-1)) error("first argument is not a matrix"); \
-}
-
-#define mat_check_args_3() { \
-    if (a_n == (-1)) error("first argument is not a matrix");  \
-    if (b_n == (-1)) error("second argument is not a matrix"); \
-    if (r_n == (-1)) error("third argument is not a matrix");  \
-}
 
 #define mat_n(v) (((vec_n(v))==16) ? ( 4) \
                : (((vec_n(v))== 9) ? ( 3) \
@@ -99,12 +92,9 @@ typedef union {
  *----------------------------------------------*/
 
 static inline void mat_identity_(float* r, int n) {
-    mat_check_args_1();
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++)
-            r[i*n+j] = (i==j) ? (1.0f) : (0.0f);
-    }
+    memset(r, 0, sizeof(float)*n*n);
+    for (int i = 0; i < n; i++)
+        r[i*n+i] = 1.0f;
 }
 
 static inline void mat_transpose_(float* m, int n) {
@@ -118,8 +108,6 @@ static inline void mat_transpose_(float* m, int n) {
 }
 
 static inline void mat_transl_xy_(float x, float y, float* m, int n) {
-    mat_check_args_1();
-
     if (n < 3) error("matrix is too small");
 
     mat_identity_(m, n);
@@ -129,8 +117,6 @@ static inline void mat_transl_xy_(float x, float y, float* m, int n) {
 }
 
 static inline void mat_transl_xyz_(float x, float y, float z, float* m, int n) {
-    mat_check_args_1();
-
     if (n < 4) error("matrix is too small");
 
     mat_identity_(m, n);
@@ -141,8 +127,6 @@ static inline void mat_transl_xyz_(float x, float y, float z, float* m, int n) {
 }
 
 static inline void mat_rot_(const vec3* u, float a, float* m, int n) {
-    mat_check_args_1();
-
     if (n < 3) error("matrix is too small");
 
     mat_identity_(m, n);
@@ -163,8 +147,6 @@ static inline void mat_rot_(const vec3* u, float a, float* m, int n) {
 }
 
 static inline void mat_rot_x_(float a, float* m, int n) {
-    mat_check_args_1();
-
     if (n < 3) error("matrix is too small");
 
     mat_identity_(m, n);
@@ -178,8 +160,6 @@ static inline void mat_rot_x_(float a, float* m, int n) {
 }
 
 static inline void mat_rot_y_(float a, float* m, int n) {
-    mat_check_args_1();
-
     if (n < 3) error("matrix is too small");
 
     mat_identity_(m, n);
@@ -193,8 +173,6 @@ static inline void mat_rot_y_(float a, float* m, int n) {
 }
 
 static inline void mat_rot_z_(float a, float* m, int n) {
-    mat_check_args_1();
-
     mat_identity_(m, n);
 
     float cos_a = cosf(a);
@@ -207,8 +185,6 @@ static inline void mat_rot_z_(float a, float* m, int n) {
 }
 
 static inline void mat_scale_(float f, float* m, int n) {
-    mat_check_args_1();
-
     mat_identity_(m, n);
 
     for (int i = 0; i < n; i++)
@@ -216,8 +192,6 @@ static inline void mat_scale_(float f, float* m, int n) {
 }
 
 static inline void mat_add_(const float* a, const float* b, float* r, int a_n, int b_n, int r_n) {
-    mat_check_args_3();
-
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
         for (int j = 0; j < min(a_n, min(b_n, r_n)); j++)
             r[i*r_n+j] = a[i*a_n+j] + b[i*b_n+j];
@@ -225,8 +199,6 @@ static inline void mat_add_(const float* a, const float* b, float* r, int a_n, i
 }
 
 static inline void mat_sub_(const float* a, const float* b, float* r, int a_n, int b_n, int r_n) {
-    mat_check_args_3();
-
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
         for (int j = 0; j < min(a_n, min(b_n, r_n)); j++)
             r[i*r_n+j] = a[i*a_n+j] - b[i*b_n+j];
@@ -234,8 +206,6 @@ static inline void mat_sub_(const float* a, const float* b, float* r, int a_n, i
 }
 
 static inline void mat_mul_(const float* a, const float* b, float* r, int a_n, int b_n, int r_n) {
-    mat_check_args_3();
-
     int const  n = min(a_n, min(b_n, r_n));
     mat4x4     t;
     float     *m = (r==a || r==b) ? (float*)&t : r;
@@ -260,8 +230,6 @@ static inline void mat_mul_(const float* a, const float* b, float* r, int a_n, i
 }
 
 static inline void mat_div_(const float* a, const float* b, float* r, int a_n, int b_n, int r_n) {
-    mat_check_args_3();
-
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
         for (int j = 0; j < min(a_n, min(b_n, r_n)); j++)
             r[i*r_n+j] = a[i*a_n+j] / b[i*b_n+j];

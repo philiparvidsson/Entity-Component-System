@@ -24,18 +24,18 @@ static vec3 randomVector(void) {
 
 static gameComponentT* createGraphicsComponent(void) {
     static triMeshT* mesh = NULL;
-    static materialT* mat = NULL;
+    materialT* mat = NULL;
 
     if (!mesh) {
-        mesh = createGeodesicSphere(0.1f, 0);
+        mesh = createGeodesicSphere(0.3f, 0);
         //mesh = createBox(0.03f, 0.03f, 0.03f);
-        
+
         //a3dsDataT* a3ds = a3dsLoad(readGamePakFile("meshes/player.3ds"));
         //getchar();
 
         //mesh = a3dsCreateMesh(gameResource("mesh:monkey", ResMesh), "Suzanne");
         //if (!mesh)
-            //mesh = createBox(0.2f, 0.2f, 0.2f);
+        //mesh = createBox(0.2f, 0.2f, 0.2f);
 
         //mat = a3dsCreateMaterial(a3ds, a3dsGetObjectMaterialName(a3ds, "Box001"));
 
@@ -44,19 +44,16 @@ static gameComponentT* createGraphicsComponent(void) {
         //calcSmoothNormals(mesh);
         //updateMesh(mesh);
     }
-    
 
-    gameComponentT* component = newGraphicsComponent(mesh);
-    graphicsComponentDataT* gfx_data = component->data;
-    
-    gfx_data->material = getNamedMaterial("shiny black");
-    
-    if ((rand() % 2) == 1) {
-        gfx_data->material = getNamedMaterial("blue crystal");
+    if (!mat) {
+
+        mat = getNamedMaterial("shiny black");
+        if ((rand() % 4) == 0) {
+            mat = getNamedMaterial("blue crystal");
+        }
     }
 
-    if (mat)
-        gfx_data->material = mat;
+    gameComponentT* component = newGraphicsComponent(mesh, mat);
 
     return (component);
 }

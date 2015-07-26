@@ -136,6 +136,7 @@
       <Filter>Documentation Files</Filter>
     </Text>
     <Text Include="doc\ideas.txt" />
+    <Text Include="doc\todo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GL\glew.h">

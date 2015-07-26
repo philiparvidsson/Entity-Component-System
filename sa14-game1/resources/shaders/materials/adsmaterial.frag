@@ -52,7 +52,7 @@ out vec4 color;
 
 void main() {
     vec3 n = normalize(vert.normal);
-    vec3 v = normalize(vert.pos.xyz - vec3(0.0, 0.0, 1.0));
+    vec3 v = normalize(vert.pos.xyz - vec3(0.0, 0.0, 6.0));
 
     vec3 ambient  = AmbientCoeff;
     vec3 diffuse  = vec3(0.0, 0.0, 0.0);

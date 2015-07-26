@@ -107,7 +107,7 @@ void deleteShader(shaderT* shader) {
 }
 
 shaderT* useShader(const shaderT* shader) {
-    shaderT* old_shader = active_shader;
+    const shaderT* old_shader = active_shader;
 
     if (shader != active_shader) {
         glUseProgram(shader ? shader->id : 0);

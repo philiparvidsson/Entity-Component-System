@@ -33,6 +33,6 @@ typedef struct {
  * FUNCTIONS
  *----------------------------------------------*/
 
-gameComponentT* newGraphicsComponent(triMeshT* mesh);
+gameComponentT* newGraphicsComponent(triMeshT* mesh, materialT* material);
 
 #endif // graphicsscomponent_h_
