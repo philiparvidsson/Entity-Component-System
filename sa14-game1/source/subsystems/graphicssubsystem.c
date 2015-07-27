@@ -57,6 +57,7 @@ typedef struct {
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
+
 static void drawComponents(gameSubsystemT* subsystem, bool use_materials);
 
 #ifdef DRAW_TRI_NORMALS
@@ -103,25 +104,25 @@ static void applyPostFX(gameSubsystemT* subsystem) {
     // 1. Render velocity texture.
     
     renderTargetT* old_rt = useRenderTarget(gfx_data->mblur_rt);
-    useShader(gfx_data->mblur_shader0);
-    clearDisplay(0.0f, 0.0f, 0.0f);
-    drawComponents(subsystem, false);
+    useShader      (gfx_data->mblur_shader0);
+    clearDisplay   (0.0f, 0.0f, 0.0f);
+    drawComponents (subsystem, false);
     useRenderTarget(old_rt);
     
     // 2. Apply motion blur.
     
-    useShader(gfx_data->mblur_shader1);
     textureT* old_tex = useTexture(getRenderTargetColorTexture(gfx_data->mblur_rt), 1);
+    useShader            (gfx_data->mblur_shader1);
     loadTextureFromScreen(gfx_data->screen_tex);
     shaderPostProcess    (gfx_data->screen_tex);
-    useTexture(old_tex, 1);
+    useTexture           (old_tex, 1);
 
     //--------------------------------------------
     // Noise
     //--------------------------------------------
 
-    useShader(gfx_data->noise_shader);
-    setShaderParam("Seed", &gfx_data->noise_seed);
+    useShader            (gfx_data->noise_shader);
+    setShaderParam       ("Seed", &gfx_data->noise_seed);
     loadTextureFromScreen(gfx_data->screen_tex);
     shaderPostProcess    (gfx_data->screen_tex);
 
@@ -149,8 +150,8 @@ static void setupCamera(graphicsSubsystemDataT* gfx_data) {
 }
 
 static void setupLights(graphicsSubsystemDataT* gfx_data) {
-    int one = 2;
-    setShaderParam("NumLights", &one);
+    int two = 2;
+    setShaderParam("NumLights", &two);
 
     vec3 light_pos      = (vec3) { 0.0f, 1.0f, 0.0f };
     vec3 light_ambient  = (vec3) { 0.0f, 0.0f, 0.0f };
@@ -203,7 +204,6 @@ static void setupTransforms(gameSubsystemT* subsystem) {
     }
 }
 
-static int num_mat_switches = 0;
 static void drawComponent(graphicsSubsystemDataT* gfx_data, gameComponentT* component, bool use_material) {
     graphicsComponentDataT* gfx_component  = component->data;
 
@@ -241,8 +241,6 @@ static void sortComponentsByMaterial(gameSubsystemT* subsystem) {
 }
 
 static void drawComponents(gameSubsystemT* subsystem, bool use_materials) {
-    num_mat_switches = 0;
-
     if (use_materials)
         sortComponentsByMaterial(subsystem);
 

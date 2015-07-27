@@ -214,6 +214,7 @@
     <Font Include="resources\fonts\sector_034.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resources\textures\CHECKER.BMP" />
     <Image Include="resources\textures\splashscreen0.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

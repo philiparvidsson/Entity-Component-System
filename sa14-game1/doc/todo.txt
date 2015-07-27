@@ -1,1 +1,2 @@
 * Rename all functions to include module prefixes (ie. gfxInitGraphics() etc.).
+* Material component, mesh component?

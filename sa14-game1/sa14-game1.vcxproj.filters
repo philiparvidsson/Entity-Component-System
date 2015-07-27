@@ -316,5 +316,8 @@
     <Image Include="resources\textures\splashscreen0.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="resources\textures\CHECKER.BMP">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
