@@ -7,8 +7,8 @@ struct vertexDataT {
     vec2 tex_coord;
 };
 
-uniform mat4 ProjViewModel;
-uniform mat4 PrevProjViewModel;
+uniform mat4 ModelViewProj;
+uniform mat4 PrevModelViewProj;
 
 uniform mat4 NormalMatrix;
 
@@ -19,8 +19,8 @@ layout(location = 2) in vec2 tex_coord;
 out vertexDataT vert;
 
 void main() {
-    vert.pos       =  ProjViewModel     * vec4(vert_pos   , 1.0);
-    vert.prev_pos  =  PrevProjViewModel * vec4(vert_pos   , 1.0);
+    vert.pos       =  ModelViewProj     * vec4(vert_pos   , 1.0);
+    vert.prev_pos  =  PrevModelViewProj * vec4(vert_pos   , 1.0);
     vert.normal    = (NormalMatrix      * vec4(vert_normal, 1.0)).xyz;
     vert.tex_coord =  tex_coord;
 
