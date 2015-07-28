@@ -125,12 +125,12 @@ void frameFunc(float dt) {
     lol += dt;
     while (lol >= 0.5f) {
         //addEntityToGame(newAsteroidEntity());
-        if (knull < 1000) {
+        if (knull < 1) {
             gameEntityT* e = *(gameEntityT**)arrayGet(prealloc, knull);
             addEntityToGame(e);
             knull++;
         }
-        lol -= 0.1f;
+        lol -= 0.5f;
         //lol = -1;
         //break;
     }

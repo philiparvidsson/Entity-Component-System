@@ -12,7 +12,8 @@ materialT* createADSMaterial(textureT* ambient_tex,
                              vec3      ambient_coeff,
                              vec3      diffuse_coeff,
                              vec3      specular_coeff,
-                             float     shininess);
+                             float     shininess,
+                             bool      wireframe);
 
 materialT* createCustomADSMaterial(textureT* ambient_tex,
                                    textureT* diffuse_tex,
@@ -21,6 +22,7 @@ materialT* createCustomADSMaterial(textureT* ambient_tex,
                                    vec3      diffuse_coeff,
                                    vec3      specular_coeff,
                                    float     shininess,
+                                   bool      wireframe,
                                    string*   vert_src,
                                    string*   frag_src);
 

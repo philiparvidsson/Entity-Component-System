@@ -6,7 +6,9 @@
  *----------------------------------------------*/
 
 #include "base/common.h"
+#include "math/shape.h"
 #include "math/vector.h"
+#include "physics/body.h"
 #include "physics/physics.h"
 
 /*------------------------------------------------
@@ -21,18 +23,20 @@ typedef struct {
     float o;  // Orientation.
     float w;  // Angular velocity.
     float t;  // Torque.
-
-    float i; // Moment of inertia.
 } bodyStateT;
 
 struct bodyT {
     worldT* world;
+
+    shapeT* shape;
 
     bodyStateT state;
     bodyStateT prev_state;
 
     bodyTypeT type;
     float     inv_mass;
+    float     inv_inertia;
+    float     restitution;
 
     bodyT* prev;
     bodyT* next;

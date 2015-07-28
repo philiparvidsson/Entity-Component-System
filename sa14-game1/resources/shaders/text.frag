@@ -28,12 +28,12 @@ in vec2 uv;
  * OUTPUTS
  *----------------------------------------------*/
 
-out vec4 frag_color;
+out vec4 color;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
 void main() {
-    frag_color = texture(Tex, uv);
+    color = texture(Tex, uv);
 }

@@ -134,8 +134,10 @@ void gameMain(void (*frame_func)(float dt)) {
         }
 
         // @To-do: Don't hardcode FPS measurements here.
+#ifndef _DEBUG
         if ((dt > (1.0f/59.0f)) || (dt < (1.0f/61.0f)))
             warn("frame time %6.4f ms", dt*1000.0f);
+#endif // !_DEBUG
 
         time = getTime();
 

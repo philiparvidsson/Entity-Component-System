@@ -37,6 +37,8 @@
 
 #define mat_identity(r) mat_identity_((float*)r, mat_n(*r))
 
+#define mat_transpose(m) mat_transpose_((float*)m, mat_n(*m))
+
 #define mat_transl_xy(x, y, r) mat_transl_xy_(x, y, (float*)r, mat_n(*r))
 #define mat_transl_xyz(x, y, z, r) mat_transl_xyz_(x, y, z, (float*)r, mat_n(*r))
 
@@ -46,6 +48,8 @@
 #define mat_rot_z(a, r) mat_rot_z_(a, (float*)r, mat_n(*r))
 
 #define mat_scale(f, r) mat_scale_(f, (float*)r, mat_n(*r))
+#define mat_scale_xy(f, r) mat_scale_xy_(x, y, (float*)r, mat_n(*r))
+#define mat_scale_xyz(f, r) mat_scale_xyz_(x, y, (float*)r, mat_n(*r))
 
 #define mat_add(a, b, r) \
     mat_add_((float*)a, (float*)b, (float*)r, mat_n(*a), mat_n(*b), mat_n(*r))
@@ -59,7 +63,8 @@
 #define mat_div(a, b, r) \
     mat_div_((float*)a, (float*)b, (float*)r, mat_n(*a), mat_n(*b), mat_n(*r))
 
-#define mat_transpose(m) mat_transpose_((float*)m, mat_n(*m))
+#define vec_mat_mul(v, m, r) \
+    vec_mat_mul_((float*)v, (float*)m, (float*)r, vec_n(*v), mat_n(*m), vec_n(*r))
 
 
 /*------------------------------------------------
@@ -191,6 +196,21 @@ static inline void mat_scale_(float f, float* m, int n) {
         m[i+i*n] = f;
 }
 
+static inline void mat_scale_xy_(float x, float y, float* m, int n) {
+    mat_identity_(m, n);
+
+    m[0  ] = x;
+    m[n+1] = y;
+}
+
+static inline void mat_scale_xyz_(float x, float y, float z, float* m, int n) {
+    mat_identity_(m, n);
+
+    m[0    ] = x;
+    m[n+1  ] = y;
+    m[2*n+2] = z;
+}
+
 static inline void mat_add_(const float* a, const float* b, float* r, int a_n, int b_n, int r_n) {
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
         for (int j = 0; j < min(a_n, min(b_n, r_n)); j++)
@@ -233,6 +253,14 @@ static inline void mat_div_(const float* a, const float* b, float* r, int a_n, i
     for (int i = 0; i < min(a_n, min(b_n, r_n)); i++) {
         for (int j = 0; j < min(a_n, min(b_n, r_n)); j++)
             r[i*r_n+j] = a[i*a_n+j] / b[i*b_n+j];
+    }
+}
+
+static inline void vec_mat_mul_(const float* v, const float* m, float* r, int v_n, int m_n, int r_n) {
+    for (int i = 0; i < min(v_n, min(m_n, r_n)); i++) {
+        r[i] = 0.0f;
+        for (int j = 0; j < min(v_n, min(m_n, r_n)); j++)
+            r[i] += v[j] * m[i*m_n+j];
     }
 }
 

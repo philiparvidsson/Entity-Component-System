@@ -33,9 +33,6 @@
     <ClCompile Include="source\physics\world.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\physics\body.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\graphics\graphics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -126,6 +123,9 @@
     <ClCompile Include="source\base\fileio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\physics\body.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -155,9 +155,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\physics\world.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\physics\body.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\physics\physics_p.h">
@@ -260,6 +257,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\buildnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\physics\body.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

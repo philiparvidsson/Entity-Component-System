@@ -4,10 +4,16 @@
 #include "base/common.h"
 #include "math/vector.h"
 
+#define ShapeMaxPoints 256
+
 typedef struct {
-    vec2* points;
-    int num_points;
-    int num_edges;
+    int  num_points;
+    vec2 points[1];
 } shapeT;
+
+shapeT* shapeNew(int num_points);
+shapeT* shapeNewSquare(float width, float height);
+
+void shapeFree(shapeT* shape);
 
 #endif // shape_h_

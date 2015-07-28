@@ -3,7 +3,6 @@
 
 #define Kilogram 1.0f
 
-typedef struct bodyT bodyT;
 typedef struct worldT worldT;
 
 #include "physics/body.h"

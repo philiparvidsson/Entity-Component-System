@@ -377,7 +377,8 @@ materialT* a3dsCreateMaterial(const a3dsDataT* a3ds,
             m->ambient,
             m->diffuse,
             m->specular,
-            m->shininess);
+            m->shininess,
+            false);
 
     // @To-do: strduping here will probably leak, so just null it for now.
     mat->name = NULL;

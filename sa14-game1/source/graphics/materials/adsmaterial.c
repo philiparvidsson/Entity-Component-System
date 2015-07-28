@@ -19,6 +19,7 @@ typedef struct {
     vec3 specular_coeff;
 
     float shininess;
+    bool  wireframe;
 } adsMaterialT;
 
 static void adsBegin(materialT* m) {
@@ -32,6 +33,19 @@ static void adsBegin(materialT* m) {
     useTexture(ads->ambient_tex  ? ads->ambient_tex  : whiteTexture(), 0);
     useTexture(ads->diffuse_tex  ? ads->diffuse_tex  : whiteTexture(), 1);
     useTexture(ads->specular_tex ? ads->specular_tex : whiteTexture(), 2);
+
+    if (ads->wireframe) {
+        glPushAttrib (GL_ENABLE_BIT | GL_POLYGON_BIT);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glDisable(GL_CULL_FACE);
+    }
+}
+
+static void adsEnd(materialT* m) {
+    adsMaterialT* ads = m->data;
+
+    if (ads->wireframe)
+        glPopAttrib();
 }
 
 materialT* createADSMaterial(textureT* ambient_tex,
@@ -40,12 +54,13 @@ materialT* createADSMaterial(textureT* ambient_tex,
                              vec3      ambient_coeff,
                              vec3      diffuse_coeff,
                              vec3      specular_coeff,
-                             float     shininess)
+                             float     shininess,
+                             bool      wireframe)
 {
     materialT* m = createCustomADSMaterial(ambient_tex, diffuse_tex,
                                            specular_tex, ambient_coeff,
                                            diffuse_coeff, specular_coeff,
-                                           shininess, NULL, NULL);
+                                           shininess, wireframe, NULL, NULL);
 
     return (m);
 }
@@ -57,6 +72,7 @@ materialT* createCustomADSMaterial(textureT* ambient_tex,
                                    vec3      diffuse_coeff,
                                    vec3      specular_coeff,
                                    float     shininess,
+                                   bool      wireframe,
                                    string*   vert_src,
                                    string*   frag_src)
 {
@@ -85,7 +101,7 @@ materialT* createCustomADSMaterial(textureT* ambient_tex,
     m->sort_value = 1000;
     m->shader     = ads_shader;
     m->begin_fn   = adsBegin;
-    m->end_fn     = NULL;
+    m->end_fn     = adsEnd;
     
     ads->ambient_tex    = ambient_tex;
     ads->diffuse_tex    = diffuse_tex;
@@ -94,6 +110,7 @@ materialT* createCustomADSMaterial(textureT* ambient_tex,
     ads->diffuse_coeff  = diffuse_coeff;
     ads->specular_coeff = specular_coeff;
     ads->shininess      = shininess;
+    ads->wireframe      = wireframe;
 
     return (m);
 }

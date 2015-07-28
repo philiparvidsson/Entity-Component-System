@@ -27,9 +27,9 @@ gameComponentT* newPhysicsComponent(float mass) {
     gameComponentT* component = newComponent("physics");
     physicsComponentDataT* data = calloc(1, sizeof(physicsComponentDataT));
 
-    data->body = bodyNew(mass);
+    data->body = bodyNewSquare(0.3f, 0.3f, mass);
 
-    component->data = data;
+    component->data       = data;
     component->cleanup_fn = cleanup;
 
     return (component);
