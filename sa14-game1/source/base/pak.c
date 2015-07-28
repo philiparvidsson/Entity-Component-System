@@ -192,7 +192,7 @@ bool pakEOF(const pakFileT* pak_file) {
     return (pak_file->pos >= pak_file->size);
 }
 
-int pakRead(pakFileT* pak_file, char* buf, size_t count) {
+int pakRead(pakFileT* pak_file, uint8_t* buf, size_t count) {
     size_t max_count = pak_file->size - pak_file->pos;
 
     if (max_count == 0)

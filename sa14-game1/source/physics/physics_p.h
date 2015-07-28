@@ -5,6 +5,7 @@
  * INCLUDES
  *----------------------------------------------*/
 
+#include "base/array.h"
 #include "base/common.h"
 #include "math/shape.h"
 #include "math/vector.h"
@@ -44,6 +45,8 @@ struct bodyT {
 
 struct worldT {
     bodyT* bodies;
+
+    arrayT* collisions; // Used to hold collisions during collision testing.
 };
 
 #endif // physics_p_h_

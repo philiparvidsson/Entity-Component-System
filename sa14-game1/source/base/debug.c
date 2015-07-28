@@ -83,7 +83,10 @@ static void setTextColor(const string* color) {
     if (!color)
         color = "";
 
-    if (strcmp(color, "red") == 0) {
+    if (strcmp(color, "magenta") == 0) {
+        attr = FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+    }
+    else if (strcmp(color, "red") == 0) {
         attr = FOREGROUND_RED | FOREGROUND_INTENSITY;
     }
     else if (strcmp(color, "white") == 0) {

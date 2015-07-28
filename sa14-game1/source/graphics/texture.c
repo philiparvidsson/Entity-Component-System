@@ -98,7 +98,7 @@ textureT* loadTextureFromFile(const void* file_name) {
     return (tex);
 }
 
-textureT* loadTextureFromMemory(const char* data) {
+textureT* loadTextureFromMemory(const uint8_t* data) {
     textureT* tex = NULL;
 
     if (data[0]=='B' && data[1]=='M')

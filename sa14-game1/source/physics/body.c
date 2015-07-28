@@ -22,7 +22,7 @@ static void bodyInit(bodyT* body, shapeT* shape, float mass) {
     body->shape       = shape;
     body->inv_mass    = 1.0f/mass;
     body->inv_inertia = 1.0f / 0.015f;
-    body->restitution = 1.0f;
+    body->restitution = 0.5f;
     body->type        = DynamicBody;
 }
 
@@ -59,6 +59,11 @@ aabbT bodyAABB(const bodyT* body) {
         aabb.max.x = max(aabb.max.x, p.x);
         aabb.max.y = max(aabb.max.y, p.y);
     }
+
+    vec_add(&body->state.x, &aabb.min, &aabb.min);
+    vec_add(&body->state.x, &aabb.max, &aabb.max);
+
+    return (aabb);
 }
 
 float bodyOrientation   (const bodyT* body)              { return (body->state.o); }

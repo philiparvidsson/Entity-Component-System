@@ -26,10 +26,6 @@ void gameMain(void(*frame_func)(float dt));
 
 void addSubsystemToGame(gameSubsystemT* subsystem);
 void addEntityToGame(gameEntityT* entity);
-void addGamePak(pakArchiveT* pak);
-char* readGamePakFile(const string* file_name);
-int gamePakFileSize(const string* file_name);
-//void* delayedFree(void* mem);
 
 void gameAddResource(const string* name, void* data, int type);
 const void* gameResource(const string* name, int type);

@@ -19,7 +19,7 @@ void pakCloseFile(pakFileT* pak_file);
 int pakFileSize(const pakFileT* pak_file);
 int pakFileSeek(pakFileT* pak_file, size_t n);
 bool pakEOF(const pakFileT* pak_file);
-int pakRead(pakFileT* pak_file, char* buf, size_t count);
+int pakRead(pakFileT* pak_file, uint8_t* buf, size_t count);
 uint8_t* pakReadFile(pakArchiveT* pak, const string* file_name);
 
 #endif // pak_h_

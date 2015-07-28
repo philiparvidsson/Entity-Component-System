@@ -26,8 +26,6 @@ typedef struct gameResourceT {
 } gameResourceT;
 
 struct gameT {
-    arrayT* paks;
-
     gameResourceT* resources;
 
     arrayT* entities;
@@ -55,13 +53,6 @@ static void gameCleanup(void) {
     }
 
     arrayFree(game_inst->subsystems);
-
-    for (int i = 0; i < arrayLength(game_inst->paks); i++) {
-        pakArchiveT* pak = *(pakArchiveT**)arrayGet(game_inst->paks, i);
-        pakCloseArchive(pak);
-    }
-
-    arrayFree(game_inst->paks);
 
     free(game_inst);
     game_inst = NULL;
@@ -106,9 +97,7 @@ void initGame(const string* title, int screen_width, int screen_height) {
 
     game_inst = malloc(sizeof(gameT));
 
-    game_inst->resources = NULL;
-
-    game_inst->paks       = arrayNew(sizeof(pakArchiveT*));
+    game_inst->resources  = NULL;
     game_inst->entities   = arrayNew(sizeof(gameEntityT*));
     game_inst->subsystems = arrayNew(sizeof(gameSubsystemT*));
 }
@@ -191,39 +180,6 @@ void removeEntityFromGame(gameEntityT* entity) {
     entity->game = NULL;
 }
 
-void addGamePak(pakArchiveT* pak) {
-    assert(pak != NULL);
-
-    arrayAdd(game_inst->paks, &pak);
-}
-
-uint8_t* readGamePakFile(const string* file_name) {
-    for (int i = arrayLength(game_inst->paks)-1; i >= 0; i--) {
-        pakArchiveT* pak = *(pakArchiveT**)arrayGet(game_inst->paks, i);
-
-        uint8_t* data = pakReadFile(pak, file_name);
-        if (data)
-            return (data);
-    }
-
-    error("couldn't find file '%s' in any game pak", file_name);
-}
-
-int gamePakFileSize(const string* file_name) {
-    for (int i = arrayLength(game_inst->paks)-1; i >= 0; i--) {
-        pakArchiveT* pak = *(pakArchiveT**)arrayGet(game_inst->paks, i);
-
-        pakFileT* pf = pakOpenFile(pak, file_name);
-        if (pf) {
-            int file_size = pakFileSize(pf);
-            pakCloseFile(pf);
-            return (file_size);
-        }
-    }
-
-    error("couldn't find file '%s' in any game pak", file_name);
-}
-
 void gameAddResource(const string* name, void* data, int type) {
     gameResourceT* res = malloc(sizeof(gameResourceT));
 
@@ -248,8 +204,3 @@ const void* gameResource(const string* name, int type) {
 
     return (NULL);
 }
-
-/*void* delayedFree(void* mem) {
-    arrayAdd(game_inst->delayed_free, &mem);
-    return (mem);
-}*/

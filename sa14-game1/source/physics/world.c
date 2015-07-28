@@ -7,6 +7,7 @@
 
 #include "base/common.h"
 #include "base/debug.h"
+#include "math/aabb.h"
 #include "math/matrix.h"
 #include "math/shape.h"
 #include "physics/body.h"
@@ -16,19 +17,28 @@
 
 #define MaxAttempts (8)
 
+typedef struct {
+    bool exists;
+    vec2 normal;
+    vec2 contact;
+    bodyT* a;
+    bodyT* b;
+} collisionT;
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
 worldT* worldAlloc(void) {
-    worldT* world = malloc(sizeof(worldT));
+    worldT* world = calloc(1, sizeof(worldT));
+
+    world->collisions = arrayNew(sizeof(collisionT));
 
     return (world);
 }
 
 void worldInit(worldT* world) {
-    memset(world, 0, sizeof(worldT));
+    //memset(world, 0, sizeof(worldT));
 }
 
 worldT* worldNew(void) {
@@ -39,8 +49,15 @@ worldT* worldNew(void) {
 }
 
 void worldFree(worldT* world) {
-    if (world)
-        free(world);
+    if (!world)
+        return;
+
+    if (world->collisions) {
+        arrayFree(world->collisions);
+        world->collisions = NULL;
+    }
+
+    free(world);
 }
 
 void worldAddBody(worldT* world, bodyT* body) {
@@ -55,113 +72,134 @@ void worldAddBody(worldT* world, bodyT* body) {
     world->bodies = body;
 }
 
-static bool collisionsExist(worldT* world) {
-    bodyT* body = world->bodies;
-    while (body) {
-        mat2x2 orientation;
-        mat_rot_z(body->state.o, &orientation);
+static void findBodyBodyContacts(bodyT* a, bodyT* b) {
+    for (int i0 = 0; i0 < a->shape->num_points; i0++) {
+        int i1 = (i0+1) % a->shape->num_points;
 
-        for (int i = 0; i < body->shape->num_points; i++) {
-            vec2 local_pos, world_pos;
-            vec_mat_mul(&body->shape->points[i], &orientation, &local_pos);
-            vec_add    (&body->state.x         , &local_pos  , &world_pos);
+        vec2 p = a->shape->points[i0];
+        vec2 q = a->shape->points[i1];
 
-            if (world_pos.x < -2.0f) return (true);
-            if (world_pos.x >  2.0f) return (true);
-            if (world_pos.y < -1.0f) return (true);
-            if (world_pos.y >  1.0f) return (true);
+        for (int j = 0; j < b->shape->num_points; j++) {
         }
-
-        body = body->next;
     }
-
-    return (false);
 }
 
-static void resolveWorldEdgeCollisions(worldT* world) {
+static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
+    collisionT collision = { 0 };
+
+    collision.exists = false;
+
+    // First, we do an AABB collision test since it's faster.
+
+    aabbT a_aabb = bodyAABB(a);
+    aabbT b_aabb = bodyAABB(b);
+
+    if (a_aabb.max.x < b_aabb.min.x
+     || a_aabb.min.x > b_aabb.max.x
+     || a_aabb.max.y < b_aabb.min.y
+     || a_aabb.min.y > b_aabb.max.y)
+    {
+        // Definitely not a collision, so we can return here.
+        return (collision);
+    }
+    // The AABBs are colliding, so there might be a collision.
+
+    return (collision);
+}
+
+static collisionT findWorldEdgeCollision(worldT* world, bodyT* body) {
+    // We find the number of contacts that the object is making with the
+    // world edges and then average them into a single contact point, at
+    // which we then apply the collision impulse vector.
+
+    collisionT collision = { 0 };
+
+    collision.a      = body;
+    collision.exists = false;
+
+    int num_contacts = 0;
+
+    mat2x2 rotation;
+    mat_rot_z(body->state.o, &rotation);
+
+    for (int i = 0; i < body->shape->num_points; i++) {
+        vec2 local_pos, world_pos;
+        vec_mat_mul(&body->shape->points[i], &rotation , &local_pos);
+        vec_add    (&body->state.x         , &local_pos, &world_pos);
+
+        bool coll = false;
+        if (world_pos.x < -2.0f) { coll = true; collision.normal.x += 1.0f; }
+        if (world_pos.x >  2.0f) { coll = true; collision.normal.x -= 1.0f; }
+        if (world_pos.y < -1.0f) { coll = true; collision.normal.y += 1.0f; }
+        if (world_pos.y >  1.0f) { coll = true; collision.normal.y -= 1.0f; }
+
+        if (coll) {
+            num_contacts++;
+            vec_add(&local_pos, &collision.contact, &collision.contact);
+        }
+    }
+
+    if (num_contacts > 0) {
+        vec_scale(&collision.contact, 1.0f/num_contacts, &collision.contact);
+        vec_normalize(&collision.normal, &collision.normal);
+
+        collision.exists = true;
+    }
+
+    return (collision);
+}
+
+static int findCollisions(worldT* world) {
+    arrayClear(world->collisions);
+
     bodyT* body = world->bodies;
     while (body) {
-        // We find the number of contacts that the object is making with the
-        // world edges and then average them into a single contact point, at
-        // which we then apply the collision impulse vector.
+        collisionT c = findWorldEdgeCollision(world, body);
 
-        int num_contacts = 0;
+        if (c.exists)
+            arrayAdd(world->collisions, &c);
 
-        vec2 contact = { 0 };
-        vec2 normal  = { 0 };
 
-        mat2x2 rotation;
-        mat_rot_z(body->state.o, &rotation);
-
-        for (int i = 0; i < body->shape->num_points; i++) {
-            vec2 local_pos, world_pos;
-            vec_mat_mul(&body->shape->points[i], &rotation , &local_pos);
-            vec_add    (&body->state.x         , &local_pos, &world_pos);
-
-            // The variable f indicates whether there is a contact.
-            bool coll = false;
-            if (world_pos.x < -2.0f) { coll = true; normal.x += 1.0f; }
-            if (world_pos.x >  2.0f) { coll = true; normal.x -= 1.0f; }
-            if (world_pos.y < -1.0f) { coll = true; normal.y += 1.0f; }
-            if (world_pos.y >  1.0f) { coll = true; normal.y -= 1.0f; }
-
-            if (coll) {
-                num_contacts++;
-                vec_add(&contact, &local_pos, &contact);
+        bodyT* other_body = world->bodies;
+        while (other_body) {
+            if (other_body == body) {
+                other_body = other_body->next;
+                continue;
             }
-        }
 
-        if (num_contacts > 0) {
-            vec_scale(&contact, 1.0f / num_contacts, &contact);
+            //memset(&c, 0, sizeof(collisionT));
+            c = findBodyBodyCollision(world, body, other_body);
 
-            vec2 v = body->state.v;
-            v.x += -contact.y * body->state.w;
-            v.y +=  contact.x * body->state.w;
-
-            vec_perp     (&contact          , &v);
-            vec_scale    (&v,  body->state.w, &v);
-            vec_add      (&v, &body->state.v, &v);
-            vec_normalize(&normal, &normal);
-
-            float inv_mass    = body->inv_mass;
-            float inv_inertia = powf(vec_perp_dot(&contact, &normal), 2.0f);
-
-            float j  = -(1.0f + body->restitution)*vec_dot(&v, &normal);
-                  j /= inv_mass + inv_inertia*body->inv_inertia;
-
-            vec2 impulse = (vec2) { j*normal.x, j*normal.y };
-            bodyApplyImpulse(body, impulse, contact);
+            other_body = other_body->next;
         }
 
         body = body->next;
     }
-}
 
-static void resolveObjectCollisions(worldT* world) {
-    bodyT* a_body = world->bodies;
-    while (a_body) {
-        bodyT* b_body = world->bodies;
-        while (b_body) {
-            mat2x2 a_r, b_r;
-            mat_rot_z(a_body->state.o, &a_r);
-            mat_rot_z(b_body->state.o, &b_r);
-
-            vec2 p = b_body->state.x;
-            vec_sub(&p, &a_body->state.x, &p);
-
-            
-
-            b_body = b_body->next;
-        }
-
-
-        a_body = a_body->next;
-    }
+    return arrayLength(world->collisions);
 }
 
 static void resolveCollisions(worldT* world) {
-    resolveWorldEdgeCollisions(world);
-    resolveObjectCollisions(world);
+    for (int i = 0; i < arrayLength(world->collisions); i++) {
+        collisionT* c = arrayGet(world->collisions, i);
+
+        vec2 v = c->a->state.v;
+        v.x += -c->contact.y * c->a->state.w;
+        v.y +=  c->contact.x * c->a->state.w;
+
+        vec_perp (&c->contact       , &v);
+        vec_scale(&v, c->a->state.w, &v);
+        vec_add  (&v, &c->a->state.v, &v);
+
+        float inv_mass    = c->a->inv_mass;
+        float inv_inertia = powf(vec_perp_dot(&c->contact, &c->normal), 2.0f);
+
+        float j  = -(1.0f + c->a->restitution)*vec_dot(&v, &c->normal);
+              j /= inv_mass + inv_inertia*c->a->inv_inertia;
+
+        vec2 impulse = (vec2) { j*c->normal.x, j*c->normal.y };
+        bodyApplyImpulse(c->a, impulse, c->contact);
+    }
 }
 
 void worldStep(worldT* world, float dt2) {
@@ -169,7 +207,8 @@ void worldStep(worldT* world, float dt2) {
     while (b) {
         bodyT* body = b;
         b = b->next;
-
+        
+        //body->state.a.y = -3.0f;
         body->prev_state = body->state;
     }
 
@@ -209,7 +248,7 @@ void worldStep(worldT* world, float dt2) {
         // 2. Handle collisions (if any).
         //----------------------------------------
 
-        if (collisionsExist(world)) {
+        if (findCollisions(world) > 0) {
             // There are collisions. If this is our last attempt, we must
             // resolve them. Otherwise, we can increase our attempt counter and
             // hope to simulate just a little bit more before encountering them,
@@ -251,8 +290,4 @@ void worldStep(worldT* world, float dt2) {
             counter -= (int)pow(2, MaxAttempts) >> num_attempts;
         }
     }
-
-#ifdef _DEBUG
-    assert(!collisionsExist(world));
-#endif // _DEBUG
 }

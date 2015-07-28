@@ -22,10 +22,8 @@
 #include "engine/game.h"
 #include "graphics/graphics.h"
 #include "graphics/shader.h"
-#include "graphics/text.h"
 #include "graphics/texture.h"
 #include "graphics/trimesh.h"
-#include "graphics/io/3ds.h"
 
 #include <windows.h>
 
@@ -151,13 +149,6 @@ int main(void) {
     loadResources();
 
     printIntroMessage();
-
-    addGamePak(pakOpenArchive("data.pak", PakPassword));
-
-    char* font_data = readGamePakFile("fonts/sector_034.ttf");
-    int   num_bytes = gamePakFileSize("fonts/sector_034.ttf");
-    loadFontFromMemory(font_data, num_bytes);
-    free(font_data);
 
     showWindow();
 #ifndef _DEBUG

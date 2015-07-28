@@ -17,6 +17,7 @@
 
 #include "base/common.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h> // memcpy(), memmove()
 
@@ -164,7 +165,7 @@ void* arrayAdd(arrayT* a, const void* elem) {
     if (a->num_elems >= a->max_elems)
         doubleArrayCapacity(a);
 
-    void* dest = (char*)a->data + (a->num_elems * a->elem_size);
+    void* dest = (uint8_t*)a->data + (a->num_elems * a->elem_size);
     
     memcpy(dest, elem, a->elem_size);
     a->num_elems++;
@@ -187,8 +188,8 @@ void* arrayAdd(arrayT* a, const void* elem) {
 void arrayRemove(arrayT* a, int i) {
     assert(0 <= i && i < a->num_elems);
 
-    void* dest = (char*)a->data + (i * a->elem_size);
-    void* src  = (char*)dest + a->elem_size;
+    void* dest = (uint8_t*)a->data + (i * a->elem_size);
+    void* src  = (uint8_t*)dest + a->elem_size;
     memmove(dest, src, (a->num_elems-i+1) * a->elem_size);
     a->num_elems--;
 }
@@ -211,7 +212,7 @@ void arrayRemove(arrayT* a, int i) {
 void* arrayGet(const arrayT* a, int i) {
     assert(0 <= i && i < a->num_elems);
 
-    void* ptr = (char*)a->data + (i * a->elem_size);
+    void* ptr = (uint8_t*)a->data + (i * a->elem_size);
     return (ptr);
 }
 

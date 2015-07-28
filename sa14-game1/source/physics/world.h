@@ -20,4 +20,6 @@ void worldFree(worldT* world);
 void worldAddBody(worldT* world, bodyT* body);
 void worldStep(worldT* world, float dt);
 
+bool areBodiesColliding(bodyT* a, bodyT* b);
+
 #endif // world_h

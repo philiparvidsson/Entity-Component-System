@@ -4,8 +4,9 @@
 #include "base/fileio.h"
 #include "base/pak.h"
 #include "engine/game.h"
-#include "graphics/shader.h"
 #include "graphics/io/3ds.h"
+#include "graphics/shader.h"
+#include "graphics/text.h"
 
 #include <string.h>
 
@@ -173,6 +174,17 @@ void loadResources(void) {
 
         trace("  loaded %s", file_name);
     }
+
+    pakFileT* pf = pakOpenFile(pak, "fonts/sector_034.ttf");
+    assert(pf != NULL);
+
+    int num_bytes = pakFileSize(pf);
+    uint8_t* font_data = malloc(sizeof(uint8_t) * num_bytes);
+    assert(pakRead(pf, font_data, num_bytes) == num_bytes);
+    pakCloseFile(pf);
+    loadFontFromMemory(font_data, num_bytes);
+    free(font_data);
+    trace("\nloading fonts...\n  loaded font: Sector 034");
 
     pakCloseArchive(pak);
 
