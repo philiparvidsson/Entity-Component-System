@@ -103,11 +103,11 @@ static gameComponentT* createPhysicsComponent(void) {
     }
 
     //vec_scale(&pos, 0.1f, &pos);
-    bodySetOrientation(((physicsComponentDataT*)phys)->body, 15 * 3.141592f / 180.0f);
+    bodySetOrientation(((physicsComponentDataT*)phys)->body, 0 * 3.141592f / 180.0f);
     pos.x = 0.0f;
     pos.y = 0.0f;
     vel.x = -5.0f;
-    vel.y = -7.0f;
+    vel.y = -9.0f;
     bodySetPosition(((physicsComponentDataT*)phys)->body, pos);
 
     vec_scale(&vel, 0.1f, &vel);
@@ -122,7 +122,7 @@ static void rotateAsteroid(gameComponentT* component, float dt) {
     physicsComponentDataT*  phys = getComponent(component->entity, "physics" )->data;
     
     float o = bodyOrientation(phys->body);
-    vec2  x = bodyPosition(phys->body);
+    vec2  x = bodyPosition   (phys->body);
     
     mat4x4 m, r, t;
 

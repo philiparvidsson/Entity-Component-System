@@ -10,9 +10,7 @@ shapeT* shapeNew(int num_points) {
     assert(0 <= num_points && num_points < ShapeMaxPoints)
 
     // One point is included in sizeof(shapeT) so we can subtract it.
-    num_points--;
-
-    shapeT* shape = calloc(1, sizeof(shapeT) + sizeof(vec2) * num_points);
+    shapeT* shape = calloc(1, sizeof(shapeT) + sizeof(vec2) * num_points-1);
 
     shape->num_points = num_points;
 

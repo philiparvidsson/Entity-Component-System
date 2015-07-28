@@ -258,7 +258,7 @@ a3dsDataT* a3dsLoad(const uint8_t* ptr) {
     if (a3ds->version != 3)
         error("unsupported 3ds version");
 
-    trace("  materials: %d", arrayLength(a3ds->materials));
+    /*trace("  materials: %d", arrayLength(a3ds->materials));
     for (int i = 0; i < arrayLength(a3ds->materials); i++) {
         a3dsMaterialDataT* material_data = *(a3dsMaterialDataT**)arrayGet(a3ds->materials, i);
         trace("    name: %s", material_data->name);
@@ -283,7 +283,7 @@ a3dsDataT* a3dsLoad(const uint8_t* ptr) {
         trace("    material: %s", obj_data->mesh->material);
         trace("    num verts: %d", obj_data->mesh->num_verts);
         trace("    num tris:  %d", obj_data->mesh->num_tris);
-    }
+    }*/
 
     return (a3ds);
 }
