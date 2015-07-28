@@ -22,7 +22,7 @@ static void bodyInit(bodyT* body, shapeT* shape, float mass) {
     body->shape       = shape;
     body->inv_mass    = 1.0f/mass;
     body->inv_inertia = 1.0f / 0.015f;
-    body->restitution = 0.5f;
+    body->restitution = 1.0f;
     body->type        = DynamicBody;
 }
 

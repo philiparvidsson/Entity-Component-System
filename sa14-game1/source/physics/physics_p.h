@@ -32,6 +32,7 @@ struct bodyT {
     shapeT* shape;
 
     bodyStateT state;
+    bodyStateT next_state;
     bodyStateT prev_state;
 
     bodyTypeT type;

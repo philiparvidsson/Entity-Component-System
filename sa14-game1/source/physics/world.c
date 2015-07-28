@@ -104,6 +104,15 @@ static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
     }
     // The AABBs are colliding, so there might be a collision.
 
+    // @To-do: I'm a lazy bastard and decided to only implement fine collision
+    //         resolution for rectangles. Boo-hoo!
+    
+    // Require exactly 4 points and assume they represent a rectangle.
+    assert(a->shape->num_points == 4);
+    assert(b->shape->num_points == 4);
+
+    aabbT aabb;
+
     return (collision);
 }
 
@@ -155,7 +164,6 @@ static int findCollisions(worldT* world) {
     bodyT* body = world->bodies;
     while (body) {
         collisionT c = findWorldEdgeCollision(world, body);
-
         if (c.exists)
             arrayAdd(world->collisions, &c);
 
@@ -169,6 +177,8 @@ static int findCollisions(worldT* world) {
 
             //memset(&c, 0, sizeof(collisionT));
             c = findBodyBodyCollision(world, body, other_body);
+            if (c.exists)
+                arrayAdd(world->collisions, &c);
 
             other_body = other_body->next;
         }
@@ -198,96 +208,136 @@ static void resolveCollisions(worldT* world) {
               j /= inv_mass + inv_inertia*c->a->inv_inertia;
 
         vec2 impulse = (vec2) { j*c->normal.x, j*c->normal.y };
+        //printf("before coll %4.2f %4.2f\n", c->a->state.v.x, c->a->state.v.y);
         bodyApplyImpulse(c->a, impulse, c->contact);
+        //printf("after coll %4.2f %4.2f\n", c->a->state.v.x, c->a->state.v.y);
     }
+
 }
 
-void worldStep(worldT* world, float dt2) {
+typedef struct {
+    vec2 dx;
+    vec2 dv;
+    float d_o;
+    float dw;
+} derivativeT;
+
+static vec3 accelerationFunc(bodyStateT* state) {
+    return (vec3) { 0.0f , -5.0f, 0.0f };
+}
+
+static derivativeT rk4Evaluate(bodyStateT* initial, derivativeT* d, float dt) {
+    bodyStateT state;
+
+    state.x.x = initial->x.x + d->dx.x * dt;
+    state.x.y = initial->x.y + d->dx.y * dt;
+    state.v.x = initial->v.x + d->dv.x * dt;
+    state.v.y = initial->v.y + d->dv.y * dt;
+    state.o   = initial->o   + d->d_o  * dt;
+    state.w   = initial->w   + d->dw   * dt;
+
+    derivativeT output;
+
+    vec3 acc = accelerationFunc(&state);
+
+    output.dx  = state.v;
+    output.dv  = acc.xy;
+    output.d_o = state.w;
+    output.dw  = acc.z;
+
+    return (output);
+}
+
+static void rk4Integrate(bodyT* body, float dt) {
+    // Fourth-order Runge-Kutta integration.
+
+    derivativeT empty = { 0 };
+
+    derivativeT a = rk4Evaluate(&body->state, &empty, 0.0f   );
+    derivativeT b = rk4Evaluate(&body->state, &a    , dt*0.5f);
+    derivativeT c = rk4Evaluate(&body->state, &b    , dt*0.5f);
+    derivativeT d = rk4Evaluate(&body->state, &c    , dt     );
+
+    body->state.x.x += (1.0f/6.0f) * (a.dx.x + 2.0f*(b.dx.x + c.dx.x) + d.dx.x) * dt;
+    body->state.x.y += (1.0f/6.0f) * (a.dx.y + 2.0f*(b.dx.y + c.dx.y) + d.dx.y) * dt;
+    body->state.v.x += (1.0f/6.0f) * (a.dv.x + 2.0f*(b.dv.x + c.dv.x) + d.dv.x) * dt;
+    body->state.v.y += (1.0f/6.0f) * (a.dv.y + 2.0f*(b.dv.y + c.dv.y) + d.dv.y) * dt;
+    body->state.o   += (1.0f/6.0f) * (a.d_o  + 2.0f*(b.d_o  + c.d_o ) + d.d_o ) * dt;
+    body->state.w   += (1.0f/6.0f) * (a.dw   + 2.0f*(b.dw   + c.dw  ) + d.dw  ) * dt;
+}
+
+static inline float lerp(float a, float b, float x) {
+    return (a*x + b*(1.0f-x));
+}
+
+void worldStep(worldT* world, float dt) {
     bodyT* b = world->bodies;
     while (b) {
         bodyT* body = b;
         b = b->next;
-        
-        //body->state.a.y = -3.0f;
+
         body->prev_state = body->state;
     }
 
-    int counter      = pow(2, MaxAttempts);
-    int num_attempts = 0;
+    int counter = 16;
 
-    while (counter) {
-        bool collision_found = false;
+    float safe_x = 0.0f;
+    float step   = 1.0f;
 
-        float dt = dt2 / pow(2, num_attempts);
+    while (dt > (1.0/1000000.0f)) {
+        float x = safe_x + step;
 
-        //----------------------------------------
-        // 1. Step world forward in time.
-        //----------------------------------------
-
-        b = world->bodies;
+        bodyT* b = world->bodies;
         while (b) {
             bodyT* body = b;
             b = b->next;
 
-            // Static bodies do not move.
-            if (body->type == StaticBody)
-                continue;
-
-            body->state.v.x += body->state.a.x * dt;
-            body->state.v.y += body->state.a.y * dt;
-            body->state.x.x += body->state.v.x * dt;
-            body->state.x.y += body->state.v.y * dt;
-            body->state.w   += body->state.t   * dt;
-            body->state.o   += body->state.w   * dt;
-
-            body->state.a.x = body->state.a.y = 0.0f;
-            body->state.t   = 0.0f;
-        }
-
-        //----------------------------------------
-        // 2. Handle collisions (if any).
-        //----------------------------------------
-
-        if (findCollisions(world) > 0) {
-            // There are collisions. If this is our last attempt, we must
-            // resolve them. Otherwise, we can increase our attempt counter and
-            // hope to simulate just a little bit more before encountering them,
-            // giving our simulation higher precision.
-
-            num_attempts++;
-
-            if (num_attempts > MaxAttempts) {
-                warn("collisions were not resolved");
-                num_attempts = MaxAttempts;
-            }
-
-            if (num_attempts == MaxAttempts)
-                resolveCollisions(world);
-
             bodyT* b = world->bodies;
             while (b) {
                 bodyT* body = b;
                 b = b->next;
 
-                body->state.x = body->prev_state.x;
-                body->state.o = body->prev_state.o;
-                body->state.a = body->prev_state.a;
-                body->state.t = body->prev_state.t;
+                body->state = body->prev_state;
+
+                rk4Integrate(body, dt*x);
+            }
+        }
+
+        if (findCollisions(world) > 0) {
+            x = safe_x;
+            step *= 0.5f;
+
+            counter--;
+            if (counter < 0) {
+                counter = 0;
+                warn("couldn't resolve collisions");
+            }
+
+            if (counter == 0) {
+                resolveCollisions(world);
+
+                bodyT* b = world->bodies;
+                while (b) {
+                    bodyT* body = b;
+                    b = b->next;
+
+                    body->prev_state.v = body->state.v;
+                    body->prev_state.w = body->state.w;
+                }
             }
         }
         else {
-            // We managed to simulate a step (though not necessarily a full one)
-            // without encountering any collisions.
+            safe_x = x;
 
             bodyT* b = world->bodies;
             while (b) {
                 bodyT* body = b;
                 b = b->next;
-
+        
                 body->prev_state = body->state;
             }
-            
-            counter -= (int)pow(2, MaxAttempts) >> num_attempts;
+
+            dt -= safe_x * dt;
         }
     }
 }
