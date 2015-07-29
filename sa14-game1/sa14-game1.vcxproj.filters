@@ -126,6 +126,9 @@
     <ClCompile Include="source\physics\body.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\math\integrate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">
@@ -260,6 +263,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\physics\body.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\integrate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

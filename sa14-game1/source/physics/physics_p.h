@@ -17,13 +17,12 @@
  *----------------------------------------------*/
 
 typedef struct {
-    vec2 x; // Position.
-    vec2 v; // Velocity.
-    vec2 a; // Acceleration.
-
-    float o;  // Orientation.
-    float w;  // Angular velocity.
-    float t;  // Torque.
+    vec2  x; // Position.
+    float o; // Orientation.
+    vec2  v; // Velocity.
+    float w; // Angular velocity.
+    vec2  a; // Acceleration.
+    float t; // Torque.
 } bodyStateT;
 
 struct bodyT {
@@ -32,7 +31,6 @@ struct bodyT {
     shapeT* shape;
 
     bodyStateT state;
-    bodyStateT next_state;
     bodyStateT prev_state;
 
     bodyTypeT type;

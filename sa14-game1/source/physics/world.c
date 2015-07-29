@@ -215,129 +215,61 @@ static void resolveCollisions(worldT* world) {
 
 }
 
-typedef struct {
-    vec2 dx;
-    vec2 dv;
-    float d_o;
-    float dw;
-} derivativeT;
-
-static vec3 accelerationFunc(bodyStateT* state) {
-    return (vec3) { 0.0f , -5.0f, 0.0f };
-}
-
-static derivativeT rk4Evaluate(bodyStateT* initial, derivativeT* d, float dt) {
-    bodyStateT state;
-
-    state.x.x = initial->x.x + d->dx.x * dt;
-    state.x.y = initial->x.y + d->dx.y * dt;
-    state.v.x = initial->v.x + d->dv.x * dt;
-    state.v.y = initial->v.y + d->dv.y * dt;
-    state.o   = initial->o   + d->d_o  * dt;
-    state.w   = initial->w   + d->dw   * dt;
-
-    derivativeT output;
-
-    vec3 acc = accelerationFunc(&state);
-
-    output.dx  = state.v;
-    output.dv  = acc.xy;
-    output.d_o = state.w;
-    output.dw  = acc.z;
-
-    return (output);
-}
-
-static void rk4Integrate(bodyT* body, float dt) {
-    // Fourth-order Runge-Kutta integration.
-
-    derivativeT empty = { 0 };
-
-    derivativeT a = rk4Evaluate(&body->state, &empty, 0.0f   );
-    derivativeT b = rk4Evaluate(&body->state, &a    , dt*0.5f);
-    derivativeT c = rk4Evaluate(&body->state, &b    , dt*0.5f);
-    derivativeT d = rk4Evaluate(&body->state, &c    , dt     );
-
-    body->state.x.x += (1.0f/6.0f) * (a.dx.x + 2.0f*(b.dx.x + c.dx.x) + d.dx.x) * dt;
-    body->state.x.y += (1.0f/6.0f) * (a.dx.y + 2.0f*(b.dx.y + c.dx.y) + d.dx.y) * dt;
-    body->state.v.x += (1.0f/6.0f) * (a.dv.x + 2.0f*(b.dv.x + c.dv.x) + d.dv.x) * dt;
-    body->state.v.y += (1.0f/6.0f) * (a.dv.y + 2.0f*(b.dv.y + c.dv.y) + d.dv.y) * dt;
-    body->state.o   += (1.0f/6.0f) * (a.d_o  + 2.0f*(b.d_o  + c.d_o ) + d.d_o ) * dt;
-    body->state.w   += (1.0f/6.0f) * (a.dw   + 2.0f*(b.dw   + c.dw  ) + d.dw  ) * dt;
-}
-
-static inline float lerp(float a, float b, float x) {
-    return (a*x + b*(1.0f-x));
+static void accelerationFn(float* a, float dt) {
+    a[0] = 0.0f;  // a_x
+    a[1] = -3.0f; // a_y
+    a[2] = 0.0f;  // t
 }
 
 void worldStep(worldT* world, float dt) {
-    bodyT* b = world->bodies;
-    while (b) {
-        bodyT* body = b;
-        b = b->next;
-
+    bodyT* body = world->bodies;
+    while (body) {
         body->prev_state = body->state;
+        body = body->next;
     }
 
-    int counter = 16;
-
-    float safe_x = 0.0f;
-    float step   = 1.0f;
+    int a = 1;
+    int b = 1;
 
     while (dt > (1.0/1000000.0f)) {
-        float x = safe_x + step;
+        float x = (float)a/(float)b;
 
-        bodyT* b = world->bodies;
-        while (b) {
-            bodyT* body = b;
-            b = b->next;
+        body = world->bodies;
+        while (body) {
+            body->state = body->prev_state;
 
-            bodyT* b = world->bodies;
-            while (b) {
-                bodyT* body = b;
-                b = b->next;
-
-                body->state = body->prev_state;
-
-                rk4Integrate(body, dt*x);
-            }
+            ////rk4Integrate(body, dt*x);
+            bodyStateT* s = &body->state;
+            eulerIntegrate(&s->x, &s->v, &s->a, 3, dt*x, accelerationFn);
+            body = body->next;
         }
 
         if (findCollisions(world) > 0) {
-            x = safe_x;
-            step *= 0.5f;
-
-            counter--;
-            if (counter < 0) {
-                counter = 0;
-                warn("couldn't resolve collisions");
-            }
-
-            if (counter == 0) {
+            b <<= 1;
+            if (b == (1<<8)) {
                 resolveCollisions(world);
 
-                bodyT* b = world->bodies;
-                while (b) {
-                    bodyT* body = b;
-                    b = b->next;
-
+                body = world->bodies;
+                while (body) {
                     body->prev_state.v = body->state.v;
                     body->prev_state.w = body->state.w;
+
+                    body = body->next;
                 }
+
+                a = 1;
+                b = 1;
             }
         }
         else {
-            safe_x = x;
-
-            bodyT* b = world->bodies;
-            while (b) {
-                bodyT* body = b;
-                b = b->next;
-        
+            body = world->bodies;
+            while (body) {
                 body->prev_state = body->state;
+                body = body->next;
             }
 
-            dt -= safe_x * dt;
+            dt -= x*dt;
+            a <<= 1;
         }
     }
 }

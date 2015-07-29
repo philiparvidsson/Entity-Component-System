@@ -126,6 +126,7 @@
     <ClCompile Include="source\graphics\text.c" />
     <ClCompile Include="source\input\keyboard.c" />
     <ClCompile Include="source\input\mouse.c" />
+    <ClCompile Include="source\math\integrate.c" />
     <ClCompile Include="source\physics\body.c" />
     <ClCompile Include="source\math\shape.c" />
     <ClCompile Include="source\physics\world.c" />
@@ -172,6 +173,7 @@
     <ClInclude Include="source\graphics\text.h" />
     <ClInclude Include="source\input\keyboard.h" />
     <ClInclude Include="source\input\mouse.h" />
+    <ClInclude Include="source\math\integrate.h" />
     <ClInclude Include="source\math\matrix.h" />
     <ClInclude Include="source\math\vector.h" />
     <ClInclude Include="source\math\aabb.h" />
