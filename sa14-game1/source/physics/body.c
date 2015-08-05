@@ -34,6 +34,7 @@ bodyT* bodyNew(shapeT* shape, float mass) {
 }
 
 bodyT* bodyNewSquare(float width, float height, float mass) {
+    // @To-do: Remove this function. Up to the client to provide a shape.
     shapeT* shape = shapeNewSquare(width, height);
 
     return (bodyNew(shape, mass));
@@ -45,13 +46,22 @@ void bodyFree(bodyT* body) {
 }
 
 aabbT bodyAABB(const bodyT* body) {
+    aabbT aabb = shapeAABB(body->shape);
+
+    vec_add(&body->state.x, &aabb.min, &aabb.min);
+    vec_add(&body->state.x, &aabb.max, &aabb.max);
+
+    return (aabb);
+}
+
+aabbT bodyRotatedAABB(const bodyT* body) {
     aabbT aabb = { 0 };
 
     mat2x2 r;
     mat_rot_z(body->state.o, &r);
 
     for (int i = 0; i < body->shape->num_points; i++) {
-        vec2 p;
+        vec2 p = body->shape->points[i];
         vec_mat_mul(&body->shape->points[i], &r, &p);
 
         aabb.min.x = min(aabb.min.x, p.x);

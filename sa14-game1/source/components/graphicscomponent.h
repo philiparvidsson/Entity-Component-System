@@ -20,7 +20,6 @@
 typedef struct {
     triMeshT*  mesh;             // Model mesh.
     mat4x4     transform;        // Model transform matrix.
-    mat4x4     normal_transform; // Normal transform matrix.
     materialT* material;         // Shader material.
     //shaderT*   shader;           // Shader, or NULL to use default.
     //textureT*  texture;          // Texture, or NULL to use default.

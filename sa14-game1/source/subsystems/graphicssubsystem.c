@@ -217,7 +217,7 @@ static void drawComponent(graphicsSubsystemDataT* gfx_data, gameComponentT* comp
 
     setShaderParam("ModelViewProj"    , &gfx_component->model_view_proj);
     setShaderParam("PrevModelViewProj", &gfx_component->prev_model_view_proj);
-    setShaderParam("NormalMatrix"     , &gfx_component->normal_transform);
+    setShaderParam("NormalMatrix"     , &gfx_component->transform);
     
     drawMesh(gfx_component->mesh);
 }

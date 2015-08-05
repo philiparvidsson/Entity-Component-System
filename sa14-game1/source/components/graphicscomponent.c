@@ -29,7 +29,6 @@ gameComponentT* newGraphicsComponent(triMeshT* mesh, materialT* material) {
     gfx_data->material = material ? material : getNamedMaterial("debug");
 
     mat_identity(&gfx_data->transform);
-    mat_identity(&gfx_data->normal_transform);
 
     component->data       = gfx_data;
     component->cleanup_fn = cleanup;

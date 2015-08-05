@@ -8,6 +8,7 @@
 #include "base/common.h"
 #include "base/debug.h"
 #include "math/aabb.h"
+#include "math/integrate.h"
 #include "math/matrix.h"
 #include "math/shape.h"
 #include "physics/body.h"
@@ -15,8 +16,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MaxAttempts (8)
+// Specifies the integration function to use for integrating positions,
+// velocities, etc.
+#define IntegrateFn rk4Integrate
 
+// The maximum number of subdivides to do for a single step attempt in the
+// worldStep() function.
+#define MaxSubdivs 8
+
+// This struct is used as a return value for some functions. I think it's ok
+// performance-wise. I believe that the ABI specifies that it will be returned
+// on the caller's stack due to its size.
 typedef struct {
     bool exists;
     vec2 normal;
@@ -84,6 +94,18 @@ static void findBodyBodyContacts(bodyT* a, bodyT* b) {
     }
 }
 
+static inline bool pointInsideAABB(const vec2* p, const aabbT* aabb) {
+    if ((p->x >= aabb->min.x)
+     && (p->x  < aabb->max.x)
+     && (p->y >= aabb->min.y)
+     && (p->y  < aabb->max.y))
+    {
+        return (true);
+    }
+
+    return (false);
+}
+
 static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
     collisionT collision = { 0 };
 
@@ -91,8 +113,8 @@ static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
 
     // First, we do an AABB collision test since it's faster.
 
-    aabbT a_aabb = bodyAABB(a);
-    aabbT b_aabb = bodyAABB(b);
+    aabbT a_aabb = bodyRotatedAABB(a);
+    aabbT b_aabb = bodyRotatedAABB(b);
 
     if (a_aabb.max.x < b_aabb.min.x
      || a_aabb.min.x > b_aabb.max.x
@@ -111,20 +133,50 @@ static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
     assert(a->shape->num_points == 4);
     assert(b->shape->num_points == 4);
 
-    aabbT aabb;
+    aabbT aabb = bodyAABB(a);
+
+    mat2x2 ra, rb;
+    mat_rot_z(-a->state.o, &ra);
+    mat_rot_z(b->state.o, &rb);
+
+    int num_contacts = 0;
+
+    for (int i = 0; i < 4; i++) {
+        vec2 p = b->shape->points[i];
+
+        vec_mat_mul(&p, &rb, &p);
+        //vec_add    (&p, &b->state.x, &p);
+        vec_sub    (&p, &a->state.x, &p);
+        vec_mat_mul(&p, &ra, &p);
+
+        if (pointInsideAABB(&p, &aabb)) {
+            // We should probably clip here but I trust that the binary search
+            // for time-of-collision is accurate enough that we don't need to.
+
+            collision.exists = true;
+
+            // Point p is in local space (body a frame of reference).
+            vec_add(&p, &collision.contact, &collision.contact);
+
+
+            num_contacts++;
+        }
+    }
+
+    assert(num_contacts <= 0);
 
     return (collision);
 }
 
-static collisionT findWorldEdgeCollision(worldT* world, bodyT* body) {
+static collisionT findBodyWorldCollision(worldT* world, bodyT* body) {
     // We find the number of contacts that the object is making with the
     // world edges and then average them into a single contact point, at
-    // which we then apply the collision impulse vector.
+    // which we then apply the collision impulse vector. Seems to work fine.
 
-    collisionT collision = { 0 };
+    collisionT c = { 0 };
 
-    collision.a      = body;
-    collision.exists = false;
+    c.a      = body;
+    c.exists = false;
 
     int num_contacts = 0;
 
@@ -137,25 +189,25 @@ static collisionT findWorldEdgeCollision(worldT* world, bodyT* body) {
         vec_add    (&body->state.x         , &local_pos, &world_pos);
 
         bool coll = false;
-        if (world_pos.x < -2.0f) { coll = true; collision.normal.x += 1.0f; }
-        if (world_pos.x >  2.0f) { coll = true; collision.normal.x -= 1.0f; }
-        if (world_pos.y < -1.0f) { coll = true; collision.normal.y += 1.0f; }
-        if (world_pos.y >  1.0f) { coll = true; collision.normal.y -= 1.0f; }
+        if (world_pos.x < -2.0f) { coll = true; c.normal.x += 1.0f; }
+        if (world_pos.x >  2.0f) { coll = true; c.normal.x -= 1.0f; }
+        if (world_pos.y < -1.0f) { coll = true; c.normal.y += 1.0f; }
+        if (world_pos.y >  1.0f) { coll = true; c.normal.y -= 1.0f; }
 
         if (coll) {
             num_contacts++;
-            vec_add(&local_pos, &collision.contact, &collision.contact);
+            vec_add(&local_pos, &c.contact, &c.contact);
         }
     }
 
     if (num_contacts > 0) {
-        vec_scale(&collision.contact, 1.0f/num_contacts, &collision.contact);
-        vec_normalize(&collision.normal, &collision.normal);
+        vec_scale    (&c.contact, 1.0f/num_contacts, &c.contact);
+        vec_normalize(&c.normal                    , &c.normal);
 
-        collision.exists = true;
+        c.exists = true;
     }
 
-    return (collision);
+    return (c);
 }
 
 static int findCollisions(worldT* world) {
@@ -163,7 +215,7 @@ static int findCollisions(worldT* world) {
 
     bodyT* body = world->bodies;
     while (body) {
-        collisionT c = findWorldEdgeCollision(world, body);
+        collisionT c = findBodyWorldCollision(world, body);
         if (c.exists)
             arrayAdd(world->collisions, &c);
 
@@ -215,10 +267,29 @@ static void resolveCollisions(worldT* world) {
 
 }
 
-static void accelerationFn(float* a, float dt) {
-    a[0] = 0.0f;  // a_x
-    a[1] = -3.0f; // a_y
-    a[2] = 0.0f;  // t
+static void derivativeFn(const float* state, float* derivs) {
+    // state[0] = x.x
+    // state[1] = x.y
+    // state[2] = o
+    // state[3] = v.x
+    // state[4] = v.y
+    // state[5] = w
+
+    // derivs[0] = v.x
+    // derivs[1] = v.y
+    // derivs[2] = w
+    // derivs[0] = a.x
+    // derivs[1] = a.y
+    // derivs[2] = t
+
+    derivs[0] = state[3];
+    derivs[1] = state[4];
+    derivs[2] = state[5];
+
+
+    derivs[3] =  0.0f;
+    derivs[4] = -3.0f;
+    derivs[5] =  0.0f;
 }
 
 void worldStep(worldT* world, float dt) {
@@ -231,6 +302,7 @@ void worldStep(worldT* world, float dt) {
     int a = 1;
     int b = 1;
 
+    // Don't test against zero because of rounding errors!
     while (dt > (1.0/1000000.0f)) {
         float x = (float)a/(float)b;
 
@@ -238,15 +310,18 @@ void worldStep(worldT* world, float dt) {
         while (body) {
             body->state = body->prev_state;
 
-            ////rk4Integrate(body, dt*x);
             bodyStateT* s = &body->state;
-            eulerIntegrate(&s->x, &s->v, &s->a, 3, dt*x, accelerationFn);
+            IntegrateFn(&s->x, &s->v, 6, dt*x, derivativeFn);
+
             body = body->next;
         }
 
         if (findCollisions(world) > 0) {
-            b <<= 1;
-            if (b == (1<<8)) {
+            // Collisions were found, so we double the value of b. If we've
+            // reached the max value for b, we try to resolve them. Otherwise,
+            // we go back and try to simulate half the time we did last
+            // iteration.
+            if ((b<<=1) == (1<<MaxSubdivs)) {
                 resolveCollisions(world);
 
                 body = world->bodies;
@@ -257,8 +332,9 @@ void worldStep(worldT* world, float dt) {
                     body = body->next;
                 }
 
-                a = 1;
-                b = 1;
+                // Reset a and b to make sure we simulate the remainder of dt
+                // with our next attempt.
+                a = b = 1;
             }
         }
         else {

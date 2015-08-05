@@ -27,7 +27,6 @@ static void handleInput(gameComponentT* component, float dt) {
     graphicsComponentDataT* gfx = getComponent(component->entity, "graphics")->data;
 
     mat_rot_z(player->angle - 90.0f*3.1415f / 180.0f, &gfx->transform);
-    mat_rot_z(player->angle - 90.0f*3.1415f / 180.0f, &gfx->normal_transform);
 }
 
 gameEntityT* newPlayerEntity(void) {
@@ -36,7 +35,7 @@ gameEntityT* newPlayerEntity(void) {
     entity->data = calloc(1, sizeof(playerEntityDataT));
     
     const a3dsDataT* a3ds = gameResource      ("mesh:player", ResMesh);
-          triMeshT*  mesh = a3dsCreateMesh    (a3ds, "Teapot001");
+          triMeshT*  mesh = createBox(0.3f, 0.3f, 0.3f);//a3dsCreateMesh    (a3ds, "Teapot001");
           materialT* mat  = a3dsCreateMaterial(a3ds, "Material #25");
 
     assert(mesh != NULL);

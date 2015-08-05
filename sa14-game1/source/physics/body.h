@@ -18,7 +18,8 @@ bodyT* bodyNew      (shapeT* shape, float mass);
 bodyT* bodyNewSquare(float width, float height, float mass);
 void   bodyFree     (bodyT* body);
 
-aabbT bodyAABB(const bodyT* body);
+aabbT bodyAABB       (const bodyT* body);
+aabbT bodyRotatedAABB(const bodyT* body);
 
 float bodyOrientation   (const bodyT* body             );
 void  bodySetOrientation(      bodyT* body, float angle);

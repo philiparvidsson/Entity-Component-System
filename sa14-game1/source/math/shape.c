@@ -35,3 +35,18 @@ void shapeFree(shapeT* shape) {
     free(shape->points);
     free(shape);
 }
+
+aabbT shapeAABB(const shapeT* shape) {
+    aabbT aabb = { 0 };
+
+    for (int i = 0; i < shape->num_points; i++) {
+        vec2* p = &shape->points[i];
+
+        aabb.min.x = min(aabb.min.x, p->x);
+        aabb.min.y = min(aabb.min.y, p->y);
+        aabb.max.x = max(aabb.max.x, p->x);
+        aabb.max.y = max(aabb.max.y, p->y);
+    }
+
+    return (aabb);
+}
