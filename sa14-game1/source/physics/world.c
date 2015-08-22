@@ -163,7 +163,7 @@ static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
         }
     }
 
-    assert(num_contacts <= 0);
+    assert(!collision.exists);
 
     return (collision);
 }

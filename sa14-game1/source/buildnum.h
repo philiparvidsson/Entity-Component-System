@@ -1,2 +1,2 @@
-#define BuildNum 1078
+#define BuildNum 1079
 // do not modify! managed by build/postbuild.bat
