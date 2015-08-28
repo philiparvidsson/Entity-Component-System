@@ -126,9 +126,6 @@
     <ClCompile Include="source\physics\body.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\math\integrate.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\readme.txt">

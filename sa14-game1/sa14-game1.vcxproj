@@ -126,7 +126,6 @@
     <ClCompile Include="source\graphics\text.c" />
     <ClCompile Include="source\input\keyboard.c" />
     <ClCompile Include="source\input\mouse.c" />
-    <ClCompile Include="source\math\integrate.c" />
     <ClCompile Include="source\physics\body.c" />
     <ClCompile Include="source\math\shape.c" />
     <ClCompile Include="source\physics\world.c" />

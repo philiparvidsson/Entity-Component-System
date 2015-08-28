@@ -286,7 +286,6 @@ static void derivativeFn(const float* state, float* derivs) {
     derivs[1] = state[4];
     derivs[2] = state[5];
 
-
     derivs[3] =  0.0f;
     derivs[4] = -3.0f;
     derivs[5] =  0.0f;
