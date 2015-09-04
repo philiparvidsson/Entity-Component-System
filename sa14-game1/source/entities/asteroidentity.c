@@ -110,7 +110,7 @@ static gameComponentT* createPhysicsComponent(void) {
     vel.y = 0.0f;
     bodySetPosition(((physicsComponentDataT*)phys)->body, pos);
 
-    vec_scale(&vel, 0.1f, &vel);
+    //vec_scale(&vel, 0.1f, &vel);
     bodySetVelocity(((physicsComponentDataT*)phys)->body, vel);
     
     return (component);

@@ -107,9 +107,9 @@ static inline bool pointInsideAABB(const vec2* p, const aabbT* aabb) {
 }
 
 static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
-    collisionT collision = { 0 };
+    collisionT c = { 0 };
 
-    collision.exists = false;
+    c.exists = false;
 
     // First, we do an AABB collision test since it's faster.
 
@@ -122,8 +122,11 @@ static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
      || a_aabb.min.y > b_aabb.max.y)
     {
         // Definitely not a collision, so we can return here.
-        return (collision);
+        return (c);
     }
+
+    trace("possible collision");
+
     // The AABBs are colliding, so there might be a collision.
 
     // @To-do: I'm a lazy bastard and decided to only implement fine collision
@@ -133,7 +136,7 @@ static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
     assert(a->shape->num_points == 4);
     assert(b->shape->num_points == 4);
 
-    aabbT aabb = bodyAABB(a);
+    aabbT aabb = shapeAABB(a->shape);
 
     mat2x2 ra, rb;
     mat_rot_z(-a->state.o, &ra);
@@ -145,7 +148,7 @@ static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
         vec2 p = b->shape->points[i];
 
         vec_mat_mul(&p, &rb, &p);
-        //vec_add    (&p, &b->state.x, &p);
+        vec_add    (&p, &b->state.x, &p);
         vec_sub    (&p, &a->state.x, &p);
         vec_mat_mul(&p, &ra, &p);
 
@@ -153,19 +156,23 @@ static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
             // We should probably clip here but I trust that the binary search
             // for time-of-collision is accurate enough that we don't need to.
 
-            collision.exists = true;
+            c.exists = true;
 
             // Point p is in local space (body a frame of reference).
-            vec_add(&p, &collision.contact, &collision.contact);
+            vec_add(&p, &c.contact, &c.contact);
 
 
             num_contacts++;
         }
     }
 
-    assert(!collision.exists);
+    //assert(!c.exists);
+    c.normal = (vec2) {- 1.0f, -1.0f };
 
-    return (collision);
+    c.a = a;
+    c.b = b;
+
+    return (c);
 }
 
 static collisionT findBodyWorldCollision(worldT* world, bodyT* body) {
