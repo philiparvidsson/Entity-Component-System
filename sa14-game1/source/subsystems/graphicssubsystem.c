@@ -62,7 +62,7 @@ static void drawComponents(gameSubsystemT* subsystem, bool use_materials);
 
 #ifdef DRAW_TRI_NORMALS
 static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
-    gfx_data->normal_shader = gameResource("shader:normals", ResShader)
+    gfx_data->normal_shader = gameResource("shader:normals", ResShader);
 }
 #endif // DRAW_TRI_NORMALS
 
@@ -284,10 +284,10 @@ gameSubsystemT* newGraphicsSubsystem(void) {
     gameSubsystemT* subsystem = newSubsystem("graphics");
     graphicsSubsystemDataT* gfx_data = calloc(1, sizeof(graphicsSubsystemDataT));
 
-    gfx_data->aspect_ratio    = screenWidth() / (float)screenHeight();
-    gfx_data->clear_color     = (vec3) { 1.0f, 1.0f, 1.0f };
-    gfx_data->render_target   = createMultisampledRenderTarget(screenWidth(), screenHeight(), 8);
-    gfx_data->screen_tex      = createTexture();
+    gfx_data->aspect_ratio  = screenWidth() / (float)screenHeight();
+    gfx_data->clear_color   = (vec3) { 1.0f, 1.0f, 1.0f };
+    gfx_data->render_target = createMultisampledRenderTarget(screenWidth(), screenHeight(), 8);
+    gfx_data->screen_tex    = createTexture();
 
 #ifdef DRAW_TRI_NORMALS
     loadNormalShader(gfx_data);

@@ -36,7 +36,10 @@ void      bodySetType(      bodyT* body, int type);
 vec2 bodyVelocity   (const bodyT* body          );
 void bodySetVelocity(      bodyT* body, vec2 vel);
 
-void bodyApplyForce  (bodyT* body, vec2 f, vec2 r);
-void bodyApplyImpulse(bodyT* body, vec2 i, vec2 r);
+void bodySetDerivativeFn(bodyT* body, void(*deriv_fn)(void));
+
+void bodyApplyForce  (bodyT* body, vec2 f, vec2 p);
+void bodyApplyImpulse(bodyT* body, vec2 i, vec2 p);
+void bodyApplyTorque (bodyT* body, float t);
 
 #endif

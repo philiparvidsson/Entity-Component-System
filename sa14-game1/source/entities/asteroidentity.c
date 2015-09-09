@@ -102,7 +102,7 @@ static gameComponentT* createPhysicsComponent(void) {
 
     }
 
-    //vec_scale(&pos, 0.1f, &pos);
+    vec_scale(&pos, 6.0f, &pos);
     //bodySetOrientation(((physicsComponentDataT*)phys)->body, 17 * 3.141592f / 180.0f);
     //pos.x = -1.0f;
     //pos.y = 0.0f;

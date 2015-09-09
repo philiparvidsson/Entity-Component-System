@@ -10,6 +10,31 @@
 #include <stdlib.h>
 #include <string.h>
 
+// This is the default derivatives function which applies no extra forces.
+static void derivativeFn(const float* state, float* derivs) {
+    // state[0] = x.x
+    // state[1] = x.y
+    // state[2] = o
+    // state[3] = v.x
+    // state[4] = v.y
+    // state[5] = w
+
+    // derivs[0] = v.x
+    // derivs[1] = v.y
+    // derivs[2] = w
+    // derivs[3] = a.x
+    // derivs[4] = a.y
+    // derivs[5] = t
+
+    derivs[0] = state[3];
+    derivs[1] = state[4];
+    derivs[2] = state[5];
+
+    derivs[3] = 0.0f;
+    derivs[4] = 0.0f;
+    derivs[5] = 0.0f;
+}
+
 static bodyT* bodyAlloc(void) {
     bodyT* body = malloc(sizeof(bodyT));
 
@@ -24,6 +49,7 @@ static void bodyInit(bodyT* body, shapeT* shape, float mass) {
     body->inv_inertia = 1.0f / 0.015f;
     body->restitution = 1.0f;
     body->type        = DynamicBody;
+    body->deriv_fn    = derivativeFn;
 }
 
 bodyT* bodyNew(shapeT* shape, float mass) {
@@ -91,16 +117,24 @@ void      bodySetType(      bodyT* body, int type) { body->type = type;   }
 vec2 bodyVelocity   (const bodyT* body)           { return (body->state.v); }
 void bodySetVelocity(      bodyT* body, vec2 vel) { body->state.v = vel;    }
 
-void bodyApplyForce(bodyT* body, vec2 f, vec2 r) {
+void bodySetDerivativeFn(bodyT* body, void (*deriv_fn)(void)) {
+    body->deriv_fn = deriv_fn;
+}
+
+void bodyApplyForce(bodyT* body, vec2 f, vec2 p) {
     vec_scale(&f, body->inv_mass, &f);
     vec_add  (&body->state.a, &f, &body->state.a);
 }
 
-void bodyApplyImpulse(bodyT* body, vec2 i, vec2 r) {
+void bodyApplyImpulse(bodyT* body, vec2 i, vec2 p) {
     vec2 a = i;
     vec_scale(&a, body->inv_mass, &a);
     vec_add  (&a, &body->state.v, &body->state.v);
 
-    float b = vec_perp_dot(&r, &i);
+    float b = vec_perp_dot(&p, &i);
     body->state.w += b * body->inv_inertia;
+}
+
+void bodyApplyTorque(bodyT* body, float t) {
+    body->state.t += t;
 }

@@ -8,25 +8,49 @@
 
 #include "math/matrix.h"
 
-static void handleInput(gameComponentT* component, float dt) {
-    playerEntityDataT* player = component->entity->data;
+static void playerDerivativeFn(const float* state, float* derivs) {
+    // state[0] = x.x
+    // state[1] = x.y
+    // state[2] = o
+    // state[3] = v.x
+    // state[4] = v.y
+    // state[5] = w
 
-    if (keyIsPressed(ArrowLeft))  player->angle += 2.0f * dt;
-    if (keyIsPressed(ArrowRight)) player->angle -= 2.0f * dt;
+    // derivs[0] = v.x
+    // derivs[1] = v.y
+    // derivs[2] = w
+    // derivs[3] = a.x
+    // derivs[4] = a.y
+    // derivs[5] = t
+
+    derivs[0] = state[3];
+    derivs[1] = state[4];
+    derivs[2] = state[5];
+    
+    derivs[3] = -state[3] * 5.0f;
+    derivs[4] = -state[4] * 5.0f;
+    derivs[5] = -state[5] * 5.0f;
+
+    if (keyIsPressed(ArrowLeft )) derivs[5] += 10.0f;
+    if (keyIsPressed(ArrowRight)) derivs[5] -= 10.0f;
 
     if (keyIsPressed(ArrowUp)) {
         vec2 f;
 
-        f.x = cosf(player->angle) * 1.5f;
-        f.y = sinf(player->angle) * 1.5f;
-
-        physicsComponentDataT* physics_data = component->data;
-        bodyApplyForce(physics_data->body, f, f);
+        derivs[3] += cosf(state[2]) * 10.0f;
+        derivs[4] += sinf(state[2]) * 10.0f;
     }
+}
+
+static void handleInput(gameComponentT* component, float dt) {
+    playerEntityDataT* player = component->entity->data;
+
+
 
     graphicsComponentDataT* gfx = getComponent(component->entity, "graphics")->data;
+    bodyT* body = ((physicsComponentDataT*)component->data)->body;
 
-    mat_rot_z(player->angle - 90.0f*3.1415f / 180.0f, &gfx->transform);
+    mat_rot_z(bodyOrientation(body) - 90.0f*3.1415f / 180.0f, &gfx->transform);
 }
 
 gameEntityT* newPlayerEntity(void) {
@@ -47,6 +71,9 @@ gameEntityT* newPlayerEntity(void) {
 
     gameComponentT* phys = newPhysicsComponent(1.0f);
     phys->update_fn = handleInput;
+
+    physicsComponentDataT* phys_data = phys->data;
+    bodySetDerivativeFn(phys_data->body, playerDerivativeFn);
 
     attachComponent(entity, gfx);
     attachComponent(entity, phys);

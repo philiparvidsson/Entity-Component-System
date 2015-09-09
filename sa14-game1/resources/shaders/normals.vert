@@ -1,6 +1,6 @@
 #version 430
 
-uniform float NormalLength = 0.01;
+uniform float NormalLength = 0.1;
 
 uniform mat4 ModelViewProj;
 uniform mat4 PrevModelViewProj;

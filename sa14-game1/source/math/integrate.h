@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-typedef void (*derivativeFnT)(const float*, float *);
+typedef void (*derivativeFnT)(const float*, float*);
 
 static inline void eulerIntegrate(float* state, float* derivs, int n, float dt,
                                   derivativeFnT deriv_fn)

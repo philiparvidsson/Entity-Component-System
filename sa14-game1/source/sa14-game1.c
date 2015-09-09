@@ -123,7 +123,7 @@ void frameFunc(float dt) {
     lol += dt;
     while (lol >= 0.5f) {
         //addEntityToGame(newAsteroidEntity());
-        if (knull < 10) {
+        if (knull < 20) {
             gameEntityT* e = *(gameEntityT**)arrayGet(prealloc, knull);
             addEntityToGame(e);
             knull++;

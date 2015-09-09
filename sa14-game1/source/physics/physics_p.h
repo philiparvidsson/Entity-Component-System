@@ -38,6 +38,8 @@ struct bodyT {
     float     inv_inertia;
     float     restitution;
 
+    void (*deriv_fn)(void);
+
     bodyT* prev;
     bodyT* next;
 };

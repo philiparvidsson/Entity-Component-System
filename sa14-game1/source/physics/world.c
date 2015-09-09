@@ -200,10 +200,10 @@ static collisionT findBodyWorldCollision(worldT* world, bodyT* body) {
 
         bool coll = false;
         // @To-do: World bounds should not be specified here, duh.
-        if (world_pos.x < -4.0f) { coll = true; c.normal.x += 1.0f; }
-        if (world_pos.x >  4.0f) { coll = true; c.normal.x -= 1.0f; }
-        if (world_pos.y < -2.0f) { coll = true; c.normal.y += 1.0f; }
-        if (world_pos.y >  2.0f) { coll = true; c.normal.y -= 1.0f; }
+        if (world_pos.x < -7.0f) { coll = true; c.normal.x += 1.0f; }
+        if (world_pos.x >  7.0f) { coll = true; c.normal.x -= 1.0f; }
+        if (world_pos.y < -5.0f) { coll = true; c.normal.y += 1.0f; }
+        if (world_pos.y >  5.0f) { coll = true; c.normal.y -= 1.0f; }
 
         if (coll) {
             num_contacts++;
@@ -278,30 +278,6 @@ static void resolveCollisions(worldT* world) {
 
 }
 
-static void derivativeFn(const float* state, float* derivs) {
-    // state[0] = x.x
-    // state[1] = x.y
-    // state[2] = o
-    // state[3] = v.x
-    // state[4] = v.y
-    // state[5] = w
-
-    // derivs[0] = v.x
-    // derivs[1] = v.y
-    // derivs[2] = w
-    // derivs[0] = a.x
-    // derivs[1] = a.y
-    // derivs[2] = t
-
-    derivs[0] = state[3];
-    derivs[1] = state[4];
-    derivs[2] = state[5];
-
-    derivs[3] =  0.0f;
-    derivs[4] =  0.0f;
-    derivs[5] =  0.0f;
-}
-
 void worldStep(worldT* world, float dt) {
     bodyT* body = world->bodies;
     while (body) {
@@ -321,7 +297,7 @@ void worldStep(worldT* world, float dt) {
             body->state = body->prev_state;
 
             bodyStateT* s = &body->state;
-            IntegrateFn(&s->x, &s->v, 6, dt*x, derivativeFn);
+            IntegrateFn(&s->x, &s->v, 6, dt*x, body->deriv_fn);
 
             body = body->next;
         }
