@@ -27,8 +27,8 @@ static gameComponentT* createGraphicsComponent(void) {
     materialT* mat = NULL;
 
     if (!mesh) {
-        //mesh = createGeodesicSphere(0.3f, 0);
-        mesh = createBox(0.3f, 0.3f, 0.3f);
+        mesh = createGeodesicSphere(0.3f, 0);
+        //mesh = createBox(0.3f, 0.3f, 0.3f);
 
         //a3dsDataT* a3ds = a3dsLoad(readGamePakFile("meshes/player.3ds"));
         //getchar();
@@ -103,11 +103,11 @@ static gameComponentT* createPhysicsComponent(void) {
     }
 
     //vec_scale(&pos, 0.1f, &pos);
-    bodySetOrientation(((physicsComponentDataT*)phys)->body, 17 * 3.141592f / 180.0f);
-    pos.x = -1.0f;
-    pos.y = 0.0f;
-    vel.x = -1.0f;
-    vel.y = 0.0f;
+    //bodySetOrientation(((physicsComponentDataT*)phys)->body, 17 * 3.141592f / 180.0f);
+    //pos.x = -1.0f;
+    //pos.y = 0.0f;
+    //vel.x = -1.0f;
+    //vel.y = 0.0f;
     bodySetPosition(((physicsComponentDataT*)phys)->body, pos);
 
     //vec_scale(&vel, 0.1f, &vel);
@@ -130,10 +130,10 @@ static void rotateAsteroid(gameComponentT* component, float dt) {
     mat_rot_z    (o, &r);
     mat_mul      (&r, &m, &m);
 
-    /*asteroid->angle1 += dt * asteroid->a1;
+    asteroid->angle1 += dt * asteroid->a1;
     mat4x4 lol;
     mat_rot(&asteroid->rot_axis_1, asteroid->angle1, &lol);
-    mat_mul(&lol, &m, &m);*/
+    mat_mul(&lol, &m, &m);
 
     gfx->transform = m;
 }

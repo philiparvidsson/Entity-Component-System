@@ -109,6 +109,9 @@ static inline bool pointInsideAABB(const vec2* p, const aabbT* aabb) {
 static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
     collisionT c = { 0 };
 
+    // @To-do: Implement this in a sane manner.
+    return (c);
+
     c.exists = false;
 
     // First, we do an AABB collision test since it's faster.
@@ -167,7 +170,7 @@ static collisionT findBodyBodyCollision(worldT* world, bodyT* a, bodyT* b) {
     }
 
     //assert(!c.exists);
-    c.normal = (vec2) {- 1.0f, -1.0f };
+    c.normal = (vec2) {- 0.8f, -0.7f };
 
     c.a = a;
     c.b = b;
@@ -196,10 +199,11 @@ static collisionT findBodyWorldCollision(worldT* world, bodyT* body) {
         vec_add    (&body->state.x         , &local_pos, &world_pos);
 
         bool coll = false;
-        if (world_pos.x < -2.0f) { coll = true; c.normal.x += 1.0f; }
-        if (world_pos.x >  2.0f) { coll = true; c.normal.x -= 1.0f; }
-        if (world_pos.y < -1.0f) { coll = true; c.normal.y += 1.0f; }
-        if (world_pos.y >  1.0f) { coll = true; c.normal.y -= 1.0f; }
+        // @To-do: World bounds should not be specified here, duh.
+        if (world_pos.x < -4.0f) { coll = true; c.normal.x += 1.0f; }
+        if (world_pos.x >  4.0f) { coll = true; c.normal.x -= 1.0f; }
+        if (world_pos.y < -2.0f) { coll = true; c.normal.y += 1.0f; }
+        if (world_pos.y >  2.0f) { coll = true; c.normal.y -= 1.0f; }
 
         if (coll) {
             num_contacts++;
@@ -294,7 +298,7 @@ static void derivativeFn(const float* state, float* derivs) {
     derivs[2] = state[5];
 
     derivs[3] =  0.0f;
-    derivs[4] = -3.0f;
+    derivs[4] =  0.0f;
     derivs[5] =  0.0f;
 }
 
