@@ -33,6 +33,11 @@ static void compileShaders(void) {
     // Post effects
     //--------------------------------------------
 
+    compileShader("exposure",
+                      "shaders/discard_z.vert",
+                      NULL,
+                      "shaders/postfx/exposure.frag");
+
     compileShader("mblur0",
                       "shaders/default.vert",
                       NULL,

@@ -46,6 +46,5 @@ void main() {
     float x      = 1.0 - pow((color1.r+color1.g+color1.b)/3.4, 2.0);
 
     x = clamp(x*Intensity, 0.0, 1.0);
-
     color = vec4(color0*x + color1*(1.0-x), 1.0);
 }

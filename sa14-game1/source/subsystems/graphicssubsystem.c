@@ -44,6 +44,8 @@ typedef struct {
 
     textureT* screen_tex;
 
+    shaderT* exposure_shader;
+
     shaderT* noise_shader;
     int      noise_seed;
 
@@ -71,8 +73,12 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     
     gfx_data->mblur_shader0 = gameResource("shader:mblur0", ResShader);
     gfx_data->mblur_shader1 = gameResource("shader:mblur1", ResShader);
-    gfx_data->mblur_rt = createRenderTarget(screenWidth(), screenHeight());
+    gfx_data->mblur_rt      = createRenderTarget(screenWidth(), screenHeight());
     
+    // Exposure -------------------------------------
+
+    gfx_data->exposure_shader = gameResource("shader:exposure", ResShader);
+
     // Noise -------------------------------------
 
     gfx_data->noise_seed = 0;
@@ -116,6 +122,14 @@ static void applyPostFX(gameSubsystemT* subsystem) {
     loadTextureFromScreen(gfx_data->screen_tex);
     shaderPostProcess    (gfx_data->screen_tex);
     useTexture           (old_tex, 1);
+
+    //--------------------------------------------
+    // Exposure
+    //--------------------------------------------
+
+    useShader            (gfx_data->exposure_shader);
+    loadTextureFromScreen(gfx_data->screen_tex);
+    shaderPostProcess    (gfx_data->screen_tex);
 
     //--------------------------------------------
     // Noise

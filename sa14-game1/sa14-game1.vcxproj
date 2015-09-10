@@ -194,6 +194,7 @@
     <None Include="resources\meshes\player.3ds" />
     <None Include="resources\meshes\torus.3ds" />
     <None Include="resources\shaders\materials\refractmaterial.frag" />
+    <None Include="resources\shaders\postfx\exposure.frag" />
     <None Include="resources\shaders\postfx\motionblur0.frag" />
     <None Include="resources\shaders\postfx\motionblur1.frag" />
     <None Include="resources\shaders\postfx\noise.frag" />

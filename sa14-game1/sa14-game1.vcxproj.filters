@@ -306,6 +306,7 @@
     <None Include="resources\meshes\torus.3ds" />
     <None Include="bin\msvcr120d.dll" />
     <None Include="resources\meshes\player.3ds" />
+    <None Include="resources\shaders\postfx\exposure.frag" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />
