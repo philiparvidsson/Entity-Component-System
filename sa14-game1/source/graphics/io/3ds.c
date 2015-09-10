@@ -392,10 +392,9 @@ triMeshT* a3dsCreateMesh(const a3dsDataT* a3ds, const string* object_name) {
     if (!o || !o->mesh)
         return (NULL);
 
-    triMeshT* mesh = newMesh(o->mesh->num_tris*3, o->mesh->num_tris);
-
-    triT*    tris  = meshTrisPtr (mesh);
-    vertexT* verts = meshVertsPtr(mesh);
+    triMeshT* mesh  = newMesh(o->mesh->num_tris*3, o->mesh->num_tris);
+    triT*     tris  = meshTrisPtr (mesh);
+    vertexT*  verts = meshVertsPtr(mesh);
 
     // We separate the triangles so that none of them share the same vertices.
     for (int i = 0; i < o->mesh->num_tris; i++) {
