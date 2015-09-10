@@ -105,14 +105,15 @@ static void showSplashScreen(textureT* splash_tex, float secs) {
     deleteShader(splash_shader);
 }
 
+// ugly crap, fix this
 static arrayT* prealloc;
-static int knull;
-
+static int spawn_count;
 static float lol;
+
 void frameFunc(float dt) {
     if (!prealloc) {
         prealloc = arrayNew(sizeof(gameEntityT*));
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 20; i++) {
             gameEntityT* e = newAsteroidEntity();
             arrayAdd(prealloc, &e);
         }
@@ -123,10 +124,10 @@ void frameFunc(float dt) {
     lol += dt;
     while (lol >= 0.5f) {
         //addEntityToGame(newAsteroidEntity());
-        if (knull < 20) {
-            gameEntityT* e = *(gameEntityT**)arrayGet(prealloc, knull);
+        if (spawn_count < 20) {
+            gameEntityT* e = *(gameEntityT**)arrayGet(prealloc, spawn_count);
             addEntityToGame(e);
-            knull++;
+            spawn_count++;
         }
         lol -= 0.5f;
         //lol = -1;
