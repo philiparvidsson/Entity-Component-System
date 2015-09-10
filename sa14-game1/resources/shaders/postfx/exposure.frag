@@ -1,3 +1,18 @@
+/*------------------------------------------------------------------------------
+ * File: expsure.frag
+ * Created: September 10, 2015
+ * Last changed: September 10, 2015
+ *
+ * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ *
+ * Description:
+ *   Exposure shader for adjusting color brightness.
+ *----------------------------------------------------------------------------*/
+
+// @To-do: Investigate why this shader makes the colors look more realistic.
+//         Clues might be found here:
+//             http://freespace.virgin.net/hugo.elias/graphics/x_posure.htm
+
 #version 430
 
 /*------------------------------------------------
