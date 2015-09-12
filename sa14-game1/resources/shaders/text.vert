@@ -3,7 +3,7 @@
  * Created: June 19, 2015
  * Last changed: June 19, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   Vertex shader for drawing text. It zeroes the z-coordinate as if the input

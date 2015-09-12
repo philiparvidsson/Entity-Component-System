@@ -3,7 +3,7 @@
  * Created: June 8, 2015
  * Last changed: June 20, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   Provides a dynamic array type.

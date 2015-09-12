@@ -3,7 +3,7 @@
  * Created: June 11, 2015
  * Last changed: July 25, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   Functions for doing file I/O operations.

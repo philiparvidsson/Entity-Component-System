@@ -3,7 +3,7 @@
  * Created: June 7, 2015
  * Last changed: July 24, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   Macros, constants, types, functions etc. that are common to many parts of
@@ -103,7 +103,7 @@
  * Description:
  *   A string containing the program authors.
  *------------------------------------*/
-#define ProgramAuthors ("Philip Arvidsson (philip@philiparvidsson.com)")
+#define ProgramAuthors ("Philip Arvidsson (contact@philiparvidsson.com)")
 
 /*--------------------------------------
  * Constant: ProgramVersion

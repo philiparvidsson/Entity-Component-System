@@ -3,7 +3,7 @@
  * Created: June 21, 2015
  * Last changed: June 21, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   A shader that discards the z-coordinate and does nothing else.

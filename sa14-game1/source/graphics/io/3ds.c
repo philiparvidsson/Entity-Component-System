@@ -3,7 +3,7 @@
  * Created: July 23, 2015
  * Last changed: July 24, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   Provides functionality for loading .3ds-file data.

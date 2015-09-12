@@ -3,7 +3,7 @@
  * Created: June 17, 2015
  * Last changed: June 18, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   Vector types, macros, fucntions etc. Define VECTOR_RGB before including

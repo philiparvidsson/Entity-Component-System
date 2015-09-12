@@ -3,7 +3,7 @@
  * Created: June 8, 2015
  * Last changed: June 20, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   This file implements a graphics library using modern OpenGL, supporting
@@ -133,7 +133,8 @@ static void createWindow(const string* title, int width, int height) {
     if (window)
         error("createWindow() was called twice");
 
-    RECT window_rect  = { 0 };
+    RECT window_rect = { 0 };
+
     window_rect.right  = width;
     window_rect.bottom = height;
 
@@ -146,7 +147,7 @@ static void createWindow(const string* title, int width, int height) {
 
     window = malloc(sizeof(windowT));
 
-    wchar_t *window_name = wstrdup(title);
+    wchar_t* window_name = wstrdup(title);
 
     window->hwnd = CreateWindowExW(WindowStyleEx,
                                    ClassName,

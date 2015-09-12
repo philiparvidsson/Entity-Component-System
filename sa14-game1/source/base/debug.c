@@ -3,7 +3,7 @@
  * Created: June 8, 2015
  * Last changed: July 20, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   Macros and functions to make debugging easier.
@@ -119,7 +119,6 @@ static void setTextColor(const string* color) {
  *
  * Usage:
  *   errorFunc("An error has occurred", "main.c", 42);
- *
  *------------------------------------*/
 void errorFunc(const string* msg, const string* func_name, int line, ...) {
     va_list ap;

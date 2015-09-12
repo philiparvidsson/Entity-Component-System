@@ -39,7 +39,7 @@ ARCHITECTURE.
 
   BUGS.
 
-    Please report any bugs to philip@philiparvidsson.com.
+    Please report any bugs to contact@philiparvidsson.com.
 
 ------------------------------------------------------------
 

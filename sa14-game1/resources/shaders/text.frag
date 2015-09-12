@@ -3,7 +3,7 @@
  * Created: June 19, 2015
  * Last changed: June 19, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   Fragment shader for drawing text. It basically just reads from a texture

@@ -3,7 +3,7 @@
  * Created: June 17, 2015
  * Last changed: July 16, 2015
  *
- * Author(s): Philip Arvidsson (philip@philiparvidsson.com)
+ * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
  *   Matrix types, macros, functions etc. The matrices are stored in row-major
