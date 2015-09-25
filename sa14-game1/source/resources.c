@@ -109,13 +109,13 @@ static void loadTextures(void) {
     loadTexture("splashscreen0",
                     "textures/splashscreen0.bmp");
 
-    loadTexture("CHECKER.BMP",
+    loadTexture("checker.bmp",
                     "textures/CHECKER.BMP");
     
     loadTexture("background",
                     "textures/background.bmp");
 
-    loadTexture("DOUGHNUT.BMP",
+    loadTexture("doughnut.bmp",
                     "textures/doughnut.bmp");
 }
 
