@@ -42,6 +42,7 @@ typedef struct {
     shaderT* normal_shader;
 #endif // DRAW_TRI_NORMALS
 
+    textureT* background_tex;
     textureT* screen_tex;
 
     shaderT* exposure_shader;
@@ -278,6 +279,14 @@ static void drawEverything(gameSubsystemT* subsystem, float dt) {
     vec3* clear_color = &gfx_data->clear_color;
     clearDisplay(clear_color->r, clear_color->g, clear_color->b);
 
+    GLint depth_mask;
+    glGetIntegerv(GL_DEPTH_WRITEMASK, &depth_mask);
+    glDepthMask(GL_FALSE);
+    useShader(gfx_data->noise_shader);
+    shaderPostProcess(gfx_data->background_tex);
+    glDepthMask(depth_mask);
+
+
     drawComponents(subsystem, true);
 
 #ifdef DRAW_TRI_NORMALS
@@ -289,6 +298,7 @@ static void drawEverything(gameSubsystemT* subsystem, float dt) {
 
     useRenderTarget(NULL);
     presentRenderTarget(gfx_data->render_target);
+
     applyPostFX(subsystem);
 
     drawText("SCORE: 12345\nNOOB WARNING: HIGH", 10.0f, 10.0f, "Sector 034", 10);
@@ -298,10 +308,11 @@ gameSubsystemT* newGraphicsSubsystem(void) {
     gameSubsystemT* subsystem = newSubsystem("graphics");
     graphicsSubsystemDataT* gfx_data = calloc(1, sizeof(graphicsSubsystemDataT));
 
-    gfx_data->aspect_ratio  = screenWidth() / (float)screenHeight();
-    gfx_data->clear_color   = (vec3) { 1.0f, 1.0f, 1.0f };
-    gfx_data->render_target = createMultisampledRenderTarget(screenWidth(), screenHeight(), 8);
-    gfx_data->screen_tex    = createTexture();
+    gfx_data->aspect_ratio   = screenWidth() / (float)screenHeight();
+    gfx_data->clear_color    = (vec3) { 1.0f, 1.0f, 1.0f };
+    gfx_data->render_target  = createMultisampledRenderTarget(screenWidth(), screenHeight(), 8);
+    gfx_data->background_tex = gameResource("texture:background", ResTexture);
+    gfx_data->screen_tex     = createTexture();
 
 #ifdef DRAW_TRI_NORMALS
     loadNormalShader(gfx_data);

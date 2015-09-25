@@ -111,6 +111,12 @@ static void loadTextures(void) {
 
     loadTexture("CHECKER.BMP",
                     "textures/CHECKER.BMP");
+    
+    loadTexture("background",
+                    "textures/background.bmp");
+
+    loadTexture("DOUGHNUT.BMP",
+                    "textures/doughnut.bmp");
 }
 
 static void loadMesh(const string* name, const string* res_name) {
@@ -129,6 +135,9 @@ static void loadMeshes(void) {
 
     loadMesh("player",
                  "meshes/player.3ds");
+
+    loadMesh("doughnut",
+                 "meshes/doughnut.3ds");
 }
 
 static void compileResources(void) {

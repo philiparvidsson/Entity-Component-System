@@ -59,7 +59,7 @@ gameEntityT* newPlayerEntity(void) {
     entity->data = calloc(1, sizeof(playerEntityDataT));
     
     const a3dsDataT* a3ds = gameResource      ("mesh:player", ResMesh);
-          triMeshT*  mesh = a3dsCreateMesh    (a3ds, "Teapot001");
+          triMeshT*  mesh = a3dsCreateMesh    (a3ds, "Teapot002");
           materialT* mat  = a3dsCreateMaterial(a3ds, "Material #25");
 
     assert(mesh != NULL);

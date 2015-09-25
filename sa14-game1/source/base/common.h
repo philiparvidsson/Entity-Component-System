@@ -151,5 +151,6 @@ typedef char stringT;
 
 void sleep(int millisecs);
 wchar_t* wstrdup(const string* str);
+int strcmpi2(const string* str1, const string* str2);
 
 #endif // common_h_

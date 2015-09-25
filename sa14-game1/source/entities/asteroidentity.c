@@ -24,20 +24,18 @@ static vec3 randomVector(void) {
 
 static gameComponentT* createGraphicsComponent(void) {
     static triMeshT* mesh = NULL;
-    materialT* mat = NULL;
+    static materialT* mat = NULL;
 
     if (!mesh) {
-        mesh = createGeodesicSphere(0.3f, 0);
+        //mesh = createGeodesicSphere(0.3f, 0);
         //mesh = createBox(0.3f, 0.3f, 0.3f);
-
+        
         //a3dsDataT* a3ds = a3dsLoad(readGamePakFile("meshes/player.3ds"));
         //getchar();
 
-        //mesh = a3dsCreateMesh(gameResource("mesh:monkey", ResMesh), "Suzanne");
-        //if (!mesh)
-        //mesh = createBox(0.2f, 0.2f, 0.2f);
-
-        //mat = a3dsCreateMaterial(a3ds, a3dsGetObjectMaterialName(a3ds, "Box001"));
+        const a3dsDataT* a3ds = gameResource      ("mesh:doughnut", ResMesh);
+                         mesh = a3dsCreateMesh    (a3ds, "doughnut");
+                         mat  = a3dsCreateMaterial(a3ds, "doughnut_materia");
 
         //a3dsFree(a3ds);
         //mesh = load3DS();
@@ -122,7 +120,7 @@ static void rotateAsteroid(gameComponentT* component, float dt) {
     physicsComponentDataT*  phys     = getComponent(component->entity, "physics" )->data;
     
     float o = bodyOrientation(phys->body);
-    vec2  x = bodyPosition   (phys->body);
+    //vec2  x = bodyPosition   (phys->body);
     
     mat4x4 m, r;
 

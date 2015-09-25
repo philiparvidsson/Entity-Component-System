@@ -77,9 +77,9 @@ long ioFileSize(const string* file_name) {
  *   free() function on the returned pointer.
  *
  * Usage:
- *   uint8_t *data = ioReadFile("foo.bin");
+ *   uint8_t* data = ioReadFile("foo.bin");
  *------------------------------------*/
-uint8_t *ioReadFile(const string* file_name) {
+uint8_t* ioReadFile(const string* file_name) {
     FILE* fp = fopen(file_name, "rb");
 
     if (!fp)
@@ -89,7 +89,7 @@ uint8_t *ioReadFile(const string* file_name) {
     long num_bytes = ftell(fp);
     rewind(fp);
 
-    uint8_t *s = malloc(num_bytes+1);
+    uint8_t* s = malloc(num_bytes+1);
 
     if (s) {
         fread(s, sizeof(char), num_bytes, fp);

@@ -14,3 +14,13 @@ wchar_t* wstrdup(const string* str) {
 
     return (wstr);
 }
+
+int strcmpi2(const string* str1, const string* str2) {
+    while (true) {
+        int a = tolower(*(str1++));
+        int b = tolower(*(str2++));
+
+        if ((a == 0) || (a != b))
+            return (a-b);
+    }
+}

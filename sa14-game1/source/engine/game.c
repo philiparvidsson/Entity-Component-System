@@ -181,6 +181,9 @@ void removeEntityFromGame(gameEntityT* entity) {
 }
 
 void gameAddResource(const string* name, void* data, int type) {
+    if (gameResource(name, -1))
+        error("attempted to add duplicate resource");
+
     gameResourceT* res = malloc(sizeof(gameResourceT));
 
     res->data = data;
@@ -196,11 +199,16 @@ const void* gameResource(const string* name, int type) {
 
     gameResourceT* res = game_inst->resources;
     while (res) {
-        if ((res->type == type) && (strcmp(name, res->name) == 0))
+        if (((res->type == type) || (res->type == -1))
+         && (strcmpi2(name, res->name) == 0))
+        {
             return (res->data);
+        }
 
         res = res->next;
     }
 
+    if (type != -1)
+        warn("requested resource not found (could be wrong type): %s", name);
     return (NULL);
 }

@@ -166,7 +166,11 @@ void shaderPostProcess(textureT* source_texture) {
         error("no shader in use");
 
     textureT* texture = source_texture;
-    triMeshT* quad    = createQuad(2.0f, 2.0f);
+
+    // Not very sane, but it's ok...
+    static triMeshT* quad = NULL;
+    if (!quad)
+        quad = createQuad(2.0f, 2.0f);
 
     clearDisplay(1.0f, 0.0f, 1.0f);
 
@@ -174,6 +178,6 @@ void shaderPostProcess(textureT* source_texture) {
 
     drawMesh(quad);
 
-    freeMesh(quad);
+    //freeMesh(quad);
     useTexture(NULL, 0);
 }

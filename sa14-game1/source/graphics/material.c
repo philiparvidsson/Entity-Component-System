@@ -39,7 +39,7 @@ const materialT* getNamedMaterial(const string* name) {
         static materialT* blue_crystal;
 
         if (!blue_crystal) {
-            blue_crystal = createRefractMaterial((vec3) {  0.0f,  0.7f, 1.0f },
+            blue_crystal = createRefractMaterial((vec3) {  0.7f,  0.0f, 0.1f },
                                                  50.0f);
 
             blue_crystal->name = "blue crystal";
