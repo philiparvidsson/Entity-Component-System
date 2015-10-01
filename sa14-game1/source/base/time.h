@@ -6,7 +6,7 @@
  * Author(s): Philip Arvidsson (contact@philiparvidsson.com)
  *
  * Description:
- *   Provides functions for measure time with very high resolution.
+ *   Provides functions for measuring time with very high resolution.
  *----------------------------------------------------------------------------*/
 
 #ifndef time_h_
@@ -17,7 +17,6 @@
  *----------------------------------------------*/
 
 #include <stdint.h>
-#include <Windows.h>
 
 /*------------------------------------------------
  * TYPES
