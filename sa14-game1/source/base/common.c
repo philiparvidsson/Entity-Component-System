@@ -1,6 +1,6 @@
 #include "common.h"
 
-#include <windows.h>
+#include <stdlib.h>
 
 void sleep(int millisecs) {
     Sleep(millisecs);
