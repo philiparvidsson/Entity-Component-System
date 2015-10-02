@@ -35,7 +35,7 @@
  * Usage:
  *   error("An error has occurred");
  *------------------------------------*/
-#define error(msg, ...) errorFunc(msg, __FUNCTION__, __LINE__, __VA_ARGS__)
+#define error(msg, ...) errorFunc(msg, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 /*--------------------------------------
  * Macro: assert()
@@ -51,9 +51,9 @@
  *------------------------------------*/
 #define assert(expr) if (!(expr)) { error("The assertion '"#expr"' failed"); }
 
-#define trace(s, ...) traceFunc(s, __VA_ARGS__);
+#define trace(s, ...) traceFunc(s, ##__VA_ARGS__);
 
-#define warn(s, ...) warnFunc(s, __VA_ARGS__);
+#define warn(s, ...) warnFunc(s, ##__VA_ARGS__);
 
 /*------------------------------------------------
  * FUNCTIONS

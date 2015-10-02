@@ -22,26 +22,43 @@
 
 #include <stdint.h>
 
+#ifdef WIN32
 #include <windows.h>
+#endif
+
+#ifdef __linux__
+#include <sys/time.h>
+#endif
 
 /*------------------------------------------------
  * GLOBALS
  *----------------------------------------------*/
 
+#ifdef WIN32
 LARGE_INTEGER freq = { 0 };
+#endif
 
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
 
 timeT getTime(void) {
+#ifdef WIN32
     LARGE_INTEGER count;
     QueryPerformanceCounter(&count);
 
     return ((timeT)count.QuadPart);
+#endif
+
+#ifdef __linux__
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return ((tv.tv_sec*1000000) + tv.tv_usec);
+#endif
 }
 
 long long elapsedMicrosecsSince(timeT time) {
+#ifdef WIN32
     LARGE_INTEGER count;
     QueryPerformanceCounter(&count);
 
@@ -54,6 +71,13 @@ long long elapsedMicrosecsSince(timeT time) {
     count.QuadPart /= freq.QuadPart;
 
     return (count.QuadPart);
+#endif
+
+#ifdef __linux__
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return ((tv.tv_sec*1000000) + tv.tv_usec - time);
+#endif
 }
 
 int elapsedMillisecsSince(timeT time) {

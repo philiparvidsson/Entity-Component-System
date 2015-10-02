@@ -393,7 +393,7 @@ static inline float vec_perp_dot(const vec2* a, const vec2* b) {
     return (-a->y*b->x + a->x*b->y);
 }
 
-static inline float vec_perp(const vec2* v, vec2* r) {
+static inline void vec_perp(const vec2* v, vec2* r) {
     r->x = -v->y;
     r->y = v->x;
 }

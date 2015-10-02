@@ -149,7 +149,15 @@ typedef char stringT;
  * FUNCTIONS
  *----------------------------------------------*/
 
+#ifdef WIN32
 void sleep(int millisecs);
+#endif // WIN32
+
+#ifdef __linux__
+extern int usleep(unsigned int useconds);
+#define sleep(millisecs) (usleep(millisecs*1000))
+#endif // __linux__
+
 wchar_t* wstrdup(const string* str);
 int strcmpi2(const string* str1, const string* str2);
 

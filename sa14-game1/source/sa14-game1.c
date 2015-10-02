@@ -58,7 +58,7 @@ static void printIntroMessage(void) {
  * Usage:
  *   showSplashScreen(my_tex, 3.0f);
  *------------------------------------*/
-static void showSplashScreen(textureT* splash_tex, float secs) {
+static void showSplashScreen(const textureT* splash_tex, float secs) {
     const shaderT* splash_shader = gameResource("shader:splashscreen", ResShader);
     triMeshT* quad = createQuad(2.0f, 2.0f);
 
@@ -100,7 +100,6 @@ static void showSplashScreen(textureT* splash_tex, float secs) {
     freeMesh    (quad);
     useTexture  (NULL, 0);
     useShader   (NULL);
-    deleteShader(splash_shader);
 }
 
 // ugly crap, fix this
@@ -150,12 +149,12 @@ int main(void) {
     printIntroMessage();
 
     showWindow();
-#ifndef _DEBUG
+#if defined(WIN32) && !defined(_DEBUG)
     ShowWindow(GetConsoleWindow(), SW_HIDE);
-#endif // !_DEBUG
+#endif
 
 #ifndef _DEBUG
-    textureT* splash_tex = gameResource("texture:splashscreen0", ResTexture);
+    const textureT* splash_tex = gameResource("texture:splashscreen0", ResTexture);
     showSplashScreen(splash_tex, 3.0f);
     freeTexture(splash_tex);
 #endif // !_DEBUG
