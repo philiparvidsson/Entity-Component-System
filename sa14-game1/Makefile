@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -c -Wall -Os -Isource -Iinclude
+CFLAGS = -c -Wall -Os -Isource -Iinclude -D_DEBUG
 
 LDFLAGS=
 LDLIBS=-lm -lGL -lX11 -lGLEW

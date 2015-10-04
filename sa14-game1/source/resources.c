@@ -145,7 +145,7 @@ static void compileResources(void) {
 
     compileShaders();
     trace("");
-    
+
     loadTextures();
     trace("");
 

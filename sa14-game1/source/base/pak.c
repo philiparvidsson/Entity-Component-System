@@ -90,7 +90,9 @@ pakArchiveT* pakOpenArchive(const string* file_name, const string* password) {
         return (NULL);
     }
 
-    pak->password = strdup(password);
+    pak->password = password;
+    if (pak->password)
+        pak->password = strdup(pak->password);
 
     assert(readPakArchiveHeader(pak));
 
