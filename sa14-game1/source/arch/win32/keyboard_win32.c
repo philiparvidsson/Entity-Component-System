@@ -1,21 +1,26 @@
+#ifdef WIN32
+
 /*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
 
-#include "keyboard.h"
-
 #include "base/common.h"
 #include "base/debug.h"
+#include "input/keyboard.h"
 
 #include <stdint.h>
 
 #include <windows.h>
 
 /*------------------------------------------------
- * FUNCTIONS
+ * GLOBALS
  *----------------------------------------------*/
 
 static keyboardStateT keyboard_state;
+
+/*------------------------------------------------
+ * FUNCTIOMS
+ *----------------------------------------------*/
 
 void updateKeyboardState(void) {
     BYTE keys[KeyboardNumKeys];
@@ -65,3 +70,5 @@ keyboardStateT getKeyboardState(void) {
 bool keyIsPressed(keyboardKeyT key) {
     return (keyboard_state.keys[key % KeyboardNumKeys]);
 }
+
+#endif // WIN32

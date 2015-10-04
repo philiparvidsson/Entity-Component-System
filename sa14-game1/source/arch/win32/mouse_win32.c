@@ -1,13 +1,18 @@
+#ifdef WIN32
+
 /*------------------------------------------------
  * INCLUDES
  *----------------------------------------------*/
 
-#include "mouse.h"
-
 #include "base/common.h"
 #include "base/debug.h"
+#include "input/mouse.h"
 
 #include <windows.h>
+
+/*------------------------------------------------
+ * GLOBALS
+ *----------------------------------------------*/
 
 static mouseStateT mouse_state;
 
@@ -31,3 +36,5 @@ void updateMouseState(void) {
 mouseStateT getMouseState(void) {
     return (mouse_state);
 }
+
+#endif // WIN32

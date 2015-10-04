@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 /*------------------------------------------------------------------------------
  * File: graphics.c
  * Created: June 8, 2015
@@ -14,10 +16,9 @@
  * INCLUDES
  *----------------------------------------------*/
 
-#include "graphics.h"
-
 #include "base/common.h"
 #include "base/debug.h"
+#include "graphics/graphics.h"
 
 #include <GL/glew.h>
 
@@ -188,7 +189,7 @@ static void createWindow(const string* title, int width, int height) {
 static void destroyWindow(void) {
     if (!window)
         return;
-    
+
     if (window->hwnd)
         assert(DestroyWindow(window->hwnd));
 
@@ -363,7 +364,7 @@ void updateDisplay(void) {
     LARGE_INTEGER perf_count;
     do {
         updateWindow();
-        
+
         // If window is NULL here, the user has closed the window and
         // destroyWindow() has been called by the WindowProc() function,
         // which, in turn, has been invoekd by the DispatchMessageW() function.
@@ -411,3 +412,5 @@ bool windowIsFocused(void) {
 bool windowIsOpen(void) {
     return (window && (window->hwnd != NULL));
 }
+
+#endif // WIN32

@@ -98,10 +98,10 @@ textureT* loadTextureFromFile(const void* file_name) {
     return (tex);
 }
 
-textureT* loadTextureFromMemory(const uint8_t* data) {
+textureT* loadTextureFromMemory(const void* data) {
     textureT* tex = NULL;
 
-    if (data[0]=='B' && data[1]=='M')
+    if (((uint8_t*)data)[0]=='B' && ((uint8_t*)data)[1]=='M')
         tex = loadBMP(data);
 
     if (!tex)
@@ -142,7 +142,7 @@ textureT* useTexture(textureT* tex, int index) {
     glActiveTexture(GL_TEXTURE0 + index);
     if (tex)
         glBindTexture(texTarget(tex), tex ? tex->id : 0);
-    else 
+    else
         glBindTexture(texTarget(old_tex), 0);
 
     return (old_tex);
