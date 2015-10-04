@@ -93,7 +93,7 @@ static void compileShaders(void) {
 
 static void loadTexture(const string* name, const string* res_name) {
     textureT* tex = loadTextureFromMemory(gameResource(res_name, ResBinary));
-    
+
     // For proper tiling.
     setTextureRepeat(tex, true);
 
@@ -111,7 +111,7 @@ static void loadTextures(void) {
 
     loadTexture("checker.bmp",
                     "textures/CHECKER.BMP");
-    
+
     loadTexture("background",
                     "textures/background.bmp");
 

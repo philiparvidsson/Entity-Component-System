@@ -157,8 +157,8 @@ void errorFunc(const string* msg, const string* func_name, int line, ...) {
 
 void traceFunc(const string* msg, ...) {
     va_list ap;
-
     string s[1024];
+
     va_start(ap, msg);
     vsprintf(s, msg, ap);
     va_end(ap);

@@ -88,7 +88,6 @@ shaderT* createShader(void) {
 
     shader->id      = glCreateProgram();
     shader->shaders = arrayNew(sizeof(GLuint));
-
     return (shader);
 }
 

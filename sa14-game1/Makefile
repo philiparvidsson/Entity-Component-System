@@ -12,6 +12,5 @@ all: $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) $(LDLIBS) -o bin/sa14-game1
 
 clean:
-	rm -rf bin
 	rm -f $(TARGET) $(OBJECTS)
 
