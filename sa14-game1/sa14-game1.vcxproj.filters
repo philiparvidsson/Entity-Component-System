@@ -24,22 +24,10 @@
     <ClCompile Include="source\sa14-game1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\input\mouse.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\input\keyboard.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\physics\world.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\graphics\graphics.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\graphics\shader.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\graphics\text.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\graphics\trimesh.c">
@@ -55,9 +43,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\base\debug.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\base\time.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\engine\component.c">
@@ -124,6 +109,36 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\physics\body.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arch\win32\graphics_win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arch\win32\keyboard_win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arch\win32\mouse_win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arch\win32\text_win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arch\win32\time_win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arch\linux\graphics_linux.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arch\linux\keyboard_linux.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arch\linux\mouse_linux.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arch\linux\text_linux.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arch\linux\time_linux.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

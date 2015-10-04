@@ -9,7 +9,8 @@
  *   A shader that discards the z-coordinate and does nothing else.
  *----------------------------------------------------------------------------*/
 
-#version 430
+#version 330
+#extension GL_ARB_shading_language_420pack: require
 
 /*------------------------------------------------
  * INPUTS

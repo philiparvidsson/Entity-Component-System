@@ -13,7 +13,8 @@
 //         Clues might be found here:
 //             http://freespace.virgin.net/hugo.elias/graphics/x_posure.htm
 
-#version 430
+#version 330
+#extension GL_ARB_shading_language_420pack: require
 
 /*------------------------------------------------
  * UNIFORMS

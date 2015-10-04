@@ -25,6 +25,10 @@
 #include "graphics/texture.h"
 #include "graphics/trimesh.h"
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
