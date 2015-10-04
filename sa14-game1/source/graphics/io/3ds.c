@@ -148,6 +148,7 @@ static vec3 readColorChunk(const uint8_t* ptr) {
             g = chunk->data[1],
             b = chunk->data[2];
 
+
     return ((vec3) { r/255.0f, g/255.0f, b/255.0f });
 }
 
@@ -258,21 +259,21 @@ a3dsDataT* a3dsLoad(const uint8_t* ptr) {
     if (a3ds->version != 3)
         error("unsupported 3ds version");
 
-    /*debug("materials: %d", arrayLength(a3ds->materials));
+    /*trace("materials: %d", arrayLength(a3ds->materials));
     for (int i = 0; i < arrayLength(a3ds->materials); i++) {
         a3dsMaterialDataT* material_data = *(a3dsMaterialDataT**)arrayGet(a3ds->materials, i);
-        debug("  name: %s", material_data->name);
-        debug("    texture:   %s", material_data->texture);
-        debug("    ambient:   %4.2f %4.2f %4.2f", material_data->ambient.x, material_data->ambient.y, material_data->ambient.z);
-        debug("    diffuse:   %4.2f %4.2f %4.2f", material_data->diffuse.x, material_data->diffuse.y, material_data->diffuse.z);
-        debug("    specular:  %4.2f %4.2f %4.2f", material_data->specular.x, material_data->specular.y, material_data->specular.z);
-        debug("    shininess: %4.2f", material_data->shininess);
+        trace("  name: %s", material_data->name);
+        trace("    texture:   %s", material_data->texture);
+        trace("    ambient:   %4.2f %4.2f %4.2f", material_data->ambient.x, material_data->ambient.y, material_data->ambient.z);
+        trace("    diffuse:   %4.2f %4.2f %4.2f", material_data->diffuse.x, material_data->diffuse.y, material_data->diffuse.z);
+        trace("    specular:  %4.2f %4.2f %4.2f", material_data->specular.x, material_data->specular.y, material_data->specular.z);
+        trace("    shininess: %4.2f", material_data->shininess);
     }
     
     for (int i = 0; i < arrayLength(a3ds->objects); i++) {
         a3dsObjectDataT* obj_data = *(a3dsObjectDataT**)arrayGet(a3ds->objects, i);
 
-        debug("object: %s", obj_data->name);
+        trace("object: %s", obj_data->name);
 
         if (!obj_data->mesh)
             continue;
@@ -280,9 +281,9 @@ a3dsDataT* a3dsLoad(const uint8_t* ptr) {
         //for (int j = 0; j < obj_data->mesh->num_verts; j++)
         //    warn("%4.2f %4.2f %4.2f", obj_data->mesh->vert_pos[j].x, obj_data->mesh->vert_pos[j].y, obj_data->mesh->vert_pos[j].z);
 
-        debug("  material: %s", obj_data->mesh->material);
-        debug("  num verts: %d", obj_data->mesh->num_verts);
-        debug("  num tris:  %d", obj_data->mesh->num_tris);
+        trace("  material: %s", obj_data->mesh->material);
+        trace("  num verts: %d", obj_data->mesh->num_verts);
+        trace("  num tris:  %d", obj_data->mesh->num_tris);
     }*/
 
     return (a3ds);
