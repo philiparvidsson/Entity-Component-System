@@ -10,7 +10,8 @@
  *   splash screen texture.
  *----------------------------------------------------------------------------*/
 
-#version 430
+#version 330 core
+#extension GL_ARB_shading_language_420pack : enable
 
 /*------------------------------------------------
  * UNIFORMS

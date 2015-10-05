@@ -1,4 +1,5 @@
-#version 430
+#version 330 core
+#extension GL_ARB_shading_language_420pack : enable
 
 /*------------------------------------------------
  * UNIFORMS
@@ -26,7 +27,7 @@ out vec4 color;
  *----------------------------------------------*/
 
 float noise(in vec2 v) {
-    return fract(sin(dot(v, vec2(12.9898, 78.233) * (Seed+1))) * 43758.5453);
+    return fract(sin(dot(v, vec2(12.9898, 78.233) * (Seed+uint(1)))) * 43758.5453);
 }
 
 void main() {

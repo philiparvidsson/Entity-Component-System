@@ -10,7 +10,8 @@
  *   and draws it to the target buffer.
  *----------------------------------------------------------------------------*/
 
-#version 430
+#version 330 core
+#extension GL_ARB_shading_language_420pack : enable
 
 /*------------------------------------------------
  * UNIFORMS

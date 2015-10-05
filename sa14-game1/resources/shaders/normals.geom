@@ -1,4 +1,5 @@
-#version 430
+#version 330 core
+#extension GL_ARB_shading_language_420pack : enable
 
 layout(triangles) in;
 layout(line_strip, max_vertices = 6) out;
