@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS = -c -Wall -Os -Isource -Iinclude -D_DEBUG
+CFLAGS = -c -Wall -O0 -g -Isource -Iinclude -D_DEBUG
 
 LDFLAGS=
-LDLIBS=-lm -lGL -lX11 -lGLEW
+LDLIBS=-lm -lX11 -lGL -lGLEW
 
 SOURCES=$(shell find source -type f -iname '*.c')
 OBJECTS=$(foreach x, $(basename $(SOURCES)), $(x).o)

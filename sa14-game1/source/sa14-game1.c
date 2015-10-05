@@ -24,6 +24,8 @@
 #include "graphics/shader.h"
 #include "graphics/texture.h"
 #include "graphics/trimesh.h"
+#include "subsystems/graphicssubsystem.h"
+#include "subsystems/physicssubsystem.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -162,7 +164,6 @@ int main(void) {
     showSplashScreen(splash_tex, 3.0f);
     freeTexture(splash_tex);
 #endif // !_DEBUG
-
     addSubsystemToGame(newPhysicsSubsystem());
     addSubsystemToGame(newGraphicsSubsystem());
 

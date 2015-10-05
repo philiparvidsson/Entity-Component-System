@@ -71,11 +71,11 @@ static void loadNormalShader(graphicsSubsystemDataT* gfx_data) {
 
 static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     // Motion Blur -------------------------------
-    
+
     gfx_data->mblur_shader0 = gameResource("shader:mblur0", ResShader);
     gfx_data->mblur_shader1 = gameResource("shader:mblur1", ResShader);
     gfx_data->mblur_rt      = createRenderTarget(screenWidth(), screenHeight());
-    
+
     // Exposure -------------------------------------
 
     gfx_data->exposure_shader = gameResource("shader:exposure", ResShader);
@@ -86,7 +86,7 @@ static void initPostFX(graphicsSubsystemDataT* gfx_data) {
     gfx_data->noise_shader = gameResource("shader:noise", ResShader);
 }
 
-bool postit = true;
+bool postit = false;
 int frame_counter;
 static void applyPostFX(gameSubsystemT* subsystem) {
     graphicsSubsystemDataT* gfx_data = subsystem->data;
@@ -103,21 +103,21 @@ static void applyPostFX(gameSubsystemT* subsystem) {
     if (!postit)
         return;
 
-    
+
     //--------------------------------------------
     // Motion Blur
     //--------------------------------------------
-    
+
     // 1. Render velocity texture.
-    
+
     renderTargetT* old_rt = useRenderTarget(gfx_data->mblur_rt);
     useShader      (gfx_data->mblur_shader0);
     clearDisplay   (0.0f, 0.0f, 0.0f);
     drawComponents (subsystem, false);
     useRenderTarget(old_rt);
-    
+
     // 2. Apply motion blur.
-    
+
     textureT* old_tex = useTexture(getRenderTargetColorTexture(gfx_data->mblur_rt), 1);
     useShader            (gfx_data->mblur_shader1);
     loadTextureFromScreen(gfx_data->screen_tex);
@@ -206,10 +206,10 @@ static void setupTransforms(gameSubsystemT* subsystem) {
         mat4x4 translation;
         vec2 pos = bodyPosition(phys_component->body);
         mat_transl_xyz(pos.x, pos.y, 0.0f, &translation);
-        
+
         mat_mul(&gfx_component->transform, &model, &model);
         mat_mul(&translation             , &model, &model);
-        
+
         gfx_component->prev_model_view_proj = gfx_component->model_view_proj;
 
         mat4x4* mvp = &gfx_component->model_view_proj;
@@ -233,7 +233,7 @@ static void drawComponent(graphicsSubsystemDataT* gfx_data, gameComponentT* comp
     setShaderParam("ModelViewProj"    , &gfx_component->model_view_proj);
     setShaderParam("PrevModelViewProj", &gfx_component->prev_model_view_proj);
     setShaderParam("NormalMatrix"     , &gfx_component->transform);
-    
+
     drawMesh(gfx_component->mesh);
 }
 
@@ -310,7 +310,7 @@ gameSubsystemT* newGraphicsSubsystem(void) {
 
     gfx_data->aspect_ratio   = screenWidth() / (float)screenHeight();
     gfx_data->clear_color    = (vec3) { 1.0f, 1.0f, 1.0f };
-    gfx_data->render_target  = createMultisampledRenderTarget(screenWidth(), screenHeight(), 8);
+    gfx_data->render_target  = createRenderTarget(screenWidth(), screenHeight());
     gfx_data->background_tex = gameResource("texture:background", ResTexture);
     gfx_data->screen_tex     = createTexture();
 

@@ -6,6 +6,7 @@
 
 #include "base/common.h"
 #include "base/debug.h"
+#include "base/fileio.h"
 #include "base/pak.h"
 #include "base/time.h"
 #include "graphics/graphics.h"
@@ -113,12 +114,12 @@ void gameMain(void (*frame_func)(float dt)) {
     timeT time = getTime();
     while (!game_inst->done && windowIsOpen()) {
         float dt = elapsedSecsSince(time);
-        
+
         // Pause if we lose focus. The time we pause should not be taken into
         // account, so we put this between elapsedSecsSince() and getTime().
         while (!windowIsFocused()) {
             sleep(100);
-            
+
             updateWindow();
         }
 
@@ -153,15 +154,15 @@ gameSubsystemT* getGameSubsystem(const string* name) {
         if (strcmp(subsystem->name, name)==0)
             return (subsystem);
     }
-    
+
     return (NULL);
 }
 
 void addEntityToGame(gameEntityT* entity) {
     assert(entity->game == NULL);
-    
+
     entity->game = game_inst;
-    
+
     int num_components = arrayLength(entity->components);
     for (int i = 0; i < num_components; i++) {
         gameComponentT* component = *(gameComponentT**)arrayGet(entity->components, i);
@@ -196,6 +197,18 @@ void gameAddResource(const string* name, void* data, int type) {
 
 const void* gameResource(const string* name, int type) {
     assert((name != NULL) && (strlen(name) > 0));
+
+#ifdef _DEBUG
+    // @To-do: Remove this crap.
+    if (type == ResString && strstr(name, "shaders/") == name) {
+        string* p = malloc(100);
+        for (int i = 0; i < 100; i++) p[i] = 0;
+        sprintf(p, "../resources/");
+        strcat(p, name);
+        string* lol= ioReadFile(p);
+        return (lol);
+    }
+#endif
 
     gameResourceT* res = game_inst->resources;
     while (res) {

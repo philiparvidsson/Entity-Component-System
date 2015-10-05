@@ -20,12 +20,12 @@
 #include "base/debug.h"
 #include "graphics/graphics.h"
 
-#include <X11/X.h>
 #include <X11/Xlib.h>
 
+//#include <GL/glew.h>
+//#include <GL/glxew.h>
 #include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/glx.h>
+#include <GL/glxew.h>
 
 /*------------------------------------------------
  * CONSTANTS
@@ -76,8 +76,22 @@ static windowT* window = NULL;
 /*------------------------------------------------
  * FUNCTIONS
  *----------------------------------------------*/
+void initGLX(void)
+{
+    glXChooseFBConfig =
+        (PFNGLXCHOOSEFBCONFIGPROC)
+        glXGetProcAddress((GLubyte*)"glXChooseFBConfig");
+    glXGetVisualFromFBConfig =
+        (PFNGLXGETVISUALFROMFBCONFIGPROC)
+        glXGetProcAddress((GLubyte*)"glXGetVisualFromFBConfig");
+    glXCreateContextAttribsARB =
+        (PFNGLXCREATECONTEXTATTRIBSARBPROC)
+        glXGetProcAddress((GLubyte*)"glXCreateContextAttribsARB");
+}
 
 static void createWindow(const string* title, int width, int height) {
+    initGLX();
+
     window = malloc(sizeof(windowT));
 
     window->display = XOpenDisplay(0);
@@ -88,10 +102,20 @@ static void createWindow(const string* title, int width, int height) {
     if (!window->root)
         error("could not get root window");
 
-    GLint attr[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
-    window->xvi = glXChooseVisual(window->display, 0, attr);
-    if (!window->xvi)
-        error("could not create visual");
+    int config_attr[] = {
+        GLX_RENDER_TYPE  , GLX_RGBA_BIT,
+        GLX_X_RENDERABLE , True,
+        GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+        GLX_DOUBLEBUFFER , True,
+        GLX_RED_SIZE     , 8,
+        GLX_BLUE_SIZE    , 8,
+        GLX_GREEN_SIZE   , 8,
+        None
+    };
+
+    int num_configs;
+    GLXFBConfig* configs = glXChooseFBConfig(window->display, DefaultScreen(window->display), config_attr, &num_configs);
+    window->xvi = glXGetVisualFromFBConfig(window->display, configs[0]);
 
     window->colormap = XCreateColormap(window->display, window->root, window->xvi->visual, AllocNone);
 
@@ -104,7 +128,13 @@ static void createWindow(const string* title, int width, int height) {
     XMapWindow(window->display, window->window);
     XStoreName(window->display, window->window, title);
 
-    window->glx = glXCreateContext(window->display, window->xvi, NULL, GL_TRUE);
+    int context_attr[] = {
+        GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+        GLX_CONTEXT_MINOR_VERSION_ARB, 3,
+        GLX_CONTEXT_PROFILE_MASK_ARB , GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
+        0
+    };
+    window->glx = glXCreateContextAttribsARB(window->display, configs[0], 0, True, context_attr);
     glXMakeCurrent(window->display, window->window, window->glx);
 
     window->wm_delete_msg = XInternAtom(window->display, "WM_DELETE_WINDOW", False);
@@ -114,8 +144,17 @@ static void destroyWindow(void) {
 
 }
 
-/* static */ void updateWindow(void) {
-
+void updateWindow(void) {
+    XEvent xe;
+    //XNextEvent(display, &xe);
+    if (XCheckWindowEvent(window->display, window->window, KeyPressMask, &xe)) {
+        if (xe.type == ClientMessage) {
+            if (xe.xclient.data.l[0] == window->wm_delete_msg) {
+                // Easy h4x, lol.
+                window = NULL;
+            }
+        }
+    }
 }
 
 /*--------------------------------------
@@ -141,7 +180,15 @@ static void setFrameRate(float fps) {
 void initGraphics(const string* title, int width, int height) {
     createWindow(title, width, height);
 
+    glewExperimental = GL_TRUE;
     assert(glewInit() == GLEW_OK);
+    assert(GLEW_VERSION_3_3);
+
+    trace("");
+    trace("OpenGL vendor: %s" , glGetString(GL_VENDOR));
+    trace("OpenGL version: %s", glGetString(GL_VERSION));
+    trace("GLSL version: %s"  , glGetString(GL_SHADING_LANGUAGE_VERSION));
+    trace("");
 
     // We need to enable GL_BLEND for transparency.
     glEnable   (GL_BLEND);
@@ -210,16 +257,7 @@ void updateDisplay(void) {
 
     glXSwapBuffers(window->display, window->window);
 
-    XEvent xe;
-    //XNextEvent(display, &xe);
-    if (XCheckWindowEvent(window->display, window->window, KeyPressMask, &xe)) {
-        if (xe.type == ClientMessage) {
-            if (xe.xclient.data.l[0] == window->wm_delete_msg) {
-                // Easy h4x, lol.
-                window = NULL;
-            }
-        }
-    }
+    updateWindow();
 }
 
 void hideWindow(void) {

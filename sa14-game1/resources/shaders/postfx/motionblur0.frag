@@ -1,12 +1,14 @@
 #version 330 core
 #extension GL_ARB_shading_language_420pack : enable
 
-struct vertexT {
+struct vertexDataT {
     vec4 pos;
     vec4 prev_pos;
+    vec3 normal;
+    vec2 tex_coord;
 };
 
-in vertexT vert;
+in vertexDataT vert;
 
 out vec4 velocity;
 

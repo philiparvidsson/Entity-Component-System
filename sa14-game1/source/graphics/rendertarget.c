@@ -25,7 +25,7 @@ renderTargetT* createMultisampledRenderTarget(int width, int height,
 
     rt->width  = width;
     rt->height = height;
-    
+
     glGenFramebuffers(1, &rt->fbo);
 
     textureT*      old_tex = useTexture(NULL, 0);
@@ -61,7 +61,7 @@ renderTargetT* createRenderTarget(int width, int height) {
 
     rt->width  = width;
     rt->height = height;
-    
+
     glGenFramebuffers(1, &rt->fbo);
 
     textureT*      old_tex = useTexture(NULL, 0);
@@ -84,6 +84,7 @@ renderTargetT* createRenderTarget(int width, int height) {
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                          *(GLuint*)rt->depth_tex, 0);
 
+trace("snabel?");
     assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 
     useRenderTarget(old_rt);

@@ -109,7 +109,7 @@ textureT* loadTextureFromMemory(const void* data) {
 
     textureT* old_tex = useTexture(tex, 0);
 
-    glGenerateMipmap(texTarget(tex));
+    //glGenerateMipmap(texTarget(tex));
 
     useTexture(old_tex, 0);
 

@@ -166,7 +166,7 @@ void* arrayAdd(arrayT* a, const void* elem) {
         doubleArrayCapacity(a);
 
     void* dest = (uint8_t*)a->data + (a->num_elems * a->elem_size);
-    
+
     memcpy(dest, elem, a->elem_size);
     a->num_elems++;
 

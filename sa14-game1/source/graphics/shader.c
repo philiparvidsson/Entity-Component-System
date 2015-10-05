@@ -134,7 +134,6 @@ bool setShaderParam(const string* name, const void* value) {
 
     GLuint index = (GLuint)(-1);
     glGetUniformIndices(active_shader->id, 1, &name, &index);
-
     if ((int)index == (-1)) {
         //warn("couldn't set shader uniform '%s'", name);
         return (false);
