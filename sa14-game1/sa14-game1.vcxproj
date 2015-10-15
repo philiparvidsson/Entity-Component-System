@@ -195,6 +195,8 @@
     <None Include="bin\msvcr120d.dll" />
     <None Include="build\pak-tool.exe" />
     <None Include="build\postbuild.bat" />
+    <None Include="Makefile" />
+    <None Include="resources\meshes\doughnut.3ds" />
     <None Include="resources\meshes\monkey.3ds" />
     <None Include="resources\meshes\player.3ds" />
     <None Include="resources\meshes\torus.3ds" />

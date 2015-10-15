@@ -322,6 +322,8 @@
     <None Include="bin\msvcr120d.dll" />
     <None Include="resources\meshes\player.3ds" />
     <None Include="resources\shaders\postfx\exposure.frag" />
+    <None Include="Makefile" />
+    <None Include="resources\meshes\doughnut.3ds" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\glew32.lib" />

@@ -84,7 +84,6 @@ renderTargetT* createRenderTarget(int width, int height) {
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                          *(GLuint*)rt->depth_tex, 0);
 
-trace("snabel?");
     assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 
     useRenderTarget(old_rt);
