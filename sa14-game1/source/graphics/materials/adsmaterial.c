@@ -28,7 +28,7 @@ static void adsBegin(materialT* m) {
     setShaderParam("AmbientCoeff" , &ads->ambient_coeff  );
     setShaderParam("DiffuseCoeff" , &ads->diffuse_coeff  );
     setShaderParam("SpecularCoeff", &ads->specular_coeff );
-    setShaderParam("Shininess"    , &ads->shininess);
+    setShaderParam("Shininess"    , &ads->shininess      );
 
     useTexture(ads->ambient_tex  ? ads->ambient_tex  : whiteTexture(), 0);
     useTexture(ads->diffuse_tex  ? ads->diffuse_tex  : whiteTexture(), 1);
@@ -37,7 +37,7 @@ static void adsBegin(materialT* m) {
     if (ads->wireframe) {
         glPushAttrib (GL_ENABLE_BIT | GL_POLYGON_BIT);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glDisable(GL_CULL_FACE);
+        glDisable    (GL_CULL_FACE);
     }
 }
 

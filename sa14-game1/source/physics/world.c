@@ -213,7 +213,7 @@ static collisionT findBodyWorldCollision(worldT* world, bodyT* body) {
 
     if (num_contacts > 0) {
         vec_scale    (&c.contact, 1.0f/num_contacts, &c.contact);
-        vec_normalize(&c.normal                    , &c.normal);
+        vec_normalize(&c.normal                    , &c.normal );
 
         c.exists = true;
     }
