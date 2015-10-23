@@ -398,11 +398,11 @@ void showWindow(void) {
 }
 
 int screenWidth() {
-    return window->width;
+    return (window->width);
 }
 
 int screenHeight() {
-    return window->height;
+    return (window->height);
 }
 
 bool windowIsFocused(void) {
