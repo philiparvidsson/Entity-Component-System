@@ -346,5 +346,8 @@
     <Image Include="resources\textures\doughnut.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="images\game0.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

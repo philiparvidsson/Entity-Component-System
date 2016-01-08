@@ -223,6 +223,7 @@
     <Font Include="resources\fonts\sector_034.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="images\game0.png" />
     <Image Include="resources\textures\background.bmp" />
     <Image Include="resources\textures\CHECKER.BMP" />
     <Image Include="resources\textures\doughnut.bmp" />
