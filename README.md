@@ -6,6 +6,8 @@ Everything is implemented in C, although I did not follow the C89 standard, but 
 ## Materials, wohoo!
 <img src="sa14-game1/images/game1.png" alt="" />
 
+Notice the use of ADS (ambient-diffuse-specular) material shaders, a (barely noticeable) noise shader, a motion blur shader as well as an exposure shader for mor realistic colors!
+
 ## Textures, wohoo!
 <img src="sa14-game1/images/game0.png" alt="" />
 
