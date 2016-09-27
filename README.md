@@ -16,6 +16,7 @@ The goal was to implement a rendering pipeline (using OpenGL), a linear algebra 
   * Material shader
   * Noise/fake-ISO shader
   * Motion blur shader
+  * Exposure shader
 * ECS architecture
 
 Everything was implemented in C, although I did not follow the C89 standard, but rather C99 and even some C11 features (by extension since the MSVC++ compiler is not quite there yet).
