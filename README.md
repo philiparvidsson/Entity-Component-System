@@ -1,16 +1,30 @@
-# sa14-game1
-Simple game engine (+ game) developed by a student of Systems Architecture. The goal is to implement a rendering pipeline (using OpenGL), a linear algebra library (specifically for vector and matrix operations), a generalized (though not portable) device input package and a physics simulation.
+# Attempting the Entitiy Component System Architectural Pattern in C
 
-Everything is implemented in C, although I did not follow the C89 standard, but rather C99 and even some C11 features (by extension since the MSVC++ compiler is not quite there yet).
+This project had several important aspects;
 
-## Materials, wohoo!
+* Learning GLSL
+* Understanding the ECS game architecture
+* Deepening my knowledge of physics
+
+The goal was to implement a rendering pipeline (using OpenGL), a linear algebra library (specifically for vector and matrix operations), a generalized (though not portable) device input package and a physics simulation.
+
+**Features:**
+
+* File packing and unpacking
+* Rigid body physics (using fourth-order Runge Kutta integration)
+* GLSL shaders (compiled and run on the GPU)
+  * Material shader
+  * Noise/fake-ISO shader
+  * Motion blur shader
+* ECS architecture
+
+Everything was implemented in C, although I did not follow the C89 standard, but rather C99 and even some C11 features (by extension since the MSVC++ compiler is not quite there yet).
+
+### Materials!
 <img src="sa14-game1/images/game1.png" alt="" />
 
 Notice the use of ADS (ambient-diffuse-specular) material shaders, a (barely noticeable) noise shader, a motion blur shader as well as an exposure shader for mor realistic colors!
 
-## Textures, wohoo!
+### Textures!
 <img src="sa14-game1/images/game0.png" alt="" />
 
-
-Philip Arvidsson<br>
-University of Borås, Sweden
