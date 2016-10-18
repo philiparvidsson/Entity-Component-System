@@ -1,4 +1,4 @@
-# Attempting the Entitiy Component System Architectural Pattern in C
+# Attempting the Entity Component System Architectural Pattern in C
 
 This project had several important aspects;
 
