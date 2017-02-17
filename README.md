@@ -11,7 +11,7 @@ The goal was to implement a rendering pipeline (using OpenGL), a linear algebra 
 **Features:**
 
 * File packing and unpacking
-* 3DS format file loader (standardized CAD/3D model file format)
+* 3DS file loader (standardized CAD/3D model format)
 * Rigid body physics (using fourth-order Runge Kutta integration)
 * GLSL shaders (compiled and run on the GPU)
   * Material shader
